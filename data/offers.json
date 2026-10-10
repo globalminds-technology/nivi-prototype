@@ -1,0 +1,21 @@
+[
+  {
+    "id": "offer_1791544958921",
+    "name": "Diwali Offer",
+    "type": "percent",
+    "value": 10,
+    "label": "10% OFF",
+    "expiry": "2026-10-28",
+    "active": true,
+    "productIds": [
+      "4251796000000059001",
+      "4251796000000034184"
+    ],
+    "bannerImageUrl": "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/banners/new_campaign_1791544949856.png",
+    "bannerTitle": null,
+    "bannerSubtitle": null,
+    "bannerCtaText": null,
+    "createdAt": "2026-10-09T11:22:38.921Z",
+    "updatedAt": "2026-10-09T11:38:05.944Z"
+  }
+]
