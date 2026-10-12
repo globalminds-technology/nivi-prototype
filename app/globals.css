@@ -11,6 +11,8 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-heading: var(--font-display);
+  --font-serif: var(--font-display);
+  --font-script: var(--font-script), "Great Vibes", cursive;
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-success: var(--success);
@@ -51,62 +53,78 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* ── Teal Palette Custom Colors ── */
-  --color-deep-teal: #023036;
-  --color-peacock: #035354;
-  --color-ocean: #034F58;
-  --color-turquoise: #056677;
+  /* ── NiVi Luxury Boutique Palette ── */
+  --color-nivi-beige: #E4DDCD;
+  --color-nivi-ivory: #FFFCF5;
+  --color-nivi-green: #073C35;
+  --color-nivi-gold: #C9A45C;
+  --color-nivi-rose: #DCAEB6;
+  --color-nivi-blush: #F9F0EC;
+  --color-nivi-dark: #30251F;
+  --color-nivi-muted: #6B5A4A;
+  --color-nivi-border: #D5CCBB;
+
+  /* Legacy aliases for backward compatibility */
+  --color-deep-teal: #073C35;
+  --color-peacock: #0a4d44;
+  --color-ocean: #073C35;
+  --color-turquoise: #0f5a50;
   --color-seafoam: #208280;
   --color-jade: #4B9488;
-  --color-mint: #50978C;
-  --color-aqua: #689D96;
-  --color-powder: #7AA79D;
-  --color-pastel-teal: #96B7AF;
-
-  /* ── Copper Accent ── */
-  --color-copper: #B87333;
+  --color-copper: #C9A45C;
   --color-copper-light: #D4956A;
   --color-copper-shine: #E8C19A;
 }
 
-/* NiVi brand — Deep Teal & Copper on Warm Linen (#e4ddcd) Background */
+/* NiVi brand — Deep Green (#073C35) & Antique Gold (#C9A45C) on Warm Beige (#E4DDCD) Canvas */
 :root,
 .dark {
-  --background: #e4ddcd;
-  --foreground: #1a2a2e;
-  --card: #faf8f2;
-  --card-foreground: #1a2a2e;
-  --popover: #faf8f2;
-  --popover-foreground: #1a2a2e;
-  --primary: #023036;
-  --primary-foreground: #ffffff;
-  --secondary: #dcd4c3;
-  --secondary-foreground: #023036;
-  --muted: #dcd4c3;
-  --muted-foreground: #3d5a5e;
-  --accent: #d8cfbd;
-  --accent-foreground: #023036;
-  --destructive: oklch(0.577 0.245 27.325);
-  --success: #208280;
-  --brand: #B87333;
-  --brand-foreground: #1a0e05;
-  --border: #d2c8b5;
-  --input: #d2c8b5;
-  --ring: #B87333;
-  --chart-1: #023036;
-  --chart-2: #B87333;
-  --chart-3: #056677;
+  --color-beige: #E4DDCD;
+  --color-ivory: #FFFCF5;
+  --color-green: #073C35;
+  --color-gold: #C9A45C;
+  --color-dusty-rose: #DCAEB6;
+  --color-text: #30251F;
+  --color-text-muted: #6B5A4A;
+  --color-border: #D5CCBB;
+  --color-blush: #F9F0EC;
+  --color-white: #FFFFFF;
+
+  --background: #E4DDCD;
+  --foreground: #30251F;
+  --card: #FFFCF5;
+  --card-foreground: #30251F;
+  --popover: #FFFCF5;
+  --popover-foreground: #30251F;
+  --primary: #073C35;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E4DDCD;
+  --secondary-foreground: #073C35;
+  --muted: #EDE6D8;
+  --muted-foreground: #6B5A4A;
+  --accent: #F9F0EC;
+  --accent-foreground: #073C35;
+  --destructive: #b91c1c;
+  --success: #073C35;
+  --brand: #C9A45C;
+  --brand-foreground: #30251F;
+  --border: #D5CCBB;
+  --input: #D5CCBB;
+  --ring: #073C35;
+  --chart-1: #073C35;
+  --chart-2: #C9A45C;
+  --chart-3: #DCAEB6;
   --chart-4: #208280;
   --chart-5: #4B9488;
   --radius: 0.75rem;
-  --sidebar: #faf8f2;
-  --sidebar-foreground: #1a2a2e;
-  --sidebar-primary: #023036;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #dcd4c3;
-  --sidebar-accent-foreground: #023036;
-  --sidebar-border: #d2c8b5;
-  --sidebar-ring: #B87333;
+  --sidebar: #FFFCF5;
+  --sidebar-foreground: #30251F;
+  --sidebar-primary: #073C35;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EDE6D8;
+  --sidebar-accent-foreground: #073C35;
+  --sidebar-border: #D5CCBB;
+  --sidebar-ring: #C9A45C;
 }
 
 @layer base {
@@ -122,4 +140,8 @@
   html {
     @apply font-sans;
   }
+}
+
+.font-script {
+  font-family: var(--font-script), "Great Vibes", cursive;
 }

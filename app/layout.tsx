@@ -1,12 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Geist_Mono, Inter } from "next/font/google";
+import { Cormorant_Garamond, Geist_Mono, Great_Vibes, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-sans", subsets: ["latin"] });
-const fraunces = Fraunces({ variable: "--font-display", subsets: ["latin"] });
+const cormorant = Cormorant_Garamond({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+});
+const greatVibes = Great_Vibes({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: "400",
+});
 const geistMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -14,12 +24,12 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Nivi — Curated, crafted, yours",
-    template: "%s · Nivi",
+    default: "NiVi — Pure Sarees, Timeless Stories",
+    template: "%s · NiVi",
   },
   description:
-    "Shop Nivi's curated collection — new arrivals, featured pieces and limited-time offers, delivered across India.",
-  openGraph: { type: "website", siteName: "Nivi", locale: "en_IN" },
+    "Explore NiVi's curated collection of exquisite sarees that blend tradition, elegance, and modern grace. Delivered across India.",
+  openGraph: { type: "website", siteName: "NiVi", locale: "en_IN" },
   robots: { index: true, follow: true },
 };
 
@@ -35,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${fraunces.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${cormorant.variable} ${greatVibes.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" enableSystem={false} disableTransitionOnChange>

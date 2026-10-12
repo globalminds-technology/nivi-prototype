@@ -183,12 +183,11 @@ export default async function CampaignOffersPage({ params }: PageProps) {
 
         {/* Sarees Grid Section */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-              <Tag className="h-5 w-5 text-primary" />
-              <span>Exclusive Sarees in this Collection</span>
+          <div className="flex flex-col items-center justify-center text-center mb-2">
+            <h2 className="font-script text-3xl sm:text-4xl md:text-5xl font-normal tracking-wide text-foreground leading-tight">
+              Exclusive Sarees in this Collection
             </h2>
-            <span className="text-xs text-muted-foreground font-medium">
+            <span className="text-xs text-muted-foreground font-medium mt-0.5">
               {campaignProducts.length} items available
             </span>
           </div>

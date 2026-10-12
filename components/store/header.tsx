@@ -12,9 +12,11 @@ import {
   Layers,
   LayoutGrid,
   Menu,
+  Search,
   ShoppingBag,
   Sparkles,
   Tag,
+  User,
   X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -27,17 +29,18 @@ import { SearchDropdown } from "./search-dropdown";
 import type { StoreProductData } from "./product-card";
 
 interface HeaderProps {
-  products: StoreProductData[];
+  products?: StoreProductData[];
   categories?: Category[];
 }
 
-export function Header({ products, categories }: HeaderProps) {
+export function Header({ products = [], categories }: HeaderProps) {
   const pathname = usePathname();
   const { totalCount: cartCount } = useCart();
   const { count: wishlistCount } = useWishlist();
 
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   // Derive categories list (from prop or unique from products)
   const categoryList = useMemo(() => {
@@ -59,25 +62,27 @@ export function Header({ products, categories }: HeaderProps) {
     }));
   }, [categories, products]);
 
-  // Clean nav items — flat links, no dropdowns, categories removed
+  // Exact navigation items from desktop reference
   const navItems = [
-    { label: "Collections", href: "/collections", icon: LayoutGrid },
-    { label: "Offers", href: "/offers", icon: Sparkles, badge: "Deals" },
+    { label: "Collections", href: "/collections" },
+    { label: "Sarees", href: "/collections" },
+    { label: "Offers", href: "/offers", badge: "New" },
+    { label: "About", href: "/#about" },
+    { label: "Contact", href: "/#contact" },
   ];
 
   return (
     <>
       {/* ========================================================
           TOP HEADER
-          - Vertical gradient: Natural beige tones with cool undertone
-          - Clean navigation: flat links, Categories removed
-          - Green teal palette used for badges (cart, wishlist, deals)
-          - Copper accents for brand touches
+          - Warm ivory surface with subtle beige border
+          - Desktop: Logo | Collections Sarees Offers About Contact | Search | Wishlist | Account | Cart
+          - Mobile: Menu | Logo | Wishlist | Cart
          ======================================================== */}
       <header
-        className="sticky top-0 z-40 border-b border-[#023036]/10 shadow-[0_2px_12px_rgba(2,48,54,0.04)] backdrop-blur-md"
+        className="sticky top-0 z-40 border-b border-[#D5CCBB]/80 shadow-[0_2px_12px_rgba(7,60,53,0.04)] backdrop-blur-md"
         style={{
-          background: "linear-gradient(180deg, rgba(250, 248, 243, 0.98) 0%, rgba(242, 237, 227, 0.96) 60%, rgba(228, 221, 205, 0.94) 100%)",
+          background: "linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(249, 244, 235, 0.96) 60%, rgba(228, 221, 205, 0.94) 100%)",
         }}
       >
         <div className="container mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3">
@@ -88,60 +93,56 @@ export function Header({ products, categories }: HeaderProps) {
               size="icon-sm"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open Navigation Menu"
-              className="text-[#023036] hover:text-[#035354] hover:bg-[#023036]/8 rounded-lg -ml-1"
+              className="text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-lg -ml-1"
             >
               <Menu className="h-5 w-5" />
             </Button>
 
-            <Link href="/" className="flex items-center shrink-0">
+            <Link href="/" className="flex items-center gap-2 shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/nivi-logo.jpeg"
-                alt="NiVi — Woven with tradition"
-                className="h-11 sm:h-12 w-auto object-contain rounded-lg shadow-xs ring-1 ring-[#023036]/10"
+                alt="NiVi"
+                className="h-10 sm:h-11 w-auto object-contain rounded-lg shadow-xs ring-1 ring-[#073C35]/15"
               />
+              <span className="font-serif text-xl font-bold tracking-wide text-[#073C35]">NiVi</span>
             </Link>
           </div>
 
-          {/* DESKTOP ONLY: Logo & Clean Navigation Links */}
+          {/* DESKTOP ONLY: Logo & Navigation Links */}
           <div className="hidden md:flex items-center gap-8 lg:gap-10">
-            <Link href="/" className="flex items-center shrink-0 group">
+            <Link href="/" className="flex items-center gap-3 shrink-0 group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/nivi-logo.jpeg"
-                alt="NiVi — Woven with tradition"
-                className="h-14 sm:h-16 w-auto object-contain rounded-xl shadow-xs ring-1 ring-[#023036]/10 group-hover:scale-105 transition-all duration-200"
+                alt="NiVi"
+                className="h-12 lg:h-14 w-auto object-contain rounded-xl shadow-xs ring-1 ring-[#073C35]/15 group-hover:scale-105 transition-all duration-200"
               />
             </Link>
 
-            {/* Desktop Center Navigation — Clean flat links, Categories removed */}
-            <nav className="flex items-center gap-1.5 lg:gap-2">
+            {/* Desktop Center Navigation */}
+            <nav className="flex items-center gap-6 lg:gap-8">
               {navItems.map((item) => {
                 const isActive = item.href === "/"
                   ? pathname === "/"
                   : pathname.startsWith(item.href);
-                const Icon = item.icon;
 
                 return (
                   <Link
-                    key={item.href}
+                    key={item.label}
                     href={item.href}
-                    className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 flex items-center gap-1.5 ${
+                    className={`text-[13px] lg:text-[14px] font-medium tracking-wide transition-all duration-200 relative py-1 ${
                       isActive
-                        ? "bg-[#023036] text-white shadow-xs"
-                        : "text-[#023036]/85 hover:text-[#023036] hover:bg-[#023036]/8 border border-transparent"
+                        ? "text-[#073C35] font-semibold"
+                        : "text-[#30251F]/80 hover:text-[#073C35]"
                     }`}
                   >
-                    <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#96B7AF]" : "text-[#056677]"}`} />
                     <span>{item.label}</span>
+                    {isActive && (
+                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#073C35] rounded-full" />
+                    )}
                     {item.badge && (
-                      <span
-                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${
-                          isActive
-                            ? "bg-[#208280] text-white"
-                            : "bg-[#023036] text-white"
-                        }`}
-                      >
+                      <span className="ml-1.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-[#DCAEB6] text-[#30251F]">
                         {item.badge}
                       </span>
                     )}
@@ -151,12 +152,12 @@ export function Header({ products, categories }: HeaderProps) {
             </nav>
           </div>
 
-          {/* RIGHT ACTIONS: Search Dropdown + Wishlist + Cart Bag */}
+          {/* RIGHT ACTIONS: Search Dropdown + Wishlist + Account + Cart Bag */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Search Dropdown / Trigger */}
             <SearchDropdown products={products} />
 
-            {/* Desktop Wishlist */}
+            {/* Wishlist (Desktop & Mobile header) */}
             <Link
               href="/wishlist"
               aria-label="Wishlist"
@@ -164,29 +165,46 @@ export function Header({ products, categories }: HeaderProps) {
                 variant: "ghost",
                 size: "icon-sm",
                 className:
-                  "hidden md:inline-flex relative text-[#023036] hover:text-[#035354] hover:bg-[#023036]/8 rounded-full",
+                  "relative text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full",
               })}
             >
-              <Heart className="h-4 w-4" />
+              <Heart className="h-4.5 w-4.5" />
               {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#023036] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs border border-white">
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#DCAEB6] text-[#30251F] font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
                   {wishlistCount}
                 </span>
               )}
             </Link>
 
-            {/* Desktop Cart Bag */}
+            {/* Desktop Account Icon */}
+            <Link
+              href="/admin"
+              aria-label="Account / Admin"
+              className={buttonVariants({
+                variant: "ghost",
+                size: "icon-sm",
+                className:
+                  "hidden md:inline-flex text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full",
+              })}
+              title="Account / Admin"
+            >
+              <User className="h-4.5 w-4.5" />
+            </Link>
+
+            {/* Cart Bag (Desktop & Mobile header) */}
             <Button
               variant="ghost"
               size="icon-sm"
               onClick={() => setCartOpen(true)}
               aria-label="Shopping Cart"
-              className="hidden md:inline-flex relative text-[#023036] hover:text-[#035354] hover:bg-[#023036]/8 rounded-full"
+              className="relative text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full"
             >
               <ShoppingBag className="h-4.5 w-4.5" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#023036] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs border border-white">
-                {cartCount}
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#073C35] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
+                  {cartCount}
+                </span>
+              )}
             </Button>
           </div>
         </div>
@@ -311,9 +329,9 @@ export function Header({ products, categories }: HeaderProps) {
          ======================================================== */}
       <nav
         aria-label="Mobile Bottom Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md border-t border-[#023036]/15 shadow-[0_-4px_20px_rgba(2,48,54,0.1)] pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-1.5 transition-all"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md border-t border-[#D5CCBB] shadow-[0_-4px_20px_rgba(7,60,53,0.06)] pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-1.5 transition-all"
         style={{
-          background: "linear-gradient(180deg, rgba(228,221,205,0.97) 0%, rgba(228,221,205,0.99) 100%)",
+          background: "linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(244, 238, 227, 0.98) 100%)",
         }}
       >
         <div className="grid grid-cols-5 items-center max-w-md mx-auto px-1">
@@ -322,8 +340,8 @@ export function Header({ products, categories }: HeaderProps) {
             href="/"
             className={`flex flex-col items-center justify-center py-1 transition-colors ${
               pathname === "/"
-                ? "text-[#023036] font-bold"
-                : "text-[#3d5a5e] hover:text-[#023036]"
+                ? "text-[#073C35] font-bold"
+                : "text-[#6B5A4A] hover:text-[#073C35]"
             }`}
           >
             <div className="relative">
@@ -332,38 +350,58 @@ export function Header({ products, categories }: HeaderProps) {
             <span className="text-[10px] tracking-tight mt-1">Home</span>
           </Link>
 
-          {/* 2. Shop (Collections) */}
+          {/* 2. Collections */}
           <Link
             href="/collections"
             className={`flex flex-col items-center justify-center py-1 transition-colors ${
-              pathname === "/collections"
-                ? "text-[#023036] font-bold"
-                : "text-[#3d5a5e] hover:text-[#023036]"
+              pathname.startsWith("/collections")
+                ? "text-[#073C35] font-bold"
+                : "text-[#6B5A4A] hover:text-[#073C35]"
             }`}
           >
             <div className="relative">
               <LayoutGrid className="h-5 w-5 stroke-[1.8px]" />
             </div>
-            <span className="text-[10px] tracking-tight mt-1">Shop</span>
+            <span className="text-[10px] tracking-tight mt-1">Collections</span>
           </Link>
 
-          {/* 3. Wishlist */}
+          {/* 3. Search */}
+          <button
+            type="button"
+            onClick={() => {
+              const searchInput = document.querySelector('header input[type="text"]') as HTMLInputElement | null;
+              if (searchInput) {
+                searchInput.focus();
+              } else {
+                window.location.href = "/collections";
+              }
+            }}
+            aria-label="Search sarees"
+            className="flex flex-col items-center justify-center py-1 text-[#6B5A4A] hover:text-[#073C35] transition-colors"
+          >
+            <div className="relative">
+              <Search className="h-5 w-5 stroke-[1.8px]" />
+            </div>
+            <span className="text-[10px] tracking-tight mt-1">Search</span>
+          </button>
+
+          {/* 4. Wishlist */}
           <Link
             href="/wishlist"
             className={`flex flex-col items-center justify-center py-1 transition-colors ${
               pathname === "/wishlist"
-                ? "text-[#023036] font-bold"
-                : "text-[#3d5a5e] hover:text-[#023036]"
+                ? "text-[#073C35] font-bold"
+                : "text-[#6B5A4A] hover:text-[#073C35]"
             }`}
           >
             <div className="relative">
               <Heart
                 className={`h-5 w-5 ${
-                  pathname === "/wishlist" ? "fill-[#023036]/20 stroke-[2.4px]" : "stroke-[1.8px]"
+                  pathname === "/wishlist" ? "fill-[#DCAEB6] text-[#073C35] stroke-[2px]" : "stroke-[1.8px]"
                 }`}
               />
               {wishlistCount > 0 && (
-                <span className="absolute -top-1.5 -right-2.5 h-4 min-w-4 px-1 rounded-full bg-[#023036] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
+                <span className="absolute -top-1.5 -right-2.5 h-4 min-w-4 px-1 rounded-full bg-[#DCAEB6] text-[#30251F] font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
                   {wishlistCount}
                 </span>
               )}
@@ -371,37 +409,20 @@ export function Header({ products, categories }: HeaderProps) {
             <span className="text-[10px] tracking-tight mt-1">Wishlist</span>
           </Link>
 
-          {/* 4. Cart */}
-          <button
-            type="button"
-            onClick={() => setCartOpen(true)}
-            aria-label="Open Shopping Cart"
-            className="flex flex-col items-center justify-center py-1 text-[#3d5a5e] hover:text-[#023036] transition-colors"
+          {/* 5. Account */}
+          <Link
+            href="/admin"
+            className={`flex flex-col items-center justify-center py-1 transition-colors ${
+              pathname.startsWith("/admin")
+                ? "text-[#073C35] font-bold"
+                : "text-[#6B5A4A] hover:text-[#073C35]"
+            }`}
           >
             <div className="relative">
-              <ShoppingBag className="h-5 w-5 stroke-[1.8px]" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2.5 h-4 min-w-4 px-1 rounded-full bg-[#023036] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
-                  {cartCount}
-                </span>
-              )}
+              <User className="h-5 w-5 stroke-[1.8px]" />
             </div>
-            <span className="text-[10px] tracking-tight mt-1">Cart</span>
-          </button>
-
-          {/* 5. Support */}
-          <a
-            href="https://wa.me/919999999999?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Contact Concierge Support"
-            className="flex flex-col items-center justify-center py-1 text-[#3d5a5e] hover:text-[#023036] transition-colors"
-          >
-            <div className="relative">
-              <Headphones className="h-5 w-5 stroke-[1.8px]" />
-            </div>
-            <span className="text-[10px] tracking-tight mt-1">Support</span>
-          </a>
+            <span className="text-[10px] tracking-tight mt-1">Account</span>
+          </Link>
         </div>
       </nav>
 

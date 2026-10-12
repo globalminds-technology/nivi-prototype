@@ -137,23 +137,25 @@ export default async function HomePage() {
       {/* 1. STORE HEADER */}
       <Header products={storeProducts} categories={categories} />
 
-      {/* 2. ROUND-SHAPED CATEGORY BAR (SUB-HEADER) */}
-      <CircularCategoryBar categories={categories} />
-
-      <main className="flex-1 space-y-8 sm:space-y-12 pb-20">
-        {/* 3. HERO CAROUSEL (Initial Hero Slide + Active Campaign Banners from R2) */}
+      <main className="flex-1 pb-20">
+        {/* 2. HERO CAROUSEL (Edge-to-edge frame matching reference) */}
         <HeroCarousel campaigns={campaigns} heroBanner={heroBanner} />
 
-        {/* 4. NEW ARRIVALS (Strictly tag = new_arrival) */}
-        {newArrivals.length > 0 && (
-          <section className="container mx-auto px-4 sm:px-6">
-            <FeaturedCarousel
-              products={newArrivals}
-              title="New Arrivals"
-              viewAllHref="/collections?tag=new_arrival"
-            />
-          </section>
-        )}
+        {/* 3. CATEGORY SECTION (Immediately attached to the banner with large circles) */}
+        <CircularCategoryBar categories={categories} />
+
+        {/* 4. PRODUCT SHOWCASE SECTIONS */}
+        <div className="space-y-8 sm:space-y-12 mt-6 sm:mt-10">
+          {/* NEW ARRIVALS */}
+          {newArrivals.length > 0 && (
+            <section className="container mx-auto px-4 sm:px-6">
+              <FeaturedCarousel
+                products={newArrivals}
+                title="New Arrivals"
+                viewAllHref="/collections?tag=new_arrival"
+              />
+            </section>
+          )}
 
         {/* 5. FEATURED (Strictly tag = featured) */}
         {featured.length > 0 && (
@@ -187,6 +189,7 @@ export default async function HomePage() {
             />
           </section>
         ))}
+        </div>
       </main>
 
       {/* FOOTER */}

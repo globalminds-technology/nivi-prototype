@@ -1,10 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MessageCircle, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import { StorePoliciesDialog, type PolicyTabKey } from "./store-policies-dialog";
 
 export function Footer() {
+  const [policyDialogOpen, setPolicyDialogOpen] = useState(false);
+  const [selectedPolicyTab, setSelectedPolicyTab] = useState<PolicyTabKey>("shipping");
+
+  const handleOpenPolicy = (tab: PolicyTabKey) => {
+    setSelectedPolicyTab(tab);
+    setPolicyDialogOpen(true);
+  };
+
   return (
     <footer className="border-t border-[#023036]/10 bg-[#faf8f2]/80 backdrop-blur-xs text-muted-foreground mt-auto pb-20 md:pb-0">
       {/* Guarantees row */}
@@ -55,8 +65,8 @@ export function Footer() {
       </div>
 
       {/* Main Footer links */}
-      <div className="container mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div className="space-y-3 md:col-span-2">
+      <div className="container mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="space-y-3">
           <Link href="/" className="inline-flex items-center gap-3 group">
             <div className="relative w-11 h-11 rounded-full overflow-hidden border border-brand/50 shadow-xs shrink-0 bg-neutral-50">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -67,48 +77,49 @@ export function Footer() {
               />
             </div>
             <div className="flex flex-col text-left">
-              <span className="font-serif text-2xl font-bold tracking-tight text-[#023036] leading-none">
+              <span className="font-serif text-2xl font-bold tracking-tight text-[#073C35] leading-none">
                 NiVi
               </span>
-              <span className="text-[9px] font-sans text-[#B87333] tracking-widest uppercase font-semibold mt-1">
-                Woven with tradition, styled for today
+              <span className="text-[9px] font-sans text-[#C9A45C] tracking-[0.2em] uppercase font-semibold mt-1">
+                Pure Sarees, Timeless Stories
               </span>
             </div>
           </Link>
-          <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">
-            Curated Indian heritage textiles, modern silhouettes, and bespoke festive ensembles crafted by master artisans for your most cherished celebrations.
+          <p className="text-xs text-[#6B5A4A] leading-relaxed max-w-sm">
+            Curated collection of exquisite sarees that blend tradition, elegance, and modern grace. Crafted by master artisans for your most cherished celebrations.
           </p>
           <div className="pt-2">
             <a
-              href="https://wa.me/919999999999?text=Hello%20Nivi%2C%20I%20have%20an%20inquiry%20about%20your%20curated%20pieces."
+              href="https://wa.me/919999999999?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20curated%20pieces."
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-medium text-[#208280] hover:text-[#056677] hover:underline"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-[#073C35] hover:text-[#C9A45C] transition-colors"
             >
-              <MessageCircle className="h-4 w-4" />
-              <span>Chat on WhatsApp Support</span>
+              <MessageCircle className="h-4 w-4 text-[#073C35]" />
+              <span>WhatsApp Concierge: +91 99999 99999</span>
             </a>
           </div>
         </div>
 
+        {/* Navigation */}
         <div className="space-y-3">
           <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
-            Navigation
+            Collections
           </h4>
           <ul className="space-y-2 text-xs">
             <li>
-              <Link href="/" className="hover:text-foreground transition-colors">
-                All Collections
+              <Link href="/collections" className="hover:text-foreground transition-colors">
+                All Sarees
               </Link>
             </li>
             <li>
-              <Link href="/?tag=new_arrival" className="hover:text-foreground transition-colors">
+              <Link href="/collections?tag=new_arrival" className="hover:text-foreground transition-colors">
                 New Arrivals
               </Link>
             </li>
             <li>
-              <Link href="/?tag=featured" className="hover:text-foreground transition-colors">
-                Featured Edits
+              <Link href="/collections?tag=bestseller" className="hover:text-foreground transition-colors">
+                Best Sellers
               </Link>
             </li>
             <li>
@@ -116,28 +127,84 @@ export function Footer() {
                 Limited-time Offers
               </Link>
             </li>
+            <li>
+              <Link href="/wishlist" className="hover:text-foreground transition-colors">
+                Saved Wishlist
+              </Link>
+            </li>
           </ul>
         </div>
 
+        {/* Store Policies Column */}
         <div className="space-y-3">
           <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
-            Management
+            Customer Care & Policies
           </h4>
-          <ul className="space-y-2 text-xs">
+          <ul className="space-y-2.5 text-xs">
             <li>
-              <Link href="/admin/login" className="hover:text-foreground transition-colors">
-                Admin Console
-              </Link>
+              <button
+                type="button"
+                onClick={() => handleOpenPolicy("shipping")}
+                className="text-left hover:text-[#073C35] transition-colors flex items-center gap-1.5 group cursor-pointer"
+              >
+                <span className="text-[#C9A45C] group-hover:translate-x-0.5 transition-transform">→</span>
+                <span>Shipping Policy</span>
+              </button>
             </li>
             <li>
-              <a
-                href="https://books.zoho.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
+              <button
+                type="button"
+                onClick={() => handleOpenPolicy("returns")}
+                className="text-left hover:text-[#073C35] transition-colors flex items-center gap-1.5 group cursor-pointer"
               >
-                Zoho Books Portal
-              </a>
+                <span className="text-[#C9A45C] group-hover:translate-x-0.5 transition-transform">→</span>
+                <span>Return & Exchange Policy</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => handleOpenPolicy("cancellation")}
+                className="text-left hover:text-[#073C35] transition-colors flex items-center gap-1.5 group cursor-pointer"
+              >
+                <span className="text-[#C9A45C] group-hover:translate-x-0.5 transition-transform">→</span>
+                <span>Cancellation Policy</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => handleOpenPolicy("disclaimers")}
+                className="text-left hover:text-[#073C35] transition-colors flex items-center gap-1.5 group cursor-pointer"
+              >
+                <span className="text-[#C9A45C] group-hover:translate-x-0.5 transition-transform">→</span>
+                <span>Disclaimers (Sungudi & Handloom)</span>
+              </button>
+            </li>
+            <li className="pt-1">
+              <Link
+                href="/policies"
+                className="text-[11px] font-medium text-[#073C35] hover:underline"
+              >
+                View Full Policy Page →
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Security & Portal */}
+        <div className="space-y-3">
+          <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
+            Assurance & Admin
+          </h4>
+          <ul className="space-y-2 text-xs">
+            <li className="text-[11px] text-[#6B5A4A] leading-relaxed">
+              Every parcel is checked, hand-packed, and shipped with tamper-evident seal from our studio.
+            </li>
+            <li className="pt-2">
+              <Link href="/admin/login" className="hover:text-foreground transition-colors font-mono text-[11px]">
+                Admin Console
+              </Link>
             </li>
           </ul>
         </div>
@@ -150,6 +217,13 @@ export function Footer() {
           <p className="text-[11px] font-mono">Crafted in India • Powered by Next.js & Zoho Books</p>
         </div>
       </div>
+
+      {/* Interactive Policy Modal */}
+      <StorePoliciesDialog
+        open={policyDialogOpen}
+        onClose={() => setPolicyDialogOpen(false)}
+        defaultTab={selectedPolicyTab}
+      />
     </footer>
   );
 }

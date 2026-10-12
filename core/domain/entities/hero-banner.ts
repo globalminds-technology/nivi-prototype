@@ -18,21 +18,21 @@ export interface HeroBannerConfig {
 }
 
 export const DEFAULT_HERO_BANNER: HeroBannerConfig = {
-  imageUrl: "/nivi-hero-banner-v2.jpg",
+  imageUrl: "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/banners/hero_flagship_1791797443698.png",
   active: true,
   displayOrder: 0,
-  tagline: "Handcrafted Heritage",
-  title: "Woven with Tradition, Styled for Today.",
+  tagline: "TIMELESS TRADITIONS",
+  title: "Sarees for Every Story",
   subtitle:
-    "Discover heirloom Kanchipuram, Banarasi, and pure zari silk sarees handcrafted by generational master artisans.",
-  primaryCtaText: "Explore Sarees",
+    "Explore our curated collection of exquisite sarees that blend tradition, elegance and modern grace.",
+  primaryCtaText: "Shop Collection",
   primaryCtaLink: "/collections",
-  secondaryCtaText: "Heritage Edit",
-  secondaryCtaLink: "/collections?tag=featured",
+  secondaryCtaText: "Explore Offers",
+  secondaryCtaLink: "/offers",
   showOverlay: true,
   textPosition: "left",
   imagePositionX: 85,
-  imagePositionY: 20,
-  objectPosition: "85% 20%",
-  updatedAt: "2026-10-12T09:05:00.000Z",
+  imagePositionY: 15,
+  objectPosition: "85% 15%",
+  updatedAt: "2026-10-12T15:35:00.000Z",
 };

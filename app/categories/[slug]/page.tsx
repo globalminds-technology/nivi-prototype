@@ -138,23 +138,23 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 />
               </div>
             )}
-            <div className="relative z-10 max-w-2xl space-y-4">
+            <div className="relative z-10 max-w-2xl mx-auto text-center space-y-4">
               <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
                 <Sparkles className="h-3 w-3" />
                 <span>Heritage Handloom</span>
               </div>
 
-              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+              <h1 className="font-script text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-wide text-foreground leading-tight">
                 {category.name}
               </h1>
 
               {category.description && (
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
                   {category.description}
                 </p>
               )}
 
-              <div className="pt-2 flex items-center gap-4 text-xs font-medium text-muted-foreground">
+              <div className="pt-2 flex items-center justify-center gap-4 text-xs font-medium text-muted-foreground">
                 <span>
                   {categoryProducts.length} {categoryProducts.length === 1 ? "piece" : "pieces"} available
                 </span>

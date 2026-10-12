@@ -22,7 +22,7 @@ export function WishlistClient({ products }: WishlistClientProps) {
           <Heart className="w-3.5 h-3.5 fill-current" />
           <span>Your Curated Favorites</span>
         </div>
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-neutral-900">
+        <h1 className="font-script text-4xl sm:text-5xl md:text-6xl font-normal tracking-wide text-neutral-900 leading-tight">
           Saved Heritage Wishlist
         </h1>
         <p className="text-xs sm:text-sm text-neutral-500 max-w-md mx-auto">

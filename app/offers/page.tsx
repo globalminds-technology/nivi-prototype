@@ -87,23 +87,20 @@ export default async function OffersPage() {
 
       <main className="flex-1 container mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-8 sm:space-y-10">
         {/* Breadcrumb / Header */}
-        <div className="flex items-center justify-between border-b border-border/60 pb-5">
-          <div className="space-y-1">
-            <Link
-              href="/"
-              className="inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group mb-1"
-            >
-              <ArrowLeft className="mr-1.5 h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
-              Back to Catalog
-            </Link>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" />
-              <span>Special Offers & Promotions</span>
-            </h1>
-            <p className="text-xs text-muted-foreground">
-              Limited-time festive discounts and exclusive promotional collections.
-            </p>
-          </div>
+        <div className="text-center max-w-xl mx-auto space-y-2 pb-5 border-b border-border/60">
+          <Link
+            href="/"
+            className="inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group mb-1"
+          >
+            <ArrowLeft className="mr-1.5 h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
+            Back to Catalog
+          </Link>
+          <h1 className="font-script text-4xl sm:text-5xl md:text-6xl font-normal tracking-wide text-foreground leading-tight">
+            Special Offers & Promotions
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Limited-time festive discounts and exclusive promotional collections.
+          </p>
         </div>
 
         {/* 1. Featured Promotional Campaigns */}

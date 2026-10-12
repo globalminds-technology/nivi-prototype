@@ -25,17 +25,17 @@ export function FeaturedCarousel({
 
   return (
     <section className="space-y-4 sm:space-y-6">
-      {/* Header: Great Vibes font placed in center, View All on the right side on the same line */}
-      <div className="relative flex items-center justify-center mb-2 sm:mb-4 min-h-[44px]">
-        <h2 className="font-['Great_Vibes'] text-3xl sm:text-4xl md:text-5xl font-normal leading-tight tracking-wide text-[#023036] text-center pt-1 px-16 sm:px-24">
+      {/* Header: Great Vibes Google font heading placed center */}
+      <div className="relative flex flex-col items-center justify-center text-center mb-4 sm:mb-6">
+        <h2 className="font-script text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-normal tracking-wide text-[#30251F] leading-tight">
           {title}
         </h2>
 
         {viewAllHref && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2">
+          <div className="mt-1 sm:mt-0 sm:absolute sm:right-0 sm:top-1/2 sm:-translate-y-1/2">
             <Link
               href={viewAllHref}
-              className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#023036] hover:text-[#056677] hover:underline transition-colors shrink-0"
+              className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#073C35] hover:text-[#C9A45C] transition-colors shrink-0"
             >
               <span>View All</span>
               <ArrowRight className="w-3.5 h-3.5" />

@@ -52,6 +52,7 @@ import {
   reorderAllCarouselSlidesAction,
 } from "@/app/actions/admin-hero-banner";
 import { uploadCampaignBannerAction } from "@/app/actions/media";
+import { ImageCropperModal } from "@/components/admin/image-cropper-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -132,6 +133,13 @@ export function OfferManager({
   const [heroPositionX, setHeroPositionX] = useState<number>(heroBanner.imagePositionX ?? 85);
   const [heroPositionY, setHeroPositionY] = useState<number>(heroBanner.imagePositionY ?? 15);
   const [isUploadingHero, setIsUploadingHero] = useState(false);
+
+  // Dedicated 3:1 Banner Cropper Modal state
+  const [cropperModalState, setCropperModalState] = useState<{
+    isOpen: boolean;
+    imageSrc: string;
+    targetType: "hero" | "campaign";
+  } | null>(null);
 
   // Create/Edit Campaign Modal State
   const [campaignDialogOpen, setCampaignDialogOpen] = useState(false);
@@ -453,16 +461,7 @@ export function OfferManager({
     setHeroDialogOpen(true);
   };
 
-  // Upload Initial Hero Banner Image to Cloudflare R2
-  const handleHeroFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file (JPEG, PNG, or WebP).");
-      return;
-    }
-
+  const uploadHeroFileDirectly = async (file: File) => {
     setIsUploadingHero(true);
     try {
       const fd = new FormData();
@@ -471,7 +470,7 @@ export function OfferManager({
       const res = await uploadHeroBannerAction(fd);
       if (res.success) {
         setHeroImageUrl(res.data.publicUrl);
-        toast.success("Initial hero banner uploaded to Cloudflare R2!");
+        toast.success("Hero banner uploaded to Cloudflare R2!");
       } else {
         toast.error(res.error || "Failed uploading hero banner.");
       }
@@ -480,6 +479,50 @@ export function OfferManager({
     } finally {
       setIsUploadingHero(false);
     }
+  };
+
+  // Upload Initial Hero Banner Image to Cloudflare R2 (Auto-detects 3:1 ratio)
+  const handleHeroFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file (JPEG, PNG, or WebP).");
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    const img = new window.Image();
+    img.onload = () => {
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const isRight3To1 = Math.abs(ratio - 3.0) <= 0.08;
+
+      if (isRight3To1) {
+        // Standard 3:1 Canva format detected - upload directly without asking to crop
+        URL.revokeObjectURL(objectUrl);
+        toast.info("Standard 3:1 banner format detected (1200×400 / 2400×800). Uploading directly...");
+        uploadHeroFileDirectly(file);
+      } else {
+        // Different ratio detected - ask to crop to 3:1
+        const reader = new FileReader();
+        reader.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          toast.info("Image is not 3:1 ratio. Adjust crop to fit the banner perfectly.");
+          setCropperModalState({
+            isOpen: true,
+            imageSrc: reader.result as string,
+            targetType: "hero",
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      uploadHeroFileDirectly(file);
+    };
+    img.src = objectUrl;
   };
 
   // Save Initial Hero Banner Changes
@@ -590,16 +633,7 @@ export function OfferManager({
     setCampaignDialogOpen(true);
   };
 
-  // Banner file upload handler for Campaign (Cloudflare R2)
-  const handleBannerFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file (JPEG, PNG, or WebP).");
-      return;
-    }
-
+  const uploadCampaignFileDirectly = async (file: File) => {
     setIsUploadingBanner(true);
     try {
       const fd = new FormData();
@@ -617,6 +651,62 @@ export function OfferManager({
       toast.error("An error occurred uploading the banner image.");
     } finally {
       setIsUploadingBanner(false);
+    }
+  };
+
+  // Banner file upload handler for Campaign (Auto-detects 3:1 ratio)
+  const handleBannerFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file (JPEG, PNG, or WebP).");
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    const img = new window.Image();
+    img.onload = () => {
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const isRight3To1 = Math.abs(ratio - 3.0) <= 0.08;
+
+      if (isRight3To1) {
+        // Standard 3:1 Canva format detected - upload directly without asking to crop
+        URL.revokeObjectURL(objectUrl);
+        toast.info("Standard 3:1 banner format detected (1200×400 / 2400×800). Uploading directly...");
+        uploadCampaignFileDirectly(file);
+      } else {
+        // Different ratio detected - ask to crop to 3:1
+        const reader = new FileReader();
+        reader.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          toast.info("Image is not 3:1 ratio. Adjust crop to fit the banner perfectly.");
+          setCropperModalState({
+            isOpen: true,
+            imageSrc: reader.result as string,
+            targetType: "campaign",
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      uploadCampaignFileDirectly(file);
+    };
+    img.src = objectUrl;
+  };
+
+  // Handles cropped file from ImageCropperModal
+  const handleCroppedFile = async (croppedFile: File) => {
+    const target = cropperModalState?.targetType;
+    setCropperModalState(null);
+
+    if (target === "hero") {
+      await uploadHeroFileDirectly(croppedFile);
+    } else if (target === "campaign") {
+      await uploadCampaignFileDirectly(croppedFile);
     }
   };
 
@@ -1805,7 +1895,7 @@ export function OfferManager({
                         {isUploadingHero ? "Uploading to Cloudflare R2..." : "Click to Upload Banner Image"}
                       </span>
                       <span className="text-[10px] text-muted-foreground">
-                        Recommended: 1920×700 px (JPEG, PNG, or WebP)
+                        Recommended: 1200×400 or 2400×800 px (Canva 3:1 Standard) • Auto-crops if other sizes
                       </span>
                       <input
                         type="file"
@@ -2264,7 +2354,7 @@ export function OfferManager({
                         {isUploadingBanner ? "Uploading to Cloudflare R2..." : "Click to Upload Banner Image"}
                       </span>
                       <span className="text-[10px] text-muted-foreground">
-                        Recommended: 1920×600 px (JPEG, PNG, or WebP)
+                        Recommended: 1200×400 or 2400×800 px (Canva 3:1 Standard) • Auto-crops if other sizes
                       </span>
                       <input
                         type="file"
@@ -2527,6 +2617,24 @@ export function OfferManager({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* 4. SEPARATE 3:1 IMAGE CROPPER MODAL */}
+      {cropperModalState?.isOpen && (
+        <ImageCropperModal
+          imageSrc={cropperModalState.imageSrc}
+          aspectRatio={3 / 1}
+          exportWidth={2400}
+          exportHeight={800}
+          title={
+            cropperModalState.targetType === "hero"
+              ? "Adjust Hero Banner Crop (3 : 1)"
+              : "Adjust Campaign Banner Crop (3 : 1)"
+          }
+          subtitle="Drag to position & slide to zoom so your banner fits the 3:1 frame perfectly with zero cutoffs"
+          onCrop={handleCroppedFile}
+          onClose={() => setCropperModalState(null)}
+        />
+      )}
     </div>
   );
 }

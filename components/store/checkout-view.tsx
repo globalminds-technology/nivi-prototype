@@ -10,9 +10,19 @@ import {
   CreditCard,
   Lock,
   Package,
+  RotateCcw,
   ShieldCheck,
+  Sparkles,
   Truck,
+  XCircle,
 } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { StorePoliciesDialog, type PolicyTabKey } from "./store-policies-dialog";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -105,6 +115,16 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   // Business GST
   const [isBusiness, setIsBusiness] = useState(false);
   const [gstin, setGstin] = useState("");
+
+  // Store Policies Consent & Dialog State
+  const [policiesAgreed, setPoliciesAgreed] = useState(false);
+  const [policyDialogOpen, setPolicyDialogOpen] = useState(false);
+  const [policyDialogTab, setPolicyDialogTab] = useState<PolicyTabKey>("shipping");
+
+  const openPolicyDialog = (tab: PolicyTabKey) => {
+    setPolicyDialogTab(tab);
+    setPolicyDialogOpen(true);
+  };
 
   // UI Processing State
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
@@ -209,6 +229,11 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   };
 
   const handleProceedToPayment = async () => {
+    if (!policiesAgreed) {
+      toast.error("Please confirm that you have read and agreed to NiVi's Store & Craft Policies (including mandatory continuous unboxing video requirement).");
+      return;
+    }
+
     if (!validateForm()) {
       toast.error("Please fill in all required delivery details correctly.");
       return;
@@ -818,6 +843,97 @@ export function CheckoutView({ products }: CheckoutViewProps) {
               </div>
             </CardContent>
           </Card>
+
+          {/* Step 4: Store & Craft Policies Accordion */}
+          <Card className="shadow-xs border-[#D5CCBB]/80 bg-[#FAF7F0]/80">
+            <CardHeader className="pb-3 border-b border-[#D5CCBB]/50">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#073C35] uppercase tracking-wider flex items-center gap-1.5">
+                  <span>🌸</span>
+                  <span>Store &amp; Craft Policies</span>
+                </span>
+                <Badge variant="outline" className="text-[10px] bg-[#073C35]/10 text-[#073C35] border-[#073C35]/20">
+                  Please Review Before Payment
+                </Badge>
+              </div>
+              <CardTitle className="font-serif text-lg text-[#30251F]">
+                Customer Policies &amp; Handloom Disclaimers
+              </CardTitle>
+              <CardDescription className="text-xs text-[#6B5A4A]">
+                Click each section below to review dispatch schedules, return rules, mandatory unboxing video guidelines, and artisanal disclaimers.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-3">
+              <Accordion defaultValue={["returns"]} className="w-full">
+                {/* 1. SHIPPING POLICY */}
+                <AccordionItem value="shipping" className="border-b border-[#D5CCBB]/50 py-1">
+                  <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
+                    <div className="flex items-center gap-2">
+                      <Truck className="w-4 h-4 text-[#073C35]" />
+                      <span>1. Shipping Policy (Dispatched in 2–3 Days)</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-[#4A3D34] space-y-2 pt-1 pb-3 pl-6">
+                    <p>• <strong>Payment &amp; Dispatch:</strong> Orders processed only after full payment is received. Dispatched within 2–3 business days (excluding Sundays &amp; public holidays).</p>
+                    <p>• <strong>WhatsApp Tracking:</strong> AWB courier tracking details will be shared directly to your WhatsApp once dispatched.</p>
+                    <p>• <strong>Courier Partners:</strong> Shipped via verified courier logistics. Timelines are subject to courier partner service speeds.</p>
+                    <p>• <strong>International Shipping:</strong> Charges vary based on parcel weight, destination country, and customs clearance.</p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* 2. RETURN & EXCHANGE POLICY */}
+                <AccordionItem value="returns" className="border-b border-[#D5CCBB]/50 py-1">
+                  <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
+                    <div className="flex items-center gap-2">
+                      <RotateCcw className="w-4 h-4 text-[#C9A45C]" />
+                      <span>2. Return &amp; Exchange Policy (12–18 Hr Window)</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-[#4A3D34] space-y-2.5 pt-1 pb-3 pl-6">
+                    <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-950 font-medium">
+                      ⚠️ <strong>No returns/exchanges for:</strong> Change of mind, colour preference, size issues, fabric feel/texture, or minor 10–15% natural lighting/screen dye variation.
+                    </div>
+                    <p>• <strong>Accepted strictly for:</strong> Wrong product received or physically damaged product received.</p>
+                    <div className="p-2.5 rounded-lg bg-[#073C35]/10 border border-[#073C35]/20 text-[#073C35]">
+                      🎥 <strong>Mandatory Continuous Unboxing Video:</strong> A continuous, unedited parcel-opening video is strictly mandatory showing: (1) Unopened parcel, (2) NiVi shipping label, (3) Complete unboxing process, (4) Unfolded product. Claims without continuous video will NOT be accepted.
+                    </div>
+                    <p>• <strong>Claim Period:</strong> Must be reported to NiVi within <strong>12–18 hours of delivery</strong> via Email &amp; WhatsApp with unboxing video and photos.</p>
+                    <p>• <strong>Non-Returnable:</strong> Deal-of-the-day / offer items, customized/stitched products, or used/altered items.</p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* 3. CANCELLATION POLICY */}
+                <AccordionItem value="cancellation" className="border-b border-[#D5CCBB]/50 py-1">
+                  <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
+                    <div className="flex items-center gap-2">
+                      <XCircle className="w-4 h-4 text-red-600" />
+                      <span>3. Cancellation Policy (Strict No-Cancellation)</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-[#4A3D34] space-y-2 pt-1 pb-3 pl-6">
+                    <p>• <strong>No Cancellations:</strong> Once an order is confirmed and payment is completed, cancellation is not allowed under any circumstances.</p>
+                    <p>• <strong>Confirm Before Paying:</strong> Please carefully review product, colour, size, and address details before proceeding.</p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* 4. DISCLAIMERS */}
+                <AccordionItem value="disclaimers" className="py-1">
+                  <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-[#073C35]" />
+                      <span>4. Disclaimers (Sungudi Sarees &amp; Handloom)</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-[#4A3D34] space-y-2 pt-1 pb-3 pl-6">
+                    <p>• <strong>Sungudi Border Designs:</strong> Border designs may naturally vary.</p>
+                    <p>• <strong>River Sand Marks:</strong> Minor sand marks are normal in Sungudi cotton sarees, as the fabric is traditionally dried on open river sand after dyeing.</p>
+                    <p>• <strong>Handmade Nature:</strong> Minor smudges or dye irregularities are organic characteristics of handmade sarees, not stains or defects.</p>
+                    <p>• <strong>Zari Line Marks:</strong> Zari line marks may occur during traditional starching and ironing; they relax and soften naturally after washing.</p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right Column: Order Summary (Sticky) */}
@@ -954,6 +1070,65 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                 </div>
               </div>
 
+              {/* Policy Acknowledgment Checkbox */}
+              <div className="pt-2 pb-1 border-t border-border/50">
+                <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                  <Checkbox
+                    id="policy-consent"
+                    checked={policiesAgreed}
+                    onCheckedChange={(c) => setPoliciesAgreed(Boolean(c))}
+                    className="mt-0.5 shrink-0"
+                  />
+                  <span className="text-[11px] text-[#4A3D34] leading-snug">
+                    I have read and agree to NiVi&apos;s{" "}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openPolicyDialog("shipping");
+                      }}
+                      className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#C9A45C] cursor-pointer"
+                    >
+                      Shipping
+                    </button>
+                    ,{" "}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openPolicyDialog("returns");
+                      }}
+                      className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#C9A45C] cursor-pointer"
+                    >
+                      Return &amp; Exchange (Mandatory Unboxing Video)
+                    </button>
+                    ,{" "}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openPolicyDialog("cancellation");
+                      }}
+                      className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#C9A45C] cursor-pointer"
+                    >
+                      Cancellation
+                    </button>{" "}
+                    policies and{" "}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openPolicyDialog("disclaimers");
+                      }}
+                      className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#C9A45C] cursor-pointer"
+                    >
+                      Craft Disclaimers
+                    </button>
+                    .
+                  </span>
+                </label>
+              </div>
+
               {/* Pay Now Button */}
               <Button
                 onClick={handleProceedToPayment}
@@ -984,6 +1159,13 @@ export function CheckoutView({ products }: CheckoutViewProps) {
           </Card>
         </div>
       </div>
+
+      {/* Interactive Policy Modal */}
+      <StorePoliciesDialog
+        open={policyDialogOpen}
+        onClose={() => setPolicyDialogOpen(false)}
+        defaultTab={policyDialogTab}
+      />
     </div>
   );
 }
