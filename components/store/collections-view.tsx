@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { ProductCard, type StoreProductData } from "./product-card";
 import { Button } from "@/components/ui/button";
-import { ShinyText } from "@/components/ui/shiny-text";
 
 interface PaginationData {
   page: number;
@@ -180,12 +179,7 @@ export function CollectionsView({
           <span>Curated Artisan Weaves</span>
         </div>
         <h1 className="font-['Great_Vibes'] text-4xl sm:text-5xl md:text-6xl font-normal tracking-wide text-primary leading-tight">
-          <ShinyText
-            text="Handcrafted Collections"
-            speed={3}
-            color="#083e3e"
-            shineColor="#dfb76c"
-          />
+          Handcrafted Collections
         </h1>
         <p className="text-xs sm:text-sm text-neutral-600 max-w-lg mx-auto">
           Explore our complete showcase of authentic handlooms, pure zari borders, and timeless silks woven with soul.

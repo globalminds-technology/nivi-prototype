@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { OfferManager, type AdminProductItem } from "@/components/admin/offer-manager";
 import { categoryRepository } from "@/infrastructure/categories/category-repository";
 import { container } from "@/infrastructure/di/container";
+import { heroBannerRepository } from "@/infrastructure/hero-banner/hero-banner-repository";
 import { offerCampaignRepository } from "@/infrastructure/offers/offer-campaign-repository";
 import { Money } from "@/core/domain/value-objects/money";
 
@@ -20,6 +21,7 @@ export default async function AdminOffersPage() {
   const domainProducts = await listProductsUseCase.execute();
   const categories = await categoryRepository.list();
   const campaigns = await offerCampaignRepository.list();
+  const heroBanner = await heroBannerRepository.get();
 
   const products: AdminProductItem[] = domainProducts.map((p) => ({
     id: p.id,
@@ -48,6 +50,7 @@ export default async function AdminOffersPage() {
       campaigns={campaigns}
       products={products}
       categories={categories}
+      initialHeroBanner={heroBanner}
     />
   );
 }

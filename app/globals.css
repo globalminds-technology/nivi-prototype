@@ -50,46 +50,63 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ── Teal Palette Custom Colors ── */
+  --color-deep-teal: #023036;
+  --color-peacock: #035354;
+  --color-ocean: #034F58;
+  --color-turquoise: #056677;
+  --color-seafoam: #208280;
+  --color-jade: #4B9488;
+  --color-mint: #50978C;
+  --color-aqua: #689D96;
+  --color-powder: #7AA79D;
+  --color-pastel-teal: #96B7AF;
+
+  /* ── Copper Accent ── */
+  --color-copper: #B87333;
+  --color-copper-light: #D4956A;
+  --color-copper-shine: #E8C19A;
 }
 
-/* Nivi brand — Imperial Emerald Green & Temple Gold on Warm Linen (#e4ddcd) Background */
+/* NiVi brand — Deep Teal & Copper on Warm Linen (#e4ddcd) Background */
 :root,
 .dark {
   --background: #e4ddcd;
-  --foreground: oklch(0.18 0.02 165);
+  --foreground: #1a2a2e;
   --card: #faf8f2;
-  --card-foreground: oklch(0.18 0.02 165);
+  --card-foreground: #1a2a2e;
   --popover: #faf8f2;
-  --popover-foreground: oklch(0.18 0.02 165);
-  --primary: oklch(0.27 0.085 165);
-  --primary-foreground: oklch(1 0 0);
+  --popover-foreground: #1a2a2e;
+  --primary: #023036;
+  --primary-foreground: #ffffff;
   --secondary: #dcd4c3;
-  --secondary-foreground: oklch(0.27 0.085 165);
+  --secondary-foreground: #023036;
   --muted: #dcd4c3;
-  --muted-foreground: oklch(0.38 0.025 165);
+  --muted-foreground: #3d5a5e;
   --accent: #d8cfbd;
-  --accent-foreground: oklch(0.27 0.085 165);
+  --accent-foreground: #023036;
   --destructive: oklch(0.577 0.245 27.325);
-  --success: oklch(0.60 0.13 155);
-  --brand: oklch(0.72 0.13 85);
-  --brand-foreground: oklch(0.22 0.05 85);
+  --success: #208280;
+  --brand: #B87333;
+  --brand-foreground: #1a0e05;
   --border: #d2c8b5;
   --input: #d2c8b5;
-  --ring: oklch(0.72 0.13 85);
-  --chart-1: oklch(0.27 0.085 165);
-  --chart-2: oklch(0.72 0.13 85);
-  --chart-3: oklch(0.55 0.1 20);
-  --chart-4: oklch(0.60 0.13 155);
-  --chart-5: oklch(0.45 0.08 280);
+  --ring: #B87333;
+  --chart-1: #023036;
+  --chart-2: #B87333;
+  --chart-3: #056677;
+  --chart-4: #208280;
+  --chart-5: #4B9488;
   --radius: 0.75rem;
   --sidebar: #faf8f2;
-  --sidebar-foreground: oklch(0.18 0.02 165);
-  --sidebar-primary: oklch(0.27 0.085 165);
-  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-foreground: #1a2a2e;
+  --sidebar-primary: #023036;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #dcd4c3;
-  --sidebar-accent-foreground: oklch(0.27 0.085 165);
+  --sidebar-accent-foreground: #023036;
   --sidebar-border: #d2c8b5;
-  --sidebar-ring: oklch(0.72 0.13 85);
+  --sidebar-ring: #B87333;
 }
 
 @layer base {

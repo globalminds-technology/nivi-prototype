@@ -11,8 +11,8 @@ import { productSlug } from "@/core/domain/entities/product";
 import { Money } from "@/core/domain/value-objects/money";
 import { CategoryRepository } from "@/infrastructure/categories/category-repository";
 import { container } from "@/infrastructure/di/container";
-import { ShinyText } from "@/components/ui/shiny-text";
 import { HeroCarousel } from "@/components/store/hero-carousel";
+import { heroBannerRepository } from "@/infrastructure/hero-banner/hero-banner-repository";
 import { offerCampaignRepository } from "@/infrastructure/offers/offer-campaign-repository";
 
 export const instant = false;
@@ -59,13 +59,15 @@ export default async function HomePage() {
   await connection();
   let storeProducts: StoreProductData[] = [];
   let campaigns: import("@/core/domain/entities/offer-campaign").OfferCampaign[] = [];
+  let heroBanner: import("@/core/domain/entities/hero-banner").HeroBannerConfig | null = null;
   const categoryRepo = new CategoryRepository();
   const categories = await categoryRepo.list();
 
   try {
     campaigns = await offerCampaignRepository.list();
+    heroBanner = await heroBannerRepository.get();
   } catch (err) {
-    console.error("Storefront error loading campaigns:", err);
+    console.error("Storefront error loading campaigns or hero banner:", err);
   }
 
   try {
@@ -133,14 +135,14 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-neutral-900 selection:bg-primary/20 selection:text-primary">
       {/* 1. STORE HEADER */}
-      <Header products={storeProducts} />
+      <Header products={storeProducts} categories={categories} />
 
       {/* 2. ROUND-SHAPED CATEGORY BAR (SUB-HEADER) */}
       <CircularCategoryBar categories={categories} />
 
       <main className="flex-1 space-y-8 sm:space-y-12 pb-20">
-        {/* 3. HERO CAROUSEL (Flagship brand slide + Up to 5 Active Campaign Banners from R2) */}
-        <HeroCarousel campaigns={campaigns} />
+        {/* 3. HERO CAROUSEL (Initial Hero Slide + Active Campaign Banners from R2) */}
+        <HeroCarousel campaigns={campaigns} heroBanner={heroBanner} />
 
         {/* 4. NEW ARRIVALS (Strictly tag = new_arrival) */}
         {newArrivals.length > 0 && (
@@ -148,7 +150,6 @@ export default async function HomePage() {
             <FeaturedCarousel
               products={newArrivals}
               title="New Arrivals"
-              subtitle="Fresh additions straight from the loom, ready for your festive occasions"
               viewAllHref="/collections?tag=new_arrival"
             />
           </section>
@@ -160,7 +161,6 @@ export default async function HomePage() {
             <FeaturedCarousel
               products={featured}
               title="Featured"
-              subtitle="Handpicked master weaves defining our current collection"
               viewAllHref="/collections?tag=featured"
             />
           </section>
@@ -172,7 +172,6 @@ export default async function HomePage() {
             <FeaturedCarousel
               products={bestSellers}
               title="Best Sellers"
-              subtitle="Most coveted weaves cherished by our patrons"
               viewAllHref="/collections?tag=bestseller"
             />
           </section>
@@ -184,7 +183,6 @@ export default async function HomePage() {
             <FeaturedCarousel
               products={section.products}
               title={section.label}
-              subtitle={`Exclusive curation of ${section.label.toLowerCase()} sarees`}
               viewAllHref={`/collections?tag=${encodeURIComponent(section.key)}`}
             />
           </section>

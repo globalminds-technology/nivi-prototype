@@ -29,6 +29,9 @@ const CreateCampaignSchema = z.object({
   bannerSubtitle: z.string().trim().nullable().optional(),
   bannerCtaText: z.string().trim().nullable().optional(),
   displayOrder: z.number().int().optional(),
+  imagePosition: z.string().trim().nullable().optional(),
+  imagePositionX: z.number().min(0).max(100).nullable().optional(),
+  imagePositionY: z.number().min(0).max(100).nullable().optional(),
 });
 
 const UpdateCampaignSchema = z.object({
@@ -50,6 +53,9 @@ const UpdateCampaignSchema = z.object({
   bannerSubtitle: z.string().trim().nullable().optional(),
   bannerCtaText: z.string().trim().nullable().optional(),
   displayOrder: z.number().int().optional(),
+  imagePosition: z.string().trim().nullable().optional(),
+  imagePositionX: z.number().min(0).max(100).nullable().optional(),
+  imagePositionY: z.number().min(0).max(100).nullable().optional(),
 });
 
 function revalidateAllOfferPaths() {

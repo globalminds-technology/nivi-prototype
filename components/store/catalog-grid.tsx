@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 import { ProductCard, type StoreProductData } from "@/components/store/product-card";
 import { useWishlist } from "@/hooks/use-wishlist";
-import { ShinyText } from "@/components/ui/shiny-text";
 
 interface CatalogGridProps {
   products: StoreProductData[];
@@ -129,12 +128,7 @@ export function CatalogGrid({
       <div className="space-y-5 border-b border-neutral-200/80 pb-6 text-center">
         <div className="space-y-1.5">
           <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-neutral-900">
-            <ShinyText
-              text={showWishlistOnly ? "Your Saved Wishlist" : "Complete Handloom Showcase"}
-              speed={3}
-              color="#083B2F"
-              shineColor="#C59A3F"
-            />
+            {showWishlistOnly ? "Your Saved Wishlist" : "Complete Handloom Showcase"}
           </h2>
           <p className="text-xs sm:text-sm text-neutral-500 max-w-md mx-auto">
             Showing {filtered.length} {filtered.length === 1 ? "masterpiece" : "masterpieces"} ready for express delivery across India

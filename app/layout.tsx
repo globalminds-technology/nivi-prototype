@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={`${inter.variable} ${fraunces.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" enableSystem={false} disableTransitionOnChange>
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster richColors position="top-center" />

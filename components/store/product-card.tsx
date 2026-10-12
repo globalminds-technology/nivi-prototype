@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, Package, ShoppingBag, Sparkles } from "lucide-react";
+import { Heart, Package, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { PriceTag } from "@/components/store/price-tag";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 
@@ -41,6 +38,18 @@ export function ProductCard({ product }: ProductCardProps) {
   const isFavorited = isInWishlist(product.sku);
   const isOutOfStock = product.stock <= 0;
 
+  const originalPrice = product.priceMinor / 100;
+  let effectivePrice = originalPrice;
+  if (product.offer?.active) {
+    if (product.offer.type === "percent") {
+      const discount = (originalPrice * product.offer.value) / 100;
+      effectivePrice = Math.max(0, originalPrice - discount);
+    } else {
+      effectivePrice = Math.max(0, originalPrice - product.offer.value);
+    }
+  }
+  const hasDiscount = product.offer?.active && effectivePrice < originalPrice;
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -63,99 +72,90 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-[14px] bg-[#faf8f2] border border-[#d2c8b5]/80 shadow-[0_3px_14px_rgba(70,50,20,0.06)] hover:shadow-[0_8px_24px_rgba(70,50,20,0.12)] hover:border-brand/50 transition-all duration-300 flex flex-col h-full p-0">
-        {/* Media container - square 1:1 aspect ratio for a compact card height */}
-        <Link href={`/products/${product.slug}`} className="block relative overflow-hidden rounded-t-[14px] w-full">
-          <AspectRatio ratio={1 / 1} className="bg-[#ede7d8]">
+    <div className="group relative flex flex-col h-full bg-transparent border-0 shadow-none p-0 text-center">
+      {/* Media container - Portrait 3:4 aspect ratio matching reference */}
+      <div className="relative overflow-hidden rounded-2xl bg-[#ede7d8]/40 shadow-xs">
+        <Link href={`/products/${product.slug}`} className="block relative w-full">
+          <AspectRatio ratio={3 / 4} className="bg-[#ede7d8]/40">
             {product.primaryImageUrl ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={product.primaryImageUrl}
                 alt={product.name}
-                className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                 loading="lazy"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[#ede7d8] text-neutral-400">
+              <div className="flex h-full w-full items-center justify-center bg-[#ede7d8] text-[#7AA79D]">
                 <Package className="h-8 w-8" />
               </div>
             )}
           </AspectRatio>
-
-          {/* Top Badges */}
-          <div className="absolute top-1.5 left-1.5 flex flex-col gap-1 items-start z-10 pointer-events-none">
-            {product.offer?.active && (
-              <Badge className="bg-gradient-to-r from-primary to-[#0E5343] text-white font-medium text-[8px] sm:text-[9px] px-1.5 py-0.5 gap-0.5 shadow-sm border border-brand/30">
-                <Sparkles className="h-2 w-2 text-brand" />
-                <span>{product.offer.label || `${product.offer.value}% OFF`}</span>
-              </Badge>
-            )}
-
-            {isOutOfStock ? (
-              <Badge variant="destructive" className="text-[8px] sm:text-[9px] px-1.5 py-0.5 uppercase font-mono shadow-sm">
-                Sold Out
-              </Badge>
-            ) : product.tags.length > 0 ? (
-              <Badge variant="secondary" className="text-[8px] sm:text-[9px] px-1.5 py-0.5 capitalize shadow-2xs backdrop-blur-xs bg-[#faf8f2]/95 text-neutral-800 border border-[#d2c8b5]/80">
-                {product.tags[0].replace(/_/g, " ")}
-              </Badge>
-            ) : null}
-          </div>
-
-          {/* Wishlist Button */}
-          <button
-            type="button"
-            onClick={handleToggleWishlist}
-            aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
-            className={`absolute top-1.5 right-1.5 z-10 h-6.5 w-6.5 sm:h-7 sm:w-7 rounded-full flex items-center justify-center transition-all ${
-              isFavorited
-                ? "bg-red-50 text-red-500 shadow-sm"
-                : "bg-[#faf8f2]/90 text-neutral-600 backdrop-blur-xs hover:text-neutral-900 hover:bg-[#faf8f2] border border-[#d2c8b5]/60 shadow-2xs"
-            }`}
-          >
-            <Heart className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${isFavorited ? "fill-red-500" : ""}`} />
-          </button>
         </Link>
 
-        {/* Card Content & Details - Compact Height */}
-        <CardContent className="p-2 sm:p-2.5 flex flex-col flex-1 justify-between gap-1 sm:gap-1.5">
-          <div className="space-y-0.5">
-            <div className="flex items-center justify-between gap-1 text-[8.5px] sm:text-[9.5px] font-mono text-muted-foreground uppercase tracking-wider">
-              <span>{product.sku}</span>
-              {product.category && (
-                <span className="font-sans normal-case text-primary font-semibold truncate max-w-[80px] sm:max-w-[100px]" title={product.category}>
-                  {product.category}
-                </span>
-              )}
-            </div>
-            <Link
-              href={`/products/${product.slug}`}
-              className="font-medium text-[11px] sm:text-xs text-foreground hover:text-primary transition-colors line-clamp-1 leading-snug block"
-            >
-              {product.name}
-            </Link>
-          </div>
+        {/* Top Badges */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1 items-start z-10 pointer-events-none">
+          {product.offer?.active && (
+            <Badge className="bg-[#023036]/90 text-white font-medium text-[8px] sm:text-[9px] px-1.5 py-0.5 shadow-xs backdrop-blur-xs border-0">
+              {product.offer.label || `${product.offer.value}% OFF`}
+            </Badge>
+          )}
 
-          <div className="flex items-center justify-between gap-1 pt-1 border-t border-[#d2c8b5]/50">
-            <PriceTag
-              priceMinor={product.priceMinor}
-              offer={product.offer}
-              size="sm"
-            />
+          {isOutOfStock && (
+            <Badge variant="destructive" className="text-[8px] sm:text-[9px] px-1.5 py-0.5 uppercase font-mono shadow-xs">
+              Sold Out
+            </Badge>
+          )}
+        </div>
 
-            <Button
-              type="button"
-              size="icon-xs"
-              disabled={isOutOfStock}
-              onClick={handleAddToCart}
-              title={isOutOfStock ? "Out of Stock" : "Add to Cart"}
-              className="h-6.5 w-6.5 sm:h-7 sm:w-7 rounded-full bg-gradient-to-r from-primary via-[#0E5343] to-primary text-white hover:from-[#052920] hover:to-[#052920] shadow-2xs hover:shadow-xs transition-all duration-300 border border-brand/30 shrink-0"
-            >
-              <ShoppingBag className="h-3 w-3" />
-              <span className="sr-only">Add to Cart</span>
-            </Button>
-          </div>
-        </CardContent>
+        {/* Wishlist Button */}
+        <button
+          type="button"
+          onClick={handleToggleWishlist}
+          aria-label={isFavorited ? "Remove from wishlist" : "Add to wishlist"}
+          className={`absolute top-2 right-2 z-10 h-7 w-7 sm:h-8 sm:w-8 rounded-full flex items-center justify-center transition-all ${
+            isFavorited
+              ? "bg-white/95 text-red-500 shadow-sm"
+              : "bg-white/80 text-[#023036] hover:bg-white hover:text-[#035354] shadow-xs backdrop-blur-xs"
+          }`}
+        >
+          <Heart className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isFavorited ? "fill-red-500" : ""}`} />
+        </button>
+
+        {/* Quick Add to Cart button on hover */}
+        {!isOutOfStock && (
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className="absolute bottom-2.5 left-2.5 right-2.5 py-2 rounded-xl bg-[#023036]/90 hover:bg-[#023036] text-white text-[11px] sm:text-xs font-medium tracking-wide shadow-md backdrop-blur-xs transition-all duration-300 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 flex items-center justify-center gap-1.5"
+          >
+            <ShoppingBag className="h-3 w-3" />
+            <span>Add to Cart</span>
+          </button>
+        )}
       </div>
+
+      {/* Product Details - Clean centered title and price */}
+      <div className="pt-2.5 sm:pt-3 space-y-1 text-center">
+        <Link
+          href={`/products/${product.slug}`}
+          className="font-serif text-xs sm:text-[13.5px] md:text-[14.5px] text-[#023036] hover:text-[#056677] transition-colors line-clamp-1 leading-snug block text-center"
+          title={product.name}
+        >
+          {product.name}
+        </Link>
+
+        <div className="flex items-center justify-center gap-2 text-center flex-wrap">
+          <span className="font-serif text-xs sm:text-[13px] text-[#023036] font-normal">
+            Rs. {Math.round(effectivePrice).toLocaleString("en-IN")}.00
+          </span>
+          {hasDiscount && (
+            <span className="font-serif text-[11px] sm:text-xs text-[#7AA79D] line-through">
+              Rs. {Math.round(originalPrice).toLocaleString("en-IN")}.00
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

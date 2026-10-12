@@ -6,7 +6,7 @@ import { MessageCircle, ShieldCheck, Sparkles, Truck } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/70 bg-card/60 backdrop-blur-xs text-muted-foreground mt-auto pb-20 md:pb-0">
+    <footer className="border-t border-[#023036]/10 bg-[#faf8f2]/80 backdrop-blur-xs text-muted-foreground mt-auto pb-20 md:pb-0">
       {/* Guarantees row */}
       <div className="border-b border-border/50 py-8">
         <div className="container mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center sm:text-left">
@@ -67,10 +67,10 @@ export function Footer() {
               />
             </div>
             <div className="flex flex-col text-left">
-              <span className="font-serif text-2xl font-bold tracking-tight text-primary leading-none">
+              <span className="font-serif text-2xl font-bold tracking-tight text-[#023036] leading-none">
                 NiVi
               </span>
-              <span className="text-[9px] font-sans text-brand tracking-widest uppercase font-semibold mt-1">
+              <span className="text-[9px] font-sans text-[#B87333] tracking-widest uppercase font-semibold mt-1">
                 Woven with tradition, styled for today
               </span>
             </div>
@@ -83,7 +83,7 @@ export function Footer() {
               href="https://wa.me/919999999999?text=Hello%20Nivi%2C%20I%20have%20an%20inquiry%20about%20your%20curated%20pieces."
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
+              className="inline-flex items-center gap-2 text-xs font-medium text-[#208280] hover:text-[#056677] hover:underline"
             >
               <MessageCircle className="h-4 w-4" />
               <span>Chat on WhatsApp Support</span>

@@ -8,7 +8,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ProductCard, type StoreProductData } from "./product-card";
-import { ShinyText } from "@/components/ui/shiny-text";
 
 interface FeaturedCarouselProps {
   products: StoreProductData[];
@@ -20,65 +19,55 @@ interface FeaturedCarouselProps {
 export function FeaturedCarousel({
   products,
   title = "Curator's Highlights",
-  subtitle = "Handpicked pieces defining our current seasonal collection",
   viewAllHref,
 }: FeaturedCarouselProps) {
   if (products.length === 0) return null;
 
   return (
     <section className="space-y-4 sm:space-y-6">
-      {/* Header with Title on left & Explore All on right matching reference screenshot */}
-      <div className="flex items-end justify-between gap-3 pb-1 border-b border-neutral-100 sm:border-none">
-        <div className="space-y-0.5 text-left">
-          <h2 className="font-['Great_Vibes'] text-3xl sm:text-4xl md:text-5xl font-normal leading-tight tracking-wide text-primary pt-1">
-            <ShinyText
-              text={title}
-              speed={3}
-              color="#083e3e"
-              shineColor="#dfb76c"
-            />
-          </h2>
-          {subtitle && (
-            <p className="text-xs sm:text-sm text-neutral-600 max-w-lg hidden sm:block">
-              {subtitle}
-            </p>
-          )}
-        </div>
+      {/* Header: Great Vibes font placed in center, View All on the right side on the same line */}
+      <div className="relative flex items-center justify-center mb-2 sm:mb-4 min-h-[44px]">
+        <h2 className="font-['Great_Vibes'] text-3xl sm:text-4xl md:text-5xl font-normal leading-tight tracking-wide text-[#023036] text-center pt-1 px-16 sm:px-24">
+          {title}
+        </h2>
 
         {viewAllHref && (
-          <Link
-            href={viewAllHref}
-            className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-primary hover:text-[#052920] hover:underline shrink-0 pb-0.5 transition-colors"
-          >
-            <span>Explore All</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2">
+            <Link
+              href={viewAllHref}
+              className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#023036] hover:text-[#056677] hover:underline transition-colors shrink-0"
+            >
+              <span>View All</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         )}
       </div>
 
       <Carousel
         opts={{
           align: "start",
-          loop: products.length > 3,
+          loop: products.length > 5,
         }}
         className="w-full relative"
       >
-        <CarouselContent className="-ml-2 sm:-ml-2.5 lg:-ml-3">
+        <CarouselContent className="-ml-2.5 sm:-ml-3 lg:-ml-3.5">
           {products.map((product) => (
             <CarouselItem
               key={product.sku}
-              className="pl-2 sm:pl-2.5 lg:pl-3 basis-[43.5%] sm:basis-[26%] md:basis-[22%] lg:basis-[18.18%]"
+              className="pl-2.5 sm:pl-3 lg:pl-3.5 basis-[65%] xs:basis-[46%] sm:basis-[31%] md:basis-[24%] lg:basis-[20%]"
             >
               <ProductCard product={product} />
             </CarouselItem>
           ))}
         </CarouselContent>
-        {/* Previous & Next arrows vertically in the middle of product cards at start and last */}
+
+        {/* Previous & Next arrows vertically aligned with saree image center */}
         <CarouselPrevious
-          className="inset-y-auto top-1/2 -mt-4 sm:-mt-4.5 lg:-mt-5 my-0 -left-2.5 sm:-left-3.5 lg:-left-4 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-[#faf8f2]/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-primary hover:border-primary text-neutral-800 transition-all z-20 disabled:opacity-0 disabled:pointer-events-none active:translate-y-0 active:not-aria-[haspopup]:translate-y-0"
+          className="hidden sm:inline-flex inset-y-auto top-[40%] -translate-y-1/2 -left-3 sm:-left-4 lg:-left-5 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-white/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-[#023036] hover:border-[#023036] text-[#023036] transition-all z-20 disabled:opacity-0 disabled:pointer-events-none"
         />
         <CarouselNext
-          className="inset-y-auto top-1/2 -mt-4 sm:-mt-4.5 lg:-mt-5 my-0 -right-2.5 sm:-right-3.5 lg:-right-4 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-[#faf8f2]/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-primary hover:border-primary text-neutral-800 transition-all z-20 disabled:opacity-0 disabled:pointer-events-none active:translate-y-0 active:not-aria-[haspopup]:translate-y-0"
+          className="hidden sm:inline-flex inset-y-auto top-[40%] -translate-y-1/2 -right-3 sm:-right-4 lg:-right-5 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-white/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-[#023036] hover:border-[#023036] text-[#023036] transition-all z-20 disabled:opacity-0 disabled:pointer-events-none"
         />
       </Carousel>
     </section>

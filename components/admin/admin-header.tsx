@@ -73,7 +73,7 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
               })}
             >
               <Sparkles className="h-4 w-4" />
-              Offers
+              Offers & Banners
             </Link>
 
             <Link

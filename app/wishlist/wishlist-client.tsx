@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ArrowLeft, Heart, Sparkles } from "lucide-react";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { ProductCard, type StoreProductData } from "@/components/store/product-card";
-import { ShinyText } from "@/components/ui/shiny-text";
 
 interface WishlistClientProps {
   products: StoreProductData[];
@@ -24,12 +23,7 @@ export function WishlistClient({ products }: WishlistClientProps) {
           <span>Your Curated Favorites</span>
         </div>
         <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-neutral-900">
-          <ShinyText
-            text="Saved Heritage Wishlist"
-            speed={3}
-            color="#083B2F"
-            shineColor="#C59A3F"
-          />
+          Saved Heritage Wishlist
         </h1>
         <p className="text-xs sm:text-sm text-neutral-500 max-w-md mx-auto">
           {count > 0

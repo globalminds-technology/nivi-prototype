@@ -1,16 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  ArrowRight,
+  ChevronDown,
   Headphones,
   Heart,
   Home,
+  Layers,
   LayoutGrid,
+  Menu,
   ShoppingBag,
+  Sparkles,
+  Tag,
+  X,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
+import type { Category } from "@/core/domain/entities/category";
 import { useCart } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { CartSheet } from "./cart-sheet";
@@ -19,70 +28,123 @@ import type { StoreProductData } from "./product-card";
 
 interface HeaderProps {
   products: StoreProductData[];
+  categories?: Category[];
 }
 
-export function Header({ products }: HeaderProps) {
+export function Header({ products, categories }: HeaderProps) {
   const pathname = usePathname();
   const { totalCount: cartCount } = useCart();
   const { count: wishlistCount } = useWishlist();
 
   const [cartOpen, setCartOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navLinks = [
-    { label: "Collection", href: "/collections" },
-    { label: "New Arrivals", href: "/collections?tag=new_arrival" },
-    { label: "Featured", href: "/collections?tag=featured" },
-    { label: "Special Offers", href: "/offers", isOffer: true },
+  // Derive categories list (from prop or unique from products)
+  const categoryList = useMemo(() => {
+    if (categories && categories.length > 0) {
+      return categories.map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      }));
+    }
+    const uniqueNames = Array.from(
+      new Set(products.map((p) => p.category).filter(Boolean)),
+    ) as string[];
+
+    return uniqueNames.map((name, idx) => ({
+      id: `cat_${idx}`,
+      name,
+      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    }));
+  }, [categories, products]);
+
+  // Clean nav items — flat links, no dropdowns, categories removed
+  const navItems = [
+    { label: "Collections", href: "/collections", icon: LayoutGrid },
+    { label: "Offers", href: "/offers", icon: Sparkles, badge: "Deals" },
   ];
 
   return (
     <>
       {/* ========================================================
           TOP HEADER
-          - Header background stays clean warm sand (#e4ddcd / bg-background)
-          - Logo alone (larger, prominent, no container box, no duplicate text)
-          - Tabs use Deep Teal (#083e3e) background with warm gold text (#f3d998)
+          - Vertical gradient: Natural beige tones with cool undertone
+          - Clean navigation: flat links, Categories removed
+          - Green teal palette used for badges (cart, wishlist, deals)
+          - Copper accents for brand touches
          ======================================================== */}
-      <header className="sticky top-0 z-40 border-b border-[#d2c8b5]/80 bg-background/95 backdrop-blur-md shadow-2xs">
+      <header
+        className="sticky top-0 z-40 border-b border-[#023036]/10 shadow-[0_2px_12px_rgba(2,48,54,0.04)] backdrop-blur-md"
+        style={{
+          background: "linear-gradient(180deg, rgba(250, 248, 243, 0.98) 0%, rgba(242, 237, 227, 0.96) 60%, rgba(228, 221, 205, 0.94) 100%)",
+        }}
+      >
         <div className="container mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3">
-          {/* MOBILE ONLY: Logo Alone (Larger, unboxed, clear) */}
-          <div className="flex md:hidden items-center">
+          {/* MOBILE ONLY: Hamburger Menu & Logo */}
+          <div className="flex md:hidden items-center gap-2.5">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open Navigation Menu"
+              className="text-[#023036] hover:text-[#035354] hover:bg-[#023036]/8 rounded-lg -ml-1"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+
             <Link href="/" className="flex items-center shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/nivi-logo.jpeg"
                 alt="NiVi — Woven with tradition"
-                className="h-11 sm:h-12 w-auto object-contain rounded-lg shadow-2xs"
+                className="h-11 sm:h-12 w-auto object-contain rounded-lg shadow-xs ring-1 ring-[#023036]/10"
               />
             </Link>
           </div>
 
-          {/* DESKTOP ONLY: Logo Alone & Deep Teal Navigation Tabs */}
+          {/* DESKTOP ONLY: Logo & Clean Navigation Links */}
           <div className="hidden md:flex items-center gap-8 lg:gap-10">
             <Link href="/" className="flex items-center shrink-0 group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/nivi-logo.jpeg"
                 alt="NiVi — Woven with tradition"
-                className="h-14 sm:h-16 w-auto object-contain rounded-xl shadow-xs group-hover:scale-105 transition-transform duration-200"
+                className="h-14 sm:h-16 w-auto object-contain rounded-xl shadow-xs ring-1 ring-[#023036]/10 group-hover:scale-105 transition-all duration-200"
               />
             </Link>
 
-            {/* Desktop Center Navigation Tabs in Deep Teal & Gold */}
-            <nav className="flex items-center gap-2 lg:gap-3">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
+            {/* Desktop Center Navigation — Clean flat links, Categories removed */}
+            <nav className="flex items-center gap-1.5 lg:gap-2">
+              {navItems.map((item) => {
+                const isActive = item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
+                const Icon = item.icon;
+
                 return (
                   <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 shadow-2xs border ${
+                    key={item.href}
+                    href={item.href}
+                    className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 flex items-center gap-1.5 ${
                       isActive
-                        ? "bg-[#052920] text-[#fde68a] border-[#dfb76c] ring-2 ring-[#dfb76c]/40 shadow-xs scale-[1.02]"
-                        : "bg-[#083e3e] text-[#f3d998] border-[#083e3e] hover:bg-[#062c2b] hover:text-[#fff1cc] hover:border-[#dfb76c]/60 hover:shadow-xs"
+                        ? "bg-[#023036] text-white shadow-xs"
+                        : "text-[#023036]/85 hover:text-[#023036] hover:bg-[#023036]/8 border border-transparent"
                     }`}
                   >
-                    {link.label}
+                    <Icon className={`h-3.5 w-3.5 ${isActive ? "text-[#96B7AF]" : "text-[#056677]"}`} />
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span
+                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${
+                          isActive
+                            ? "bg-[#208280] text-white"
+                            : "bg-[#023036] text-white"
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -101,12 +163,13 @@ export function Header({ products }: HeaderProps) {
               className={buttonVariants({
                 variant: "ghost",
                 size: "icon-sm",
-                className: "hidden md:inline-flex relative text-neutral-700 hover:text-primary hover:bg-neutral-200/60 rounded-full",
+                className:
+                  "hidden md:inline-flex relative text-[#023036] hover:text-[#035354] hover:bg-[#023036]/8 rounded-full",
               })}
             >
               <Heart className="h-4 w-4" />
               {wishlistCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-red-500 text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#023036] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs border border-white">
                   {wishlistCount}
                 </span>
               )}
@@ -118,10 +181,10 @@ export function Header({ products }: HeaderProps) {
               size="icon-sm"
               onClick={() => setCartOpen(true)}
               aria-label="Shopping Cart"
-              className="hidden md:inline-flex relative text-neutral-800 hover:text-primary hover:bg-neutral-200/60 rounded-full"
+              className="hidden md:inline-flex relative text-[#023036] hover:text-[#035354] hover:bg-[#023036]/8 rounded-full"
             >
               <ShoppingBag className="h-4.5 w-4.5" />
-              <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-[#083e3e] text-[#f3d998] font-mono text-[9px] flex items-center justify-center font-bold shadow-xs border border-[#dfb76c]/40">
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#023036] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs border border-white">
                 {cartCount}
               </span>
             </Button>
@@ -130,17 +193,128 @@ export function Header({ products }: HeaderProps) {
       </header>
 
       {/* ========================================================
+          MOBILE NAVIGATION DRAWER (Slide-over)
+          Updated with teal/copper theme
+         ======================================================== */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden animate-in fade-in-0 duration-200">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-xs"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          {/* Slide-over Drawer Panel */}
+          <div className="relative w-4/5 max-w-xs bg-[#faf8f2] text-neutral-900 h-full shadow-2xl flex flex-col z-10 border-r border-[#d2c8b5]">
+            {/* Drawer Header */}
+            <div
+              className="p-4 border-b border-[#023036]/10 flex items-center justify-between"
+              style={{ background: "linear-gradient(180deg, #FAF8F5 0%, #EFEAE1 100%)" }}
+            >
+              <div className="flex items-center gap-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/nivi-logo.jpeg"
+                  alt="NiVi"
+                  className="h-9 w-auto object-contain rounded-md ring-1 ring-[#023036]/10"
+                />
+                <span className="font-serif text-lg font-bold text-[#023036]">NiVi</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 rounded-md text-[#023036] hover:bg-[#023036]/10"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Drawer Navigation Links */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {/* Flat Navigation Links */}
+              <Link
+                href="/collections"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-xl bg-[#023036]/5 border border-[#023036]/10 hover:bg-[#023036]/10 transition-colors"
+              >
+                <LayoutGrid className="h-4.5 w-4.5 text-[#056677]" />
+                <div>
+                  <span className="text-sm font-semibold text-[#023036]">Collections</span>
+                  <p className="text-[10px] text-[#3d5a5e] mt-0.5">Explore our complete curated catalog</p>
+                </div>
+              </Link>
+
+              <Link
+                href="/collections?tag=new_arrival"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#023036]/5 transition-colors"
+              >
+                <Sparkles className="h-4 w-4 text-[#B87333]" />
+                <span className="text-sm font-medium text-[#023036]">New Arrivals</span>
+              </Link>
+
+              <Link
+                href="/collections?tag=featured"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#023036]/5 transition-colors"
+              >
+                <Tag className="h-4 w-4 text-[#208280]" />
+                <span className="text-sm font-medium text-[#023036]">Featured</span>
+              </Link>
+
+              <Link
+                href="/collections?tag=bestseller"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#023036]/5 transition-colors"
+              >
+                <Heart className="h-4 w-4 text-[#4B9488]" />
+                <span className="text-sm font-medium text-[#023036]">Best Sellers</span>
+              </Link>
+
+              {/* Divider */}
+              <div className="border-t border-[#d2c8b5]/60 my-2" />
+
+              {/* Offers */}
+              <Link
+                href="/offers"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#023036]/5 to-[#056677]/10 border border-[#023036]/15 hover:bg-[#023036]/10 transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-[#B87333]" />
+                  <span className="text-sm font-semibold text-[#023036]">Special Offers</span>
+                </span>
+                <Badge className="text-[9px] bg-[#023036] text-white">
+                  Deals
+                </Badge>
+              </Link>
+            </div>
+
+            {/* Drawer Footer */}
+            <div className="p-4 border-t border-[#023036]/15 space-y-2 bg-[#FAF8F5]">
+              <a
+                href="https://wa.me/919999999999?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#023036] hover:bg-[#035354] text-white text-xs font-semibold shadow-xs transition-colors"
+              >
+                <Headphones className="h-4 w-4" />
+                <span>WhatsApp Concierge</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
           MOBILE BOTTOM NAVIGATION (md:hidden alone)
-          Clean warm sand bar matching the theme
-          1. Home
-          2. Shop -> /collections
-          3. Wishlist -> /wishlist
-          4. Cart (with badge)
-          5. Support (with WhatsApp link)
          ======================================================== */}
       <nav
         aria-label="Mobile Bottom Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-[#d2c8b5]/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-1.5 transition-all"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md border-t border-[#023036]/15 shadow-[0_-4px_20px_rgba(2,48,54,0.1)] pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-1.5 transition-all"
+        style={{
+          background: "linear-gradient(180deg, rgba(228,221,205,0.97) 0%, rgba(228,221,205,0.99) 100%)",
+        }}
       >
         <div className="grid grid-cols-5 items-center max-w-md mx-auto px-1">
           {/* 1. Home */}
@@ -148,8 +322,8 @@ export function Header({ products }: HeaderProps) {
             href="/"
             className={`flex flex-col items-center justify-center py-1 transition-colors ${
               pathname === "/"
-                ? "text-primary font-bold"
-                : "text-neutral-500 hover:text-neutral-800"
+                ? "text-[#023036] font-bold"
+                : "text-[#3d5a5e] hover:text-[#023036]"
             }`}
           >
             <div className="relative">
@@ -163,8 +337,8 @@ export function Header({ products }: HeaderProps) {
             href="/collections"
             className={`flex flex-col items-center justify-center py-1 transition-colors ${
               pathname === "/collections"
-                ? "text-primary font-bold"
-                : "text-neutral-500 hover:text-neutral-800"
+                ? "text-[#023036] font-bold"
+                : "text-[#3d5a5e] hover:text-[#023036]"
             }`}
           >
             <div className="relative">
@@ -178,14 +352,18 @@ export function Header({ products }: HeaderProps) {
             href="/wishlist"
             className={`flex flex-col items-center justify-center py-1 transition-colors ${
               pathname === "/wishlist"
-                ? "text-primary font-bold"
-                : "text-neutral-500 hover:text-neutral-800"
+                ? "text-[#023036] font-bold"
+                : "text-[#3d5a5e] hover:text-[#023036]"
             }`}
           >
             <div className="relative">
-              <Heart className={`h-5 w-5 ${pathname === "/wishlist" ? "fill-primary/20 stroke-[2.4px]" : "stroke-[1.8px]"}`} />
+              <Heart
+                className={`h-5 w-5 ${
+                  pathname === "/wishlist" ? "fill-[#023036]/20 stroke-[2.4px]" : "stroke-[1.8px]"
+                }`}
+              />
               {wishlistCount > 0 && (
-                <span className="absolute -top-1.5 -right-2.5 h-4 min-w-4 px-1 rounded-full bg-red-500 text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
+                <span className="absolute -top-1.5 -right-2.5 h-4 min-w-4 px-1 rounded-full bg-[#023036] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
                   {wishlistCount}
                 </span>
               )}
@@ -198,12 +376,12 @@ export function Header({ products }: HeaderProps) {
             type="button"
             onClick={() => setCartOpen(true)}
             aria-label="Open Shopping Cart"
-            className="flex flex-col items-center justify-center py-1 text-neutral-500 hover:text-neutral-800 transition-colors"
+            className="flex flex-col items-center justify-center py-1 text-[#3d5a5e] hover:text-[#023036] transition-colors"
           >
             <div className="relative">
               <ShoppingBag className="h-5 w-5 stroke-[1.8px]" />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2.5 h-4 min-w-4 px-1 rounded-full bg-[#083e3e] text-[#f3d998] font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
+                <span className="absolute -top-1.5 -right-2.5 h-4 min-w-4 px-1 rounded-full bg-[#023036] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
                   {cartCount}
                 </span>
               )}
@@ -217,7 +395,7 @@ export function Header({ products }: HeaderProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Contact Concierge Support"
-            className="flex flex-col items-center justify-center py-1 text-neutral-500 hover:text-neutral-800 transition-colors"
+            className="flex flex-col items-center justify-center py-1 text-[#3d5a5e] hover:text-[#023036] transition-colors"
           >
             <div className="relative">
               <Headphones className="h-5 w-5 stroke-[1.8px]" />
@@ -228,11 +406,7 @@ export function Header({ products }: HeaderProps) {
       </nav>
 
       {/* Cart Slideover Sheet */}
-      <CartSheet
-        products={products}
-        open={cartOpen}
-        onOpenChange={setCartOpen}
-      />
+      <CartSheet products={products} open={cartOpen} onOpenChange={setCartOpen} />
     </>
   );
 }

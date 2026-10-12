@@ -139,6 +139,10 @@ export class OfferCampaignRepository {
       bannerTitle: data.bannerTitle ?? null,
       bannerSubtitle: data.bannerSubtitle ?? null,
       bannerCtaText: data.bannerCtaText ?? null,
+      displayOrder: data.displayOrder,
+      imagePosition: data.imagePosition ?? null,
+      imagePositionX: data.imagePositionX ?? null,
+      imagePositionY: data.imagePositionY ?? null,
       createdAt: now,
       updatedAt: now,
     };
@@ -226,6 +230,23 @@ export class OfferCampaignRepository {
     return map;
   }
 
+  async updateDisplayOrders(orderMap: Record<string, number>): Promise<OfferCampaign[]> {
+    const list = await this.readAll();
+    const updated = list.map((campaign) => {
+      if (orderMap[campaign.id] !== undefined) {
+        return {
+          ...campaign,
+          displayOrder: orderMap[campaign.id],
+          updatedAt: new Date().toISOString(),
+        };
+      }
+      return campaign;
+    });
+
+    await this.writeAll(updated);
+    return this.list();
+  }
+
   async reorderBanners(orderedCampaignIds: string[]): Promise<OfferCampaign[]> {
     const list = await this.readAll();
     const updated = list.map((campaign) => {
@@ -233,7 +254,7 @@ export class OfferCampaignRepository {
       if (index !== -1) {
         return {
           ...campaign,
-          displayOrder: index + 1,
+          displayOrder: index,
           updatedAt: new Date().toISOString(),
         };
       }

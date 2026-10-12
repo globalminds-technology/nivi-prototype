@@ -12,6 +12,9 @@ export interface OfferCampaign {
   bannerSubtitle?: string | null;
   bannerCtaText?: string | null;
   displayOrder?: number;
+  imagePosition?: string | null;
+  imagePositionX?: number | null;
+  imagePositionY?: number | null;
   createdAt: string;
   updatedAt: string;
 }
