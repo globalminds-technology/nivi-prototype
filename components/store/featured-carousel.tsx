@@ -8,6 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ProductCard, type StoreProductData } from "./product-card";
+import { GoldText } from "./gold-text";
 
 interface FeaturedCarouselProps {
   products: StoreProductData[];
@@ -25,11 +26,9 @@ export function FeaturedCarousel({
 
   return (
     <section className="space-y-4 sm:space-y-6">
-      {/* Header: Great Vibes Google font heading placed center */}
+      {/* Header: Centered Great Vibes with Deep Antique Gold Gradient */}
       <div className="relative flex flex-col items-center justify-center text-center mb-4 sm:mb-6">
-        <h2 className="font-script text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-normal tracking-wide text-[#30251F] leading-tight">
-          {title}
-        </h2>
+        <GoldText>{title}</GoldText>
 
         {viewAllHref && (
           <div className="mt-1 sm:mt-0 sm:absolute sm:right-0 sm:top-1/2 sm:-translate-y-1/2">
@@ -47,7 +46,8 @@ export function FeaturedCarousel({
       <Carousel
         opts={{
           align: "start",
-          loop: products.length > 5,
+          loop: false,
+          containScroll: "trimSnaps",
         }}
         className="w-full relative"
       >
@@ -55,7 +55,7 @@ export function FeaturedCarousel({
           {products.map((product) => (
             <CarouselItem
               key={product.sku}
-              className="pl-2.5 sm:pl-3 lg:pl-3.5 basis-[65%] xs:basis-[46%] sm:basis-[31%] md:basis-[24%] lg:basis-[20%]"
+              className="pl-2.5 sm:pl-3 lg:pl-3.5 basis-[39%] sm:basis-[30%] md:basis-[28.5%] lg:basis-[20%]"
             >
               <ProductCard product={product} />
             </CarouselItem>
@@ -64,10 +64,10 @@ export function FeaturedCarousel({
 
         {/* Previous & Next arrows vertically aligned with saree image center */}
         <CarouselPrevious
-          className="hidden sm:inline-flex inset-y-auto top-[40%] -translate-y-1/2 -left-3 sm:-left-4 lg:-left-5 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-white/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-[#023036] hover:border-[#023036] text-[#023036] transition-all z-20 disabled:opacity-0 disabled:pointer-events-none"
+          className="hidden sm:inline-flex inset-y-auto top-[40%] -translate-y-1/2 -left-3 sm:-left-4 lg:-left-5 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-white/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-[#023036] hover:border-[#023036] text-[#023036] transition-all z-20"
         />
         <CarouselNext
-          className="hidden sm:inline-flex inset-y-auto top-[40%] -translate-y-1/2 -right-3 sm:-right-4 lg:-right-5 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-white/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-[#023036] hover:border-[#023036] text-[#023036] transition-all z-20 disabled:opacity-0 disabled:pointer-events-none"
+          className="hidden sm:inline-flex inset-y-auto top-[40%] -translate-y-1/2 -right-3 sm:-right-4 lg:-right-5 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-white/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-[#023036] hover:border-[#023036] text-[#023036] transition-all z-20"
         />
       </Carousel>
     </section>

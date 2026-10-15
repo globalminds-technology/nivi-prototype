@@ -12,7 +12,7 @@
   --font-mono: var(--font-mono);
   --font-heading: var(--font-display);
   --font-serif: var(--font-display);
-  --font-script: var(--font-script), "Great Vibes", cursive;
+  --font-script: var(--font-great-vibes), "Great Vibes", cursive;
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-success: var(--success);
@@ -143,5 +143,5 @@
 }
 
 .font-script {
-  font-family: var(--font-script), "Great Vibes", cursive;
+  font-family: var(--font-great-vibes), "Great Vibes", cursive !important;
 }

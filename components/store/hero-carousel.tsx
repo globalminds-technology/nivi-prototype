@@ -108,7 +108,7 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
   };
 
   return (
-    <section className="w-full px-3 sm:px-5 md:px-6 lg:px-8 pt-4 sm:pt-5 pb-1">
+    <section className="w-full">
       <div
         className="relative w-full overflow-hidden select-none"
         onMouseEnter={() => setIsPaused(true)}
@@ -130,11 +130,8 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                   isActive ? "block opacity-100" : "hidden opacity-0"
                 }`}
               >
-                {/* Full-bleed rectangular banner occupying 100% of space in Canva standard 3:1 ratio across all devices */}
-                <div
-                  className="relative w-full max-w-[1440px] mx-auto overflow-hidden rounded-2xl md:rounded-[24px] border border-[#D5CCBB]/70 shadow-xs aspect-[3/1]"
-                  style={{ aspectRatio: "3 / 1" }}
-                >
+                {/* Full-bleed banner maintaining true 3:1 aspect ratio so full text and imagery fit comfortably without cropping */}
+                <div className="relative w-full overflow-hidden aspect-[3/1]">
                   <Link
                     href={banner.primaryCtaLink || "/collections"}
                     className="block w-full h-full cursor-pointer overflow-hidden group"
@@ -169,10 +166,7 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                 isActive ? "block opacity-100" : "hidden opacity-0"
               }`}
             >
-              <div
-                className="relative w-full max-w-[1440px] mx-auto overflow-hidden rounded-2xl md:rounded-[24px] border border-[#D5CCBB]/70 shadow-xs aspect-[3/1]"
-                style={{ aspectRatio: "3 / 1" }}
-              >
+              <div className="relative w-full overflow-hidden aspect-[3/1]">
                 <Link
                   href={ctaLink}
                   className="block w-full h-full cursor-pointer group overflow-hidden"
@@ -192,7 +186,7 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
 
         {/* Carousel Indicators */}
         {totalSlides > 1 && (
-          <div className="absolute bottom-3 left-6 z-20 flex items-center gap-2">
+          <div className="absolute bottom-3 sm:bottom-4 md:bottom-5 left-4 sm:left-8 md:left-12 z-20 flex items-center gap-2">
             {slides.map((slide, i) => (
               <button
                 key={slide.id}
@@ -210,23 +204,23 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
         )}
 
         {/* Navigation Arrows */}
-        {totalSlides > 1 && (
+        {totalSlides > 0 && (
           <>
             <button
               type="button"
               onClick={() => goToSlide(currentSlide - 1)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white/70 hover:bg-white text-[#30251F] shadow-sm flex items-center justify-center transition-all hover:scale-105"
+              className="absolute left-2.5 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full bg-white/75 hover:bg-white text-[#30251F] shadow-sm flex items-center justify-center transition-all hover:scale-105"
               aria-label="Previous Slide"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
             </button>
             <button
               type="button"
               onClick={() => goToSlide(currentSlide + 1)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white/70 hover:bg-white text-[#30251F] shadow-sm flex items-center justify-center transition-all hover:scale-105"
+              className="absolute right-2.5 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full bg-white/75 hover:bg-white text-[#30251F] shadow-sm flex items-center justify-center transition-all hover:scale-105"
               aria-label="Next Slide"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
             </button>
           </>
         )}

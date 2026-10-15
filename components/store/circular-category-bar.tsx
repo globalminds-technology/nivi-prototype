@@ -5,191 +5,129 @@ import Image from "next/image";
 import Link from "next/link";
 import { Layers } from "lucide-react";
 import type { Category } from "@/core/domain/entities/category";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { GoldText } from "./gold-text";
 
 interface CircularCategoryBarProps {
   categories?: Category[];
 }
 
 /**
- * The 8 canonical boutique saree collections matching the NiVi design reference mockup.
+ * Fallback cover images mapped by fabric keyword for Zoho categories
+ * in case imageUrl is missing on any item.
  */
-const CANONICAL_CATEGORIES = [
-  {
-    id: "kanchipuram",
-    name: "Kanchipuram Sarees",
-    slug: "kanchipuram-silk-sarees",
-    imageUrl:
-      "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/kanchipuram-silk-sarees.jpg",
-  },
-  {
-    id: "banarasi",
-    name: "Banarasi Sarees",
-    slug: "banarasi-silk-sarees",
-    imageUrl:
-      "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/banarasi-silk-sarees.jpg",
-  },
-  {
-    id: "cotton",
-    name: "Cotton Sarees",
-    slug: "cotton-sarees",
-    imageUrl:
-      "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/cotton-sarees.jpg",
-  },
-  {
-    id: "organza",
-    name: "Organza Sarees",
-    slug: "organza-sarees",
-    imageUrl:
-      "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/organza-sarees.jpg",
-  },
-  {
-    id: "linen",
-    name: "Linen Sarees",
-    slug: "linen-sarees",
-    imageUrl:
-      "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/linen-sarees.jpg",
-  },
-  {
-    id: "silk-cotton",
-    name: "Silk Cotton Sarees",
-    slug: "silk-cotton",
-    imageUrl:
-      "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/kanchipuram-silk-sarees.jpg",
-  },
-  {
-    id: "designer",
-    name: "Designer Sarees",
-    slug: "designer-sarees",
-    imageUrl:
-      "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/banarasi-silk-sarees.jpg",
-  },
-  {
-    id: "festive",
-    name: "Festive Collection",
-    slug: "festive-collection",
-    imageUrl:
-      "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/cotton-sarees.jpg",
-  },
-];
+const FABRIC_IMAGE_MAP: Record<string, string> = {
+  kanchipuram: "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/kanchipuram-silk-sarees.jpg",
+  banarasi: "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/banarasi-silk-sarees.jpg",
+  cotton: "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/cotton-sarees.jpg",
+  organza: "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/organza-sarees.jpg",
+  linen: "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/linen-sarees.jpg",
+  silk: "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/categories/kanchipuram-silk-sarees.jpg",
+};
 
-export function CircularCategoryBar({ categories }: CircularCategoryBarProps) {
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
-
-  // Merge canonical categories with database categories so custom images & slugs are respected
-  const displayCategories = React.useMemo(() => {
-    if (!categories || categories.length === 0) {
-      return CANONICAL_CATEGORIES;
+function resolveCategoryImageUrl(category: Category): string | null {
+  if (category.imageUrl && category.imageUrl.trim().length > 0) {
+    return category.imageUrl;
+  }
+  const searchKey = `${category.slug || ""} ${category.name || ""}`.toLowerCase();
+  for (const [fabric, url] of Object.entries(FABRIC_IMAGE_MAP)) {
+    if (searchKey.includes(fabric)) {
+      return url;
     }
+  }
+  return null;
+}
 
-    return CANONICAL_CATEGORIES.map((canonical) => {
-      const match = categories.find((c) => {
-        const cSlug = (c.slug || c.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-        const targetSlug = canonical.slug.toLowerCase().replace(/[^a-z0-9]/g, "");
-        return cSlug.includes(targetSlug) || targetSlug.includes(cSlug);
-      });
+export function CircularCategoryBar({ categories = [] }: CircularCategoryBarProps) {
+  // Only display genuine categories from Zoho Books (no hardcoded dummy categories)
+  const displayCategories = React.useMemo(() => {
+    if (!categories || categories.length === 0) return [];
 
-      return {
-        id: match?.id || canonical.id,
-        name: canonical.name, // Keep clean boutique names from reference mockup
-        slug: match?.slug || canonical.slug,
-        imageUrl: match?.imageUrl || canonical.imageUrl,
-      };
-    });
+    return categories.map((cat) => ({
+      id: cat.id,
+      name: cat.name,
+      slug: cat.slug || cat.id,
+      imageUrl: resolveCategoryImageUrl(cat),
+    }));
   }, [categories]);
 
+  if (displayCategories.length === 0) return null;
+
   return (
-    <section className="w-full pt-4 sm:pt-5 pb-3 sm:pb-4">
-      <div className="w-full max-w-[1440px] mx-auto px-3 sm:px-5 md:px-6 lg:px-8">
-        {/* ========================================================
-            DESKTOP VIEW (>= md breakpoint)
-            - 8 Large Circles fitting the screen width edge-to-edge
-            - Evenly distributed across all desktop screen sizes
-            - Immediately visible right beneath the hero banner with category names in full view
-           ======================================================== */}
-        <div className="hidden md:flex items-start justify-between w-full gap-2 lg:gap-3 xl:gap-5">
-          {displayCategories.map((category) => {
-            const href = `/categories/${category.slug}`;
-
-            return (
-              <Link
-                key={category.id}
-                href={href}
-                className="group flex flex-col items-center flex-1 min-w-0 text-center focus:outline-none transition-transform duration-200"
-              >
-                {/* Large Circular Thumbnail fitting screen width */}
-                <div className="relative w-18 h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-26 xl:h-26 2xl:w-28 2xl:h-28 rounded-full overflow-hidden bg-[#FAF7F0] border-2 border-[#D5CCBB] shadow-xs group-hover:border-[#C9A45C] group-hover:shadow-[0_0_0_4px_rgba(201,164,92,0.25)] group-hover:scale-105 transition-all duration-300 shrink-0">
-                  {category.imageUrl ? (
-                    <Image
-                      src={category.imageUrl}
-                      alt={category.name}
-                      fill
-                      unoptimized
-                      sizes="200px"
-                      className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[#FAF7F0] text-[#6B5A4A] group-hover:text-[#073C35] transition-colors">
-                      <Layers className="w-7 h-7" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Category Label Underneath */}
-                <span
-                  title={category.name}
-                  className="mt-1.5 md:mt-2 text-[11px] md:text-xs lg:text-[13px] font-medium text-[#30251F] group-hover:text-[#073C35] transition-colors text-center leading-snug line-clamp-2 px-1"
-                >
-                  {category.name}
-                </span>
-              </Link>
-            );
-          })}
+    <section className="w-full pt-2 sm:pt-3 pb-2 sm:pb-3">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8">
+        {/* Header: Explore Categories in Brand Script & Antique Gold */}
+        <div className="relative flex flex-col items-center justify-center text-center mb-2 sm:mb-3">
+          <GoldText>Explore Categories</GoldText>
         </div>
 
-        {/* ========================================================
-            MOBILE VIEW (< md breakpoint)
-            - Smooth horizontal scroll with large touch-friendly bubbles
-           ======================================================== */}
-        <div
-          ref={scrollContainerRef}
-          className="flex md:hidden overflow-x-auto pb-2 scrollbar-none scroll-smooth overscroll-x-contain touch-pan-x gap-4 sm:gap-6 px-1"
+        {/* Categories Carousel */}
+        <Carousel
+          opts={{
+            align: "start",
+            containScroll: "trimSnaps",
+            loop: false,
+          }}
+          className="w-full relative"
         >
-          {displayCategories.map((category) => {
-            const href = `/categories/${category.slug}`;
+          <CarouselContent className="-ml-3 sm:-ml-4 md:-ml-6">
+            {displayCategories.map((category) => {
+              const href = `/categories/${category.slug}`;
 
-            return (
-              <Link
-                key={`mob_cat_${category.id}`}
-                href={href}
-                className="group flex flex-col items-center shrink-0 text-center focus:outline-none"
-              >
-                <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-[#FAF7F0] border-2 border-[#D5CCBB] shadow-sm active:border-[#C9A45C] active:scale-95 transition-all shrink-0">
-                  {category.imageUrl ? (
-                    <Image
-                      src={category.imageUrl}
-                      alt={category.name}
-                      fill
-                      unoptimized
-                      sizes="160px"
-                      className="object-cover object-center"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[#FAF7F0] text-[#6B5A4A]">
-                      <Layers className="w-6 h-6" />
-                    </div>
-                  )}
-                </div>
-
-                <span
-                  title={category.name}
-                  className="mt-2 text-[11px] sm:text-xs font-medium text-[#30251F] text-center max-w-[80px] sm:max-w-[90px] leading-tight line-clamp-2"
+              return (
+                <CarouselItem
+                  key={category.id}
+                  className="pl-3 sm:pl-4 md:pl-6 basis-[36%] xs:basis-[28%] sm:basis-[22%] md:basis-[20%]"
                 >
-                  {category.name}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
+                  <Link
+                    href={href}
+                    className="group flex flex-col items-center w-full text-center focus:outline-none transition-transform duration-200"
+                  >
+                    {/* Circular Thumbnail - completely borderless, ring-free */}
+                    <div className="relative w-18 h-18 sm:w-20 sm:h-20 md:w-22 md:h-22 lg:w-24 lg:h-24 xl:w-26 xl:h-26 rounded-full overflow-hidden bg-[#FAF7F0] border-0 ring-0 outline-none focus:outline-none focus:ring-0 group-hover:border-0 group-hover:ring-0 group-hover:scale-105 transition-all duration-300 shrink-0">
+                      {category.imageUrl ? (
+                        <Image
+                          src={category.imageUrl}
+                          alt={category.name}
+                          fill
+                          unoptimized
+                          sizes="200px"
+                          className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-[#FAF7F0] text-[#6B5A4A] group-hover:text-[#073C35] transition-colors">
+                          <Layers className="w-7 h-7" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Category Label */}
+                    <span
+                      title={category.name}
+                      className="mt-2 text-xs sm:text-[13px] md:text-sm font-medium text-[#30251F] group-hover:text-[#073C35] transition-colors text-center leading-snug line-clamp-2 px-1 tracking-wide"
+                    >
+                      {category.name}
+                    </span>
+                  </Link>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+
+          {/* Previous & Next arrows: Only appear when items overflow screen bounds */}
+          <CarouselPrevious
+            className="hidden sm:inline-flex inset-y-auto top-[40%] -translate-y-1/2 -left-2 sm:-left-3 lg:-left-4 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-white/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-[#023036] hover:border-[#023036] text-[#023036] transition-all z-20"
+          />
+          <CarouselNext
+            className="hidden sm:inline-flex inset-y-auto top-[40%] -translate-y-1/2 -right-2 sm:-right-3 lg:-right-4 h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 rounded-full bg-white/95 backdrop-blur-md border border-[#d2c8b5] shadow-md hover:bg-white hover:text-[#023036] hover:border-[#023036] text-[#023036] transition-all z-20"
+          />
+        </Carousel>
       </div>
     </section>
   );

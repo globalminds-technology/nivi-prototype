@@ -121,9 +121,9 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
         )}
       </div>
 
-      {/* Desktop Search Bar — clean and simple, no ⌘K badge */}
+      {/* Desktop Search Bar — responsive width on tablet & desktop, clean and simple */}
       <div
-        className={`hidden md:flex items-center gap-2 h-9 sm:h-9.5 px-3.5 rounded-full border transition-all w-48 lg:w-64 ${
+        className={`hidden md:flex items-center gap-1.5 md:gap-2 h-8.5 sm:h-9 px-2.5 md:px-3 rounded-full border transition-all w-28 md:w-32 lg:w-48 xl:w-60 focus-within:w-40 md:focus-within:w-44 lg:focus-within:w-56 xl:focus-within:w-64 ${
           isOpen
             ? "bg-white border-[#056677] ring-2 ring-[#056677]/15 shadow-sm text-neutral-900"
             : "bg-white/70 border-[#d2c8b5] text-[#023036] hover:border-[#056677]/40 hover:bg-white shadow-2xs"
@@ -139,7 +139,7 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
             if (!isOpen) setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          placeholder="Search sarees..."
+          placeholder="Search..."
           className="w-full bg-transparent text-xs text-neutral-800 placeholder:text-neutral-500/80 focus:outline-none"
         />
         {query && (

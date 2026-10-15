@@ -1,0 +1,57 @@
+.gold-wrap {
+  display: inline-block;
+  /* shadow goes on the wrapper because text-shadow breaks with transparent text */
+  filter: drop-shadow(0 1px 0 rgba(90, 55, 10, 0.4))
+          drop-shadow(0 2px 3px rgba(60, 35, 5, 0.25));
+}
+
+.gold-text {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  line-height: 1.15;
+  margin: 0;
+  padding: 0.05em 0.15em; /* stops script swashes from clipping */
+  letter-spacing: normal !important; /* CRITICAL: Prevents breaking space between cursive script letters */
+  word-spacing: 0.15em;
+
+  /* Deep antique gold: dark amber → bright highlight → dark amber */
+  background: linear-gradient(
+    115deg,
+    #5c3a08 0%,
+    #8a5a12 18%,
+    #c9962e 32%,
+    #f3d98b 45%,   /* shine highlight */
+    #b8832a 58%,
+    #7a4e0e 75%,
+    #4a2d05 100%
+  );
+  background-size: 100% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.gold-quote {
+  font-family: var(--font-great-vibes), "Great Vibes", cursive !important;
+  letter-spacing: normal !important;
+  display: inline-block;
+  line-height: 1.45 !important;
+  padding: 0.25em 0.35em !important;
+  background: linear-gradient(
+    115deg,
+    #361f02 0%,
+    #5c3a06 18%,
+    #8f6213 36%,
+    #b88929 48%,   /* warm antique bronze */
+    #85570f 62%,
+    #4a2d04 80%,
+    #281400 100%
+  );
+  background-size: 100% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 1px 1px rgba(35, 18, 2, 0.45));
+}
+

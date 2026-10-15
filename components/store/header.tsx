@@ -27,6 +27,7 @@ import { useWishlist } from "@/hooks/use-wishlist";
 import { CartSheet } from "./cart-sheet";
 import { SearchDropdown } from "./search-dropdown";
 import type { StoreProductData } from "./product-card";
+import "./gold-text.css";
 
 interface HeaderProps {
   products?: StoreProductData[];
@@ -98,30 +99,53 @@ export function Header({ products = [], categories }: HeaderProps) {
               <Menu className="h-5 w-5" />
             </Button>
 
-            <Link href="/" className="flex items-center gap-2 shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/nivi-logo.jpeg"
                 alt="NiVi"
-                className="h-10 sm:h-11 w-auto object-contain rounded-lg shadow-xs ring-1 ring-[#073C35]/15"
+                className="h-11 sm:h-12 w-auto object-contain rounded-xl shadow-xs"
               />
-              <span className="font-serif text-xl font-bold tracking-wide text-[#073C35]">NiVi</span>
+              <div className="flex flex-col text-left justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/nivi-wordmark.png"
+                  alt="NiVi"
+                  className="h-7 sm:h-8 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
+                />
+                <span className="hidden sm:inline-block gold-quote text-[0.88rem] leading-tight select-none mt-0.5">
+                  Woven with tradition, styled for today
+                </span>
+              </div>
             </Link>
           </div>
 
-          {/* DESKTOP ONLY: Logo & Navigation Links */}
-          <div className="hidden md:flex items-center gap-8 lg:gap-10">
-            <Link href="/" className="flex items-center gap-3 shrink-0 group">
+          {/* DESKTOP ONLY: Logo & Navigation Links (Responsive for Tablet & Desktop) */}
+          <div className="hidden md:flex items-center gap-3 md:gap-4 lg:gap-6 xl:gap-9 min-w-0">
+            <Link href="/" className="flex items-center gap-2 md:gap-2.5 lg:gap-3.5 shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/nivi-logo.jpeg"
                 alt="NiVi"
-                className="h-12 lg:h-14 w-auto object-contain rounded-xl shadow-xs ring-1 ring-[#073C35]/15 group-hover:scale-105 transition-all duration-200"
+                className="h-10 md:h-11 lg:h-13 xl:h-15 w-auto object-contain rounded-xl sm:rounded-2xl shadow-xs"
               />
+              <div className="flex flex-col text-left justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/nivi-wordmark.png"
+                  alt="NiVi"
+                  className="h-6.5 md:h-7 lg:h-8.5 xl:h-9.5 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
+                />
+                <div className="hidden xl:block">
+                  <span className="gold-quote text-[0.92rem] lg:text-[1.05rem] leading-tight select-none mt-0.5">
+                    Woven with tradition, styled for today
+                  </span>
+                </div>
+              </div>
             </Link>
 
             {/* Desktop Center Navigation */}
-            <nav className="flex items-center gap-6 lg:gap-8">
+            <nav className="flex items-center gap-2 md:gap-3 lg:gap-5 xl:gap-8 shrink-0">
               {navItems.map((item) => {
                 const isActive = item.href === "/"
                   ? pathname === "/"
@@ -131,7 +155,7 @@ export function Header({ products = [], categories }: HeaderProps) {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className={`text-[13px] lg:text-[14px] font-medium tracking-wide transition-all duration-200 relative py-1 ${
+                    className={`text-[11.5px] md:text-[12px] lg:text-[13px] xl:text-[14px] font-medium tracking-wide transition-all duration-200 relative py-1 shrink-0 whitespace-nowrap ${
                       isActive
                         ? "text-[#073C35] font-semibold"
                         : "text-[#30251F]/80 hover:text-[#073C35]"
@@ -142,7 +166,7 @@ export function Header({ products = [], categories }: HeaderProps) {
                       <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#073C35] rounded-full" />
                     )}
                     {item.badge && (
-                      <span className="ml-1.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-[#DCAEB6] text-[#30251F]">
+                      <span className="ml-1 text-[8.5px] font-semibold px-1 py-0.5 rounded-full uppercase tracking-wider bg-[#DCAEB6] text-[#30251F]">
                         {item.badge}
                       </span>
                     )}
@@ -153,59 +177,59 @@ export function Header({ products = [], categories }: HeaderProps) {
           </div>
 
           {/* RIGHT ACTIONS: Search Dropdown + Wishlist + Account + Cart Bag */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 md:gap-2 sm:gap-3 shrink-0">
             {/* Search Dropdown / Trigger */}
             <SearchDropdown products={products} />
 
-            {/* Wishlist (Desktop & Mobile header) */}
-            <Link
-              href="/wishlist"
-              aria-label="Wishlist"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "icon-sm",
-                className:
-                  "relative text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full",
-              })}
-            >
-              <Heart className="h-4.5 w-4.5" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#DCAEB6] text-[#30251F] font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
+            {/* DESKTOP ONLY: Wishlist, Account, and Cart Bag (Mobile accesses these via bottom navigation bar) */}
+            <div className="hidden md:flex items-center gap-1 md:gap-1.5 lg:gap-2.5">
+              <Link
+                href="/wishlist"
+                aria-label="Wishlist"
+                className={buttonVariants({
+                  variant: "ghost",
+                  size: "icon-sm",
+                  className:
+                    "relative text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full h-8 w-8 md:h-8.5 md:w-8.5",
+                })}
+              >
+                <Heart className="h-4 w-4 md:h-4.5 md:w-4.5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-3.5 w-3.5 md:h-4 md:w-4 rounded-full bg-[#DCAEB6] text-[#30251F] font-mono text-[8.5px] md:text-[9px] flex items-center justify-center font-bold shadow-xs">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
 
-            {/* Desktop Account Icon */}
-            <Link
-              href="/admin"
-              aria-label="Account / Admin"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "icon-sm",
-                className:
-                  "hidden md:inline-flex text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full",
-              })}
-              title="Account / Admin"
-            >
-              <User className="h-4.5 w-4.5" />
-            </Link>
+              <Link
+                href="/admin"
+                aria-label="Account / Admin"
+                className={buttonVariants({
+                  variant: "ghost",
+                  size: "icon-sm",
+                  className:
+                    "text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full h-8 w-8 md:h-8.5 md:w-8.5",
+                })}
+                title="Account / Admin"
+              >
+                <User className="h-4 w-4 md:h-4.5 md:w-4.5" />
+              </Link>
 
-            {/* Cart Bag (Desktop & Mobile header) */}
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setCartOpen(true)}
-              aria-label="Shopping Cart"
-              className="relative text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full"
-            >
-              <ShoppingBag className="h-4.5 w-4.5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#073C35] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
-                  {cartCount}
-                </span>
-              )}
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={() => setCartOpen(true)}
+                aria-label="Shopping Cart"
+                className="relative text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full"
+              >
+                <ShoppingBag className="h-4.5 w-4.5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#073C35] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
+                    {cartCount}
+                  </span>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -365,24 +389,24 @@ export function Header({ products = [], categories }: HeaderProps) {
             <span className="text-[10px] tracking-tight mt-1">Collections</span>
           </Link>
 
-          {/* 3. Search */}
+          {/* 3. Bag (Cart) */}
           <button
             type="button"
-            onClick={() => {
-              const searchInput = document.querySelector('header input[type="text"]') as HTMLInputElement | null;
-              if (searchInput) {
-                searchInput.focus();
-              } else {
-                window.location.href = "/collections";
-              }
-            }}
-            aria-label="Search sarees"
-            className="flex flex-col items-center justify-center py-1 text-[#6B5A4A] hover:text-[#073C35] transition-colors"
+            onClick={() => setCartOpen(true)}
+            aria-label="Shopping Bag"
+            className={`flex flex-col items-center justify-center py-1 transition-colors relative ${
+              cartOpen ? "text-[#073C35] font-bold" : "text-[#6B5A4A] hover:text-[#073C35]"
+            }`}
           >
             <div className="relative">
-              <Search className="h-5 w-5 stroke-[1.8px]" />
+              <ShoppingBag className="h-5 w-5 stroke-[1.8px]" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2.5 h-4 min-w-4 px-1 rounded-full bg-[#073C35] text-white font-mono text-[9px] flex items-center justify-center font-bold shadow-xs">
+                  {cartCount}
+                </span>
+              )}
             </div>
-            <span className="text-[10px] tracking-tight mt-1">Search</span>
+            <span className="text-[10px] tracking-tight mt-1">Bag</span>
           </button>
 
           {/* 4. Wishlist */}

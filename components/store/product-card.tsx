@@ -133,7 +133,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="pt-2 sm:pt-2.5 space-y-1 text-left">
         <Link
           href={`/products/${product.slug}`}
-          className="text-xs sm:text-[13px] md:text-sm font-medium text-[#30251F] hover:text-[#073C35] transition-colors line-clamp-1 block text-left"
+          className="text-[11px] sm:text-[13px] md:text-sm font-medium text-[#30251F] hover:text-[#073C35] transition-colors line-clamp-1 block text-left"
           title={product.name}
         >
           {product.name}
@@ -141,11 +141,11 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex items-center justify-between gap-1 pt-0.5">
           <div className="flex items-baseline gap-1.5 flex-wrap">
-            <span className="text-xs sm:text-[13.5px] font-semibold text-[#30251F]">
+            <span className="text-[11.5px] sm:text-[13.5px] font-semibold text-[#30251F]">
               ₹{Math.round(effectivePrice).toLocaleString("en-IN")}
             </span>
             {hasDiscount && (
-              <span className="text-[10px] sm:text-xs text-[#6B5A4A] line-through">
+              <span className="text-[9.5px] sm:text-xs text-[#6B5A4A] line-through">
                 ₹{Math.round(originalPrice).toLocaleString("en-IN")}
               </span>
             )}

@@ -54,13 +54,21 @@ function Carousel({
   ...props
 }: React.ComponentProps<"div"> & CarouselProps) {
   const mergedPlugins = React.useMemo(() => {
-    return [WheelGesturesPlugin(), ...(plugins ?? [])]
+    return [WheelGesturesPlugin({ forceWheelAxis: "x" }), ...(plugins ?? [])]
   }, [plugins])
 
   const [carouselRef, api] = useEmblaCarousel(
     {
+      containScroll: "trimSnaps",
       ...opts,
       axis: orientation === "horizontal" ? "x" : "y",
+      watchDrag: (emblaApi, evt) => {
+        if (opts?.watchDrag !== undefined) {
+          if (typeof opts.watchDrag === "function") return opts.watchDrag(emblaApi, evt)
+          return opts.watchDrag
+        }
+        return emblaApi.canScrollPrev() || emblaApi.canScrollNext()
+      },
     },
     mergedPlugins
   )
@@ -184,7 +192,12 @@ function CarouselPrevious({
   size = "icon-sm",
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { orientation, scrollPrev, canScrollPrev } = useCarousel()
+  const { orientation, scrollPrev, canScrollPrev, canScrollNext } = useCarousel()
+
+  // Hide completely if the carousel cannot scroll in either direction
+  if (!canScrollPrev && !canScrollNext) {
+    return null
+  }
 
   return (
     <Button
@@ -192,10 +205,11 @@ function CarouselPrevious({
       variant={variant}
       size={size}
       className={cn(
-        "absolute touch-manipulation rounded-full active:translate-y-0 active:not-aria-[haspopup]:translate-y-0",
+        "absolute touch-manipulation rounded-full active:translate-y-0 active:not-aria-[haspopup]:translate-y-0 transition-opacity duration-200",
         orientation === "horizontal"
           ? "inset-y-0 -left-12 my-auto"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+        !canScrollPrev && "opacity-0 pointer-events-none",
         className
       )}
       disabled={!canScrollPrev}
@@ -214,7 +228,12 @@ function CarouselNext({
   size = "icon-sm",
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { orientation, scrollNext, canScrollNext } = useCarousel()
+  const { orientation, scrollNext, canScrollNext, canScrollPrev } = useCarousel()
+
+  // Hide completely if the carousel cannot scroll in either direction
+  if (!canScrollPrev && !canScrollNext) {
+    return null
+  }
 
   return (
     <Button
@@ -222,10 +241,11 @@ function CarouselNext({
       variant={variant}
       size={size}
       className={cn(
-        "absolute touch-manipulation rounded-full active:translate-y-0 active:not-aria-[haspopup]:translate-y-0",
+        "absolute touch-manipulation rounded-full active:translate-y-0 active:not-aria-[haspopup]:translate-y-0 transition-opacity duration-200",
         orientation === "horizontal"
           ? "inset-y-0 -right-12 my-auto"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+        !canScrollNext && "opacity-0 pointer-events-none",
         className
       )}
       disabled={!canScrollNext}

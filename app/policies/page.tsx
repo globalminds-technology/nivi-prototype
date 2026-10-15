@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: "Official shipping timelines, cancellation terms, mandatory unboxing video guidelines, and Sungudi craft disclaimers for NiVi.",
 };
 
+export const instant = false;
+
 interface PoliciesPageProps {
   searchParams: Promise<{ tab?: string }>;
 }
