@@ -12,6 +12,7 @@ import {
   Layers,
   Plus,
   Save,
+  Sparkles,
   Tag,
   Trash2,
   UploadCloud,
@@ -51,6 +52,15 @@ export interface InitialProductData {
   gallery: string[];
   tags: string[];
   status: "active" | "inactive";
+  attributes?: {
+    fabric?: string | null;
+    occasion: string[];
+    style: string[];
+    comfort: string[];
+    border?: string | null;
+    colourPalette?: string | null;
+    primaryColour?: string | null;
+  };
   offer?: {
     active: boolean;
     type: "percent" | "flat";
@@ -68,6 +78,68 @@ interface ProductFormProps {
 
 const COMMON_TAGS = ["featured", "new_arrival", "bestseller", "bridal", "handcrafted", "limited_edition"];
 
+const FABRIC_OPTIONS = [
+  "Kanchi Cotton",
+  "Sungudi Cotton",
+  "Kora Organza",
+  "Banarasi Katan Silk",
+  "Maheshwari Cotton",
+  "Silk Cotton",
+  "Soft Silk",
+];
+
+const OCCASION_OPTIONS = [
+  "Daily wear",
+  "Office or formal wear",
+  "Festive or family function",
+  "Wedding or grand occasion",
+  "Temple visit",
+  "Reception / Engagement",
+];
+
+const STYLE_OPTIONS = [
+  "Traditional and elegant",
+  "Modern and minimal",
+  "Rich and royal",
+  "Simple and graceful",
+  "Dramatic festive",
+];
+
+const COMFORT_OPTIONS = [
+  "Light and comfortable",
+  "Lightweight and breathable",
+  "Structured and crisp",
+  "Rich texture and luxurious feel",
+  "Versatile for many occasions",
+];
+
+const BORDER_OPTIONS = [
+  "Grand zari border",
+  "Small or subtle border",
+  "Contrast colour border",
+  "Minimal or no prominent border",
+];
+
+const PALETTE_OPTIONS = [
+  "Rich and vibrant",
+  "Soft and pastel",
+  "Earthy and muted",
+  "Classic and timeless",
+];
+
+const PRIMARY_COLOUR_OPTIONS = [
+  "Red / Maroon",
+  "Green / Emerald / Olive",
+  "Royal Blue / Navy / Indigo",
+  "Blush Pink / Rose",
+  "Lavender / Purple",
+  "Mint / Sage",
+  "Beige / Cream / Ivory",
+  "Rust / Mustard / Turmeric",
+  "Coral / Peach / Fuchsia",
+  "Black / Charcoal",
+];
+
 interface StagedGalleryFile {
   id: string;
   file: File;
@@ -82,8 +154,8 @@ export function ProductForm({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  // Tab Stepper State (3 Steps: Details -> Media -> Tags)
-  const [activeTab, setActiveTab] = useState<"details" | "media" | "tags">("details");
+  // Tab Stepper State (4 Steps: Details -> Media -> Quiz & Styling -> Merchandising)
+  const [activeTab, setActiveTab] = useState<"details" | "media" | "attributes" | "tags">("details");
 
   // Form State - Basics
   const [sku, setSku] = useState(initialData?.sku ?? "");
@@ -115,6 +187,27 @@ export function ProductForm({
   // Tags State
   const [tags, setTags] = useState<string[]>(initialData?.tags ?? []);
   const [customTagInput, setCustomTagInput] = useState("");
+
+  // Saree Quiz Attributes State
+  const [fabric, setFabric] = useState(initialData?.attributes?.fabric ?? "");
+  const [occasions, setOccasions] = useState<string[]>(initialData?.attributes?.occasion ?? []);
+  const [styles, setStyles] = useState<string[]>(initialData?.attributes?.style ?? []);
+  const [comforts, setComforts] = useState<string[]>(initialData?.attributes?.comfort ?? []);
+  const [border, setBorder] = useState(initialData?.attributes?.border ?? "");
+  const [colourPalette, setColourPalette] = useState(initialData?.attributes?.colourPalette ?? "");
+  const [primaryColour, setPrimaryColour] = useState(initialData?.attributes?.primaryColour ?? "");
+
+  const toggleOccasion = (val: string) => {
+    setOccasions((prev) => (prev.includes(val) ? prev.filter((o) => o !== val) : [...prev, val]));
+  };
+
+  const toggleStyle = (val: string) => {
+    setStyles((prev) => (prev.includes(val) ? prev.filter((s) => s !== val) : [...prev, val]));
+  };
+
+  const toggleComfort = (val: string) => {
+    setComforts((prev) => (prev.includes(val) ? prev.filter((c) => c !== val) : [...prev, val]));
+  };
 
   // SKU auto-formatting: Replace spaces with hyphens, uppercase
   const handleSkuChange = (val: string) => {
@@ -152,6 +245,13 @@ export function ProductForm({
     setStagedGalleryFiles([]);
     setTags([]);
     setCustomTagInput("");
+    setFabric("");
+    setOccasions([]);
+    setStyles([]);
+    setComforts([]);
+    setBorder("");
+    setColourPalette("");
+    setPrimaryColour("");
     setActiveTab("details");
     if (fileInputRef.current) fileInputRef.current.value = "";
     if (additionalFileInputRef.current) additionalFileInputRef.current.value = "";
@@ -311,6 +411,15 @@ export function ProductForm({
         tags,
         offer: offerPayload,
         status,
+        attributes: {
+          fabric: fabric.trim() || null,
+          occasion: occasions,
+          style: styles,
+          comfort: comforts,
+          border: border.trim() || null,
+          colourPalette: colourPalette.trim() || null,
+          primaryColour: primaryColour.trim() || null,
+        },
       };
 
       let targetProductId = initialData?.id;
@@ -399,24 +508,28 @@ export function ProductForm({
         </div>
       </div>
 
-      {/* Controlled Tabs / Stepper (3 Steps) */}
+      {/* Controlled Tabs / Stepper (4 Steps) */}
       <Tabs
         value={activeTab}
-        onValueChange={(val) => setActiveTab(val as "details" | "media" | "tags")}
+        onValueChange={(val) => setActiveTab(val as "details" | "media" | "attributes" | "tags")}
         className="w-full space-y-6"
       >
-        <TabsList className="grid grid-cols-3 w-full h-11 bg-muted/60 p-1 rounded-xl">
+        <TabsList className="grid grid-cols-4 w-full h-11 bg-muted/60 p-1 rounded-xl">
           <TabsTrigger value="details" className="text-xs gap-1.5 data-[state=active]:shadow-xs">
             <span className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">1</span>
-            <span>Details</span>
+            <span className="truncate">Details</span>
           </TabsTrigger>
           <TabsTrigger value="media" className="text-xs gap-1.5 data-[state=active]:shadow-xs">
             <span className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
-            <span>Media ({totalPhotosCount + (imagePreview ? 1 : 0)})</span>
+            <span className="truncate">Media ({totalPhotosCount + (imagePreview ? 1 : 0)})</span>
+          </TabsTrigger>
+          <TabsTrigger value="attributes" className="text-xs gap-1.5 data-[state=active]:shadow-xs">
+            <span className="w-4 h-4 rounded-full bg-emerald-800/20 text-emerald-800 flex items-center justify-center text-[10px] font-bold">3</span>
+            <span className="truncate">Quiz & Styling</span>
           </TabsTrigger>
           <TabsTrigger value="tags" className="text-xs gap-1.5 data-[state=active]:shadow-xs">
-            <span className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">3</span>
-            <span>Tags ({tags.length})</span>
+            <span className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">4</span>
+            <span className="truncate">Tags ({tags.length})</span>
           </TabsTrigger>
         </TabsList>
 
@@ -836,6 +949,194 @@ export function ProductForm({
             </Button>
             <Button
               type="button"
+              onClick={() => setActiveTab("attributes")}
+              className="gap-2 text-xs shadow-xs"
+            >
+              <span>Next: Saree Quiz & Styling</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </TabsContent>
+
+        {/* TAB 3: QUIZ & STYLING ATTRIBUTES */}
+        <TabsContent value="attributes" className="space-y-6">
+          {/* Saree Quiz & Recommendation Attributes */}
+          <Card className="shadow-xs border-border/70">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-emerald-600" />
+                <CardTitle className="text-base font-semibold">Saree Quiz & Styling Attributes</CardTitle>
+              </div>
+              <CardDescription>
+                Attributes used to match customer answers in the &quot;Find Your Perfect Saree&quot; styling quiz.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {/* Dropdowns Row: Fabric, Border, Colour Palette, Primary Colour */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="space-y-1.5">
+                  <FieldLabel className="text-xs">Fabric / Saree Type</FieldLabel>
+                  <select
+                    value={fabric}
+                    onChange={(e) => setFabric(e.target.value)}
+                    disabled={isPending}
+                    className="w-full h-8 px-2.5 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="">Select fabric...</option>
+                    {FABRIC_OPTIONS.map((f) => (
+                      <option key={f} value={f}>
+                        {f}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <FieldLabel className="text-xs">Border Type</FieldLabel>
+                  <select
+                    value={border}
+                    onChange={(e) => setBorder(e.target.value)}
+                    disabled={isPending}
+                    className="w-full h-8 px-2.5 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="">Select border...</option>
+                    {BORDER_OPTIONS.map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <FieldLabel className="text-xs">Colour Palette</FieldLabel>
+                  <select
+                    value={colourPalette}
+                    onChange={(e) => setColourPalette(e.target.value)}
+                    disabled={isPending}
+                    className="w-full h-8 px-2.5 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="">Select palette...</option>
+                    {PALETTE_OPTIONS.map((p) => (
+                      <option key={p} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <FieldLabel className="text-xs">Primary Colour</FieldLabel>
+                  <select
+                    value={primaryColour}
+                    onChange={(e) => setPrimaryColour(e.target.value)}
+                    disabled={isPending}
+                    className="w-full h-8 px-2.5 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <option value="">Select colour...</option>
+                    {PRIMARY_COLOUR_OPTIONS.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Multi-select: Occasions */}
+              <div className="space-y-1.5 pt-1">
+                <FieldLabel className="text-xs">Suitable Occasions (Multi-select)</FieldLabel>
+                <div className="flex flex-wrap gap-1.5">
+                  {OCCASION_OPTIONS.map((occ) => {
+                    const selected = occasions.includes(occ);
+                    return (
+                      <button
+                        key={occ}
+                        type="button"
+                        onClick={() => toggleOccasion(occ)}
+                        disabled={isPending}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
+                          selected
+                            ? "bg-emerald-800 text-white border-emerald-800 shadow-2xs"
+                            : "bg-muted/40 border-border text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3 text-muted-foreground" />}
+                        <span>{occ}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Multi-select: Style Preference */}
+              <div className="space-y-1.5">
+                <FieldLabel className="text-xs">Style Preference (Multi-select)</FieldLabel>
+                <div className="flex flex-wrap gap-1.5">
+                  {STYLE_OPTIONS.map((st) => {
+                    const selected = styles.includes(st);
+                    return (
+                      <button
+                        key={st}
+                        type="button"
+                        onClick={() => toggleStyle(st)}
+                        disabled={isPending}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
+                          selected
+                            ? "bg-emerald-800 text-white border-emerald-800 shadow-2xs"
+                            : "bg-muted/40 border-border text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3 text-muted-foreground" />}
+                        <span>{st}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Multi-select: Comfort & Drape Feel */}
+              <div className="space-y-1.5">
+                <FieldLabel className="text-xs">Comfort & Drape Feel (Multi-select)</FieldLabel>
+                <div className="flex flex-wrap gap-1.5">
+                  {COMFORT_OPTIONS.map((comf) => {
+                    const selected = comforts.includes(comf);
+                    return (
+                      <button
+                        key={comf}
+                        type="button"
+                        onClick={() => toggleComfort(comf)}
+                        disabled={isPending}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
+                          selected
+                            ? "bg-emerald-800 text-white border-emerald-800 shadow-2xs"
+                            : "bg-muted/40 border-border text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3 text-muted-foreground" />}
+                        <span>{comf}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stepper Navigation: From Attributes to Tags */}
+          <div className="flex items-center justify-between pt-4 border-t border-border/60">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveTab("media")}
+              className="gap-2 text-xs"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to Media</span>
+            </Button>
+            <Button
+              type="button"
               onClick={() => setActiveTab("tags")}
               className="gap-2 text-xs shadow-xs"
             >
@@ -845,8 +1146,8 @@ export function ProductForm({
           </div>
         </TabsContent>
 
-        {/* TAB 3: TAGS */}
-        <TabsContent value="tags" className="space-y-4">
+        {/* TAB 4: MERCHANDISING & DISPLAY TAGS */}
+        <TabsContent value="tags" className="space-y-6">
           <Card className="shadow-xs border-border/70">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">Display Tags</CardTitle>
@@ -909,17 +1210,17 @@ export function ProductForm({
             </CardContent>
           </Card>
 
-          {/* Stepper Navigation */}
+          {/* Stepper Navigation: Final Submission */}
           <div className="flex items-center justify-between pt-4 border-t border-border/60">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setActiveTab("media")}
+              onClick={() => setActiveTab("attributes")}
               className="gap-2 text-xs"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back to Media</span>
+              <span>Back to Quiz & Styling</span>
             </Button>
             <Button type="submit" disabled={isPending} className="gap-2 text-xs shadow-xs">
               {isPending ? (

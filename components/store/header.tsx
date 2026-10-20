@@ -67,7 +67,8 @@ export function Header({ products = [], categories }: HeaderProps) {
   const navItems = [
     { label: "Collections", href: "/collections" },
     { label: "Sarees", href: "/collections" },
-    { label: "Offers", href: "/offers", badge: "New" },
+    { label: "Styling Quiz", href: "/quiz", badge: "New" },
+    { label: "Offers", href: "/offers", badge: "Offers" },
     { label: "About", href: "/#about" },
     { label: "Contact", href: "/#contact" },
   ];
@@ -313,8 +314,20 @@ export function Header({ products = [], categories }: HeaderProps) {
                 <span className="text-sm font-medium text-[#023036]">Best Sellers</span>
               </Link>
 
-              {/* Divider */}
-              <div className="border-t border-[#d2c8b5]/60 my-2" />
+              {/* Saree Styling Quiz */}
+              <Link
+                href="/quiz"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#8C6D37]/10 to-[#8C6D37]/5 border border-[#8C6D37]/25 hover:bg-[#8C6D37]/15 transition-colors mb-2"
+              >
+                <span className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-[#8C6D37]" />
+                  <span className="text-sm font-semibold text-[#073C35]">Find Your Saree Quiz</span>
+                </span>
+                <Badge className="text-[9px] bg-[#073C35] text-white">
+                  Quiz
+                </Badge>
+              </Link>
 
               {/* Offers */}
               <Link

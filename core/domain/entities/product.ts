@@ -7,6 +7,16 @@ import type { Sku } from "../value-objects/sku";
 
 export type ProductStatus = "active" | "inactive";
 
+export type SareeAttributes = Readonly<{
+  fabric?: string | null;
+  occasion?: readonly string[];
+  style?: readonly string[];
+  comfort?: readonly string[];
+  border?: string | null;
+  colourPalette?: string | null;
+  primaryColour?: string | null;
+}>;
+
 /** A sellable item. Zoho Books is the system of record; this is the domain view of it. */
 export type Product = Readonly<{
   /** Zoho `item_id`. */
@@ -28,6 +38,7 @@ export type Product = Readonly<{
   tags: readonly DisplayTag[];
   offer: Offer | null;
   status: ProductStatus;
+  attributes?: SareeAttributes;
 }>;
 
 export type ProductProps = Omit<Product, "gallery" | "tags"> & {
@@ -54,6 +65,17 @@ export function createProduct(props: ProductProps): Product {
     description: props.description.trim(),
     gallery: createGallery(props.gallery ?? []),
     tags: normalizeTags(props.tags ?? []),
+    attributes: props.attributes
+      ? Object.freeze({
+          fabric: props.attributes.fabric ? props.attributes.fabric.trim() : null,
+          occasion: props.attributes.occasion ? Object.freeze([...props.attributes.occasion]) : [],
+          style: props.attributes.style ? Object.freeze([...props.attributes.style]) : [],
+          comfort: props.attributes.comfort ? Object.freeze([...props.attributes.comfort]) : [],
+          border: props.attributes.border ? props.attributes.border.trim() : null,
+          colourPalette: props.attributes.colourPalette ? props.attributes.colourPalette.trim() : null,
+          primaryColour: props.attributes.primaryColour ? props.attributes.primaryColour.trim() : null,
+        })
+      : undefined,
   });
 }
 

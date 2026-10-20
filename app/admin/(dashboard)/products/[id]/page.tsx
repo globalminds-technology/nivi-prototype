@@ -71,6 +71,17 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
           expiry: product.offer.expiry ?? null,
         }
       : null,
+    attributes: product.attributes
+      ? {
+          fabric: product.attributes.fabric ?? null,
+          occasion: [...(product.attributes.occasion ?? [])],
+          style: [...(product.attributes.style ?? [])],
+          comfort: [...(product.attributes.comfort ?? [])],
+          border: product.attributes.border ?? null,
+          colourPalette: product.attributes.colourPalette ?? null,
+          primaryColour: product.attributes.primaryColour ?? null,
+        }
+      : undefined,
   };
 
   return (

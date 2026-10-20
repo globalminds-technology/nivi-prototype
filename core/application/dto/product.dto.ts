@@ -9,6 +9,16 @@ export const ProductOfferDto = z.object({
   expiry: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expiry must be YYYY-MM-DD").optional().nullable(),
 });
 
+export const SareeAttributesDto = z.object({
+  fabric: z.string().optional().nullable(),
+  occasion: z.array(z.string()).default([]),
+  style: z.array(z.string()).default([]),
+  comfort: z.array(z.string()).default([]),
+  border: z.string().optional().nullable(),
+  colourPalette: z.string().optional().nullable(),
+  primaryColour: z.string().optional().nullable(),
+});
+
 export const ProductInputDto = z.object({
   sku: z.preprocess(
     (val) => (typeof val === "string" ? normalizeSku(val) : val),
@@ -27,7 +37,9 @@ export const ProductInputDto = z.object({
   tags: z.array(z.string()).default([]),
   offer: ProductOfferDto.optional().nullable(),
   status: z.enum(["active", "inactive"]).default("active"),
+  attributes: SareeAttributesDto.optional(),
 });
 
+export type SareeAttributesDto = z.infer<typeof SareeAttributesDto>;
 export type ProductOfferDto = z.infer<typeof ProductOfferDto>;
 export type ProductInputDto = z.infer<typeof ProductInputDto>;

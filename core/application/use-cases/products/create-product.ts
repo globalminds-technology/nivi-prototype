@@ -57,6 +57,17 @@ export class CreateProduct {
       tags: dto.tags,
       offer,
       status: dto.status,
+      attributes: dto.attributes
+        ? {
+            fabric: dto.attributes.fabric ?? null,
+            occasion: dto.attributes.occasion ?? [],
+            style: dto.attributes.style ?? [],
+            comfort: dto.attributes.comfort ?? [],
+            border: dto.attributes.border ?? null,
+            colourPalette: dto.attributes.colourPalette ?? null,
+            primaryColour: dto.attributes.primaryColour ?? null,
+          }
+        : undefined,
     };
 
     const created = await this.productRepo.create(props);

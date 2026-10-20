@@ -61,7 +61,7 @@ export function CircularCategoryBar({ categories = [] }: CircularCategoryBarProp
 
   return (
     <section className="w-full pt-2 sm:pt-3 pb-2 sm:pb-3">
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8">
+      <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 md:px-10">
         {/* Header: Explore Categories in Brand Script & Antique Gold */}
         <div className="relative flex flex-col items-center justify-center text-center mb-2 sm:mb-3">
           <GoldText>Explore Categories</GoldText>

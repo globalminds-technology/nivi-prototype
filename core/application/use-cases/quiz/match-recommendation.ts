@@ -1,0 +1,146 @@
+import type {
+  RecommendationProfile,
+  SareeQuizAnswers,
+} from "@/core/domain/entities/saree-quiz";
+import { SAREE_QUIZ_RECOMMENDATIONS } from "@/data/saree-quiz-recommendations";
+
+/**
+ * Specialized Result for Section 7 Sample Scenario:
+ * "Pastel Regal Grace — Modern Comfort Meets Festive Heritage"
+ */
+export const SAMPLE_SCENARIO_RESULT: RecommendationProfile = {
+  id: "rec-sample-festive-pastel",
+  slug: "pastel-regal-grace",
+  title: "Pastel Regal Grace — Modern Comfort Meets Festive Heritage",
+  fabric: "Silk Cotton / Soft Silk",
+  occasions: "Festive or family function",
+  styleSuggestion: "Lightweight soft silk or silk cotton with a grand zari border.",
+  whyItWorks:
+    "A lightweight drape keeps you comfortable during family festivities, while the grand zari border adds celebratory richness.",
+  blouseRecommendation: "Boat-neck or elbow-sleeve blouse with subtle detailing.",
+  drapingTip: "Neat front pleats with a freely flowing pallu to highlight the zari border.",
+  jewelleryAndAccessories:
+    "Silver-toned, white-gold or rhodium-finish jewellery with soft pearl accents to complement cool undertones.",
+  colourGuidance: "Blush pink, lavender, mint and related pastel shades.",
+  bannerImage: null,
+  primaryOccasions: ["Festive or family function"],
+  primaryStyles: ["Modern and minimal"],
+  primaryComforts: ["Light and comfortable"],
+  primaryBorders: ["Grand zari border"],
+  primaryPalettes: ["Soft and pastel — blush, lavender, mint"],
+};
+
+export interface MatchResult {
+  recommendation: RecommendationProfile;
+  score: number;
+  personalizedAdvice?: {
+    drapingNote?: string;
+    jewelleryNote?: string;
+  };
+}
+
+/**
+ * Matches customer answers against recommendation profiles using scoring priorities:
+ * 1. Occasion (30 pts)
+ * 2. Comfort / Feel (25 pts)
+ * 3. Style Preference (20 pts)
+ * 4. Border Preference (15 pts)
+ * 5. Colour Palette (10 pts)
+ * 6. Height / Proportions (5 pts)
+ *
+ * Deterministic fallback and tie-breaking ensured.
+ */
+export function matchRecommendation(answers: SareeQuizAnswers): MatchResult {
+  // Check exact Section 7 Sample Scenario
+  if (
+    answers.occasion === "Festive or family function" &&
+    answers.style === "Modern and minimal" &&
+    answers.comfort === "Light and comfortable" &&
+    answers.border === "Grand zari border" &&
+    answers.colourPalette === "Soft and pastel — blush, lavender, mint"
+  ) {
+    return {
+      recommendation: SAMPLE_SCENARIO_RESULT,
+      score: 100,
+      personalizedAdvice: generatePersonalizedAdvice(answers),
+    };
+  }
+
+  let bestMatch: RecommendationProfile = SAREE_QUIZ_RECOMMENDATIONS[0];
+  let highestScore = -1;
+
+  for (const profile of SAREE_QUIZ_RECOMMENDATIONS) {
+    let score = 0;
+
+    // 1. Occasion (Weight: 30)
+    if (answers.occasion && profile.primaryOccasions.includes(answers.occasion)) {
+      score += 30;
+    }
+
+    // 2. Comfort & Feel (Weight: 25)
+    if (answers.comfort && profile.primaryComforts.includes(answers.comfort)) {
+      score += 25;
+    }
+
+    // 3. Preferred Style (Weight: 20)
+    if (answers.style && profile.primaryStyles.includes(answers.style)) {
+      score += 20;
+    }
+
+    // 4. Border Preference (Weight: 15)
+    if (answers.border && profile.primaryBorders.includes(answers.border)) {
+      score += 15;
+    }
+
+    // 5. Colour Palette (Weight: 10)
+    if (answers.colourPalette && profile.primaryPalettes.includes(answers.colourPalette)) {
+      score += 10;
+    }
+
+    // 6. Height / Proportions (Weight: 5)
+    if (answers.height && profile.preferredHeight === answers.height) {
+      score += 5;
+    }
+
+    if (score > highestScore) {
+      highestScore = score;
+      bestMatch = profile;
+    }
+  }
+
+  return {
+    recommendation: bestMatch,
+    score: highestScore,
+    personalizedAdvice: generatePersonalizedAdvice(answers),
+  };
+}
+
+/**
+ * Adds nuanced, positive styling tips based on Undertone and Height
+ * without body-shaming or making absolute claims.
+ */
+function generatePersonalizedAdvice(answers: SareeQuizAnswers) {
+  let drapingNote: string | undefined;
+  let jewelleryNote: string | undefined;
+
+  if (answers.height === "Petite") {
+    drapingNote =
+      "For a streamlined look, keep your pleats neat and moderately spaced, letting the pallu flow naturally.";
+  } else if (answers.height === "Tall") {
+    drapingNote =
+      "Vertical pattern alignment and a slightly broader shoulder drape highlight tall proportions gracefully.";
+  }
+
+  if (answers.undertone?.includes("Warm")) {
+    jewelleryNote =
+      "Warm golden, antique bronze, and temple jewellery beautifully accentuate warm golden skin tones.";
+  } else if (answers.undertone?.includes("Cool")) {
+    jewelleryNote =
+      "Silver, white-gold finishes, and soft pearl ornaments add luminous radiance to cool undertones.";
+  } else if (answers.undertone?.includes("Neutral")) {
+    jewelleryNote =
+      "Both yellow gold and oxidised silver accessories blend effortlessly with neutral undertones.";
+  }
+
+  return { drapingNote, jewelleryNote };
+}

@@ -141,6 +141,51 @@ export class ZohoItemMapper {
       }
     }
 
+    // 4. Saree Quiz Attributes
+    const parseMulti = (val: unknown): string[] => {
+      if (!val) return [];
+      if (Array.isArray(val)) return val.map(String).map((s) => s.trim()).filter(Boolean);
+      if (typeof val === "string") {
+        return val.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean);
+      }
+      return [String(val).trim()].filter(Boolean);
+    };
+
+    const parseSingle = (val: unknown): string | null => {
+      if (val === undefined || val === null) return null;
+      const str = String(val).trim();
+      return str.length > 0 ? str : null;
+    };
+
+    const fabricVal = parseSingle(this.getCustomFieldValue(raw, "fabric_type"));
+    const occasionVal = parseMulti(this.getCustomFieldValue(raw, "occasion"));
+    const styleVal = parseMulti(this.getCustomFieldValue(raw, "style_preference"));
+    const comfortVal = parseMulti(this.getCustomFieldValue(raw, "comfort_feel"));
+    const borderVal = parseSingle(this.getCustomFieldValue(raw, "border_type"));
+    const paletteVal = parseSingle(this.getCustomFieldValue(raw, "colour_palette"));
+    const primaryColourVal = parseSingle(this.getCustomFieldValue(raw, "primary_colour"));
+
+    const hasAttributes =
+      fabricVal !== null ||
+      occasionVal.length > 0 ||
+      styleVal.length > 0 ||
+      comfortVal.length > 0 ||
+      borderVal !== null ||
+      paletteVal !== null ||
+      primaryColourVal !== null;
+
+    const attributes = hasAttributes
+      ? {
+          fabric: fabricVal,
+          occasion: occasionVal,
+          style: styleVal,
+          comfort: comfortVal,
+          border: borderVal,
+          colourPalette: paletteVal,
+          primaryColour: primaryColourVal,
+        }
+      : undefined;
+
     // Stock count (Zoho uses actual_available_stock or stock_on_hand when tracked)
     let stock = Number(raw.actual_available_stock ?? raw.stock_on_hand ?? raw.initial_stock ?? 0);
     if (isNaN(stock) || stock < 0) {
@@ -186,6 +231,7 @@ export class ZohoItemMapper {
       tags: displayTags,
       offer,
       status: raw.status === "inactive" ? "inactive" : "active",
+      attributes,
     });
   }
 
@@ -254,6 +300,52 @@ export class ZohoItemMapper {
         api_name: "cf_display_tags",
         value: props.tags.join(", "),
       });
+    }
+
+    // Saree Quiz Attributes
+    if (props.attributes) {
+      if (props.attributes.fabric) {
+        customFields.push({
+          api_name: "cf_fabric_type",
+          value: props.attributes.fabric,
+        });
+      }
+      if (props.attributes.occasion && props.attributes.occasion.length > 0) {
+        customFields.push({
+          api_name: "cf_occasion",
+          value: Array.from(props.attributes.occasion),
+        });
+      }
+      if (props.attributes.style && props.attributes.style.length > 0) {
+        customFields.push({
+          api_name: "cf_style_preference",
+          value: Array.from(props.attributes.style),
+        });
+      }
+      if (props.attributes.comfort && props.attributes.comfort.length > 0) {
+        customFields.push({
+          api_name: "cf_comfort_feel",
+          value: Array.from(props.attributes.comfort),
+        });
+      }
+      if (props.attributes.border) {
+        customFields.push({
+          api_name: "cf_border_type",
+          value: props.attributes.border,
+        });
+      }
+      if (props.attributes.colourPalette) {
+        customFields.push({
+          api_name: "cf_colour_palette",
+          value: props.attributes.colourPalette,
+        });
+      }
+      if (props.attributes.primaryColour) {
+        customFields.push({
+          api_name: "cf_primary_colour",
+          value: props.attributes.primaryColour,
+        });
+      }
     }
 
     if (props.offer && props.offer.active) {

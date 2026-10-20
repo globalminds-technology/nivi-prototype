@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import {} from "lucide-react";
 import { Great_Vibes } from "next/font/google";
 import { StorePoliciesDialog, type PolicyTabKey } from "./store-policies-dialog";
 import "./gold-text.css";
@@ -66,34 +66,14 @@ export function Footer() {
   const [policyDialogOpen, setPolicyDialogOpen] = useState(false);
   const [selectedPolicyTab, setSelectedPolicyTab] = useState<PolicyTabKey>("shipping");
 
-  // Newsletter interactive state
-  const [email, setEmail] = useState("");
-  const [consent, setConsent] = useState(true);
-  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [newsletterMessage, setNewsletterMessage] = useState("");
+
 
   const handleOpenPolicy = (tab: PolicyTabKey) => {
     setSelectedPolicyTab(tab);
     setPolicyDialogOpen(true);
   };
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanEmail = email.trim();
 
-    if (!cleanEmail || !cleanEmail.includes("@") || !cleanEmail.includes(".")) {
-      setNewsletterStatus("error");
-      setNewsletterMessage("Please enter a valid email address.");
-      return;
-    }
-
-    setNewsletterStatus("loading");
-    setTimeout(() => {
-      setNewsletterStatus("success");
-      setNewsletterMessage("Thank you! You're on our list for exclusive updates.");
-      setEmail("");
-    }, 500);
-  };
 
   const currentYear = new Date().getFullYear();
 
@@ -320,68 +300,7 @@ export function Footer() {
                   </ul>
                 </div>
 
-                {/* Antique Gold Divider */}
-                <GoldFiligreeDivider />
 
-                {/* 5. JOIN OUR JOURNEY COLUMN (Newsletter) */}
-                <div className="space-y-1.5 xl:space-y-2 max-w-[260px] xl:max-w-[290px]">
-                  <h4 className="font-serif text-[12px] xl:text-[13px] font-bold tracking-wider text-[#694208] uppercase">
-                    JOIN OUR JOURNEY
-                  </h4>
-                  <p className="text-[11px] xl:text-[12px] text-[#221811] font-medium leading-tight">
-                    Get exclusive updates, new arrivals and special offers.
-                  </p>
-
-                  <form onSubmit={handleNewsletterSubmit} className="pt-0.5">
-                    {/* Pill Input with Dark Teal Circle Arrow Button */}
-                    <div className="relative flex items-center">
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value);
-                          if (newsletterStatus === "error") setNewsletterStatus("idle");
-                        }}
-                        placeholder="Enter your email address"
-                        disabled={newsletterStatus === "loading"}
-                        className="w-full h-8 sm:h-8.5 xl:h-9 pl-3.5 pr-10 rounded-full bg-[#FFFCF5] border border-[#D5CCBB] text-[11px] xl:text-xs text-[#30251F] placeholder:text-[#6B5A4A]/70 focus:outline-none focus:border-[#073C35] shadow-xs"
-                        aria-label="Email address for newsletter"
-                      />
-                      <button
-                        type="submit"
-                        disabled={newsletterStatus === "loading"}
-                        aria-label="Subscribe to newsletter"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 h-6.5 w-6.5 xl:h-7 xl:w-7 rounded-full bg-[#073C35] text-[#FFFCF5] hover:bg-[#073C35]/90 disabled:opacity-50 flex items-center justify-center transition-all shadow-xs cursor-pointer"
-                      >
-                        <ArrowRight className="h-3 w-3 xl:h-3.5 xl:w-3.5" />
-                      </button>
-                    </div>
-
-                    {/* Consent Checkbox */}
-                    <label className="flex items-center gap-1.5 mt-1.5 text-[10px] xl:text-[10.5px] text-[#30251F]/80 cursor-pointer select-none">
-                      <input
-                        type="checkbox"
-                        checked={consent}
-                        onChange={(e) => setConsent(e.target.checked)}
-                        className="rounded border-[#D5CCBB] text-[#073C35] focus:ring-0 h-3 w-3 accent-[#073C35] cursor-pointer"
-                      />
-                      <span>I agree to receive updates from NiVi</span>
-                    </label>
-
-                    {/* Status Feedback */}
-                    {newsletterStatus === "success" && (
-                      <div className="flex items-center gap-1 text-[10.5px] text-[#073C35] font-medium pt-1 animate-in fade-in-0 duration-200">
-                        <CheckCircle2 className="h-3 w-3 text-[#073C35] shrink-0" />
-                        <span>{newsletterMessage}</span>
-                      </div>
-                    )}
-                    {newsletterStatus === "error" && (
-                      <p className="text-[10.5px] text-red-700 font-medium pt-0.5 animate-in fade-in-0 duration-200">
-                        {newsletterMessage}
-                      </p>
-                    )}
-                  </form>
-                </div>
               </div>
             </div>
 
@@ -431,7 +350,7 @@ export function Footer() {
           - Compact aspect ratio to eliminate excessive empty green space
          ======================================================== */}
       <div className="block md:hidden relative w-full overflow-hidden bg-[#03332a]">
-        <div className="relative w-full aspect-[1024/1180] sm:aspect-[16/11] md:aspect-[16/9] md:max-h-[500px]">
+        <div className="relative w-full aspect-[1024/1050] sm:aspect-[16/11]">
           {/* Base Mobile Illustration - Object cover with top alignment */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -546,43 +465,7 @@ export function Footer() {
                   </div>
                 </div>
 
-                {/* Compact Newsletter */}
-                <div className="w-full max-w-xs mt-2.5">
-                  <h4 className="font-serif text-[10.5px] font-bold tracking-wider text-[#694208] uppercase">
-                    Join Our Journey
-                  </h4>
-                  <p className="text-[9.5px] text-[#221811] mb-1">
-                    Exclusive previews & special offers.
-                  </p>
-                  <form onSubmit={handleNewsletterSubmit} className="relative flex items-center max-w-[220px] mx-auto">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (newsletterStatus === "error") setNewsletterStatus("idle");
-                      }}
-                      placeholder="Enter your email"
-                      disabled={newsletterStatus === "loading"}
-                      className="w-full h-6.5 pl-3 pr-7 rounded-full bg-[#FFFCF5] border border-[#D5CCBB] text-[9.5px] text-[#30251F] placeholder:text-[#6B5A4A]/70 focus:outline-none focus:border-[#073C35] shadow-xs"
-                      aria-label="Email address for newsletter"
-                    />
-                    <button
-                      type="submit"
-                      disabled={newsletterStatus === "loading"}
-                      aria-label="Subscribe to newsletter"
-                      className="absolute right-0.5 top-1/2 -translate-y-1/2 h-5.5 w-5.5 rounded-full bg-[#073C35] text-[#FFFCF5] hover:bg-[#073C35]/90 flex items-center justify-center shadow-xs"
-                    >
-                      <ArrowRight className="h-2.5 w-2.5" />
-                    </button>
-                  </form>
-                  {newsletterStatus === "success" && (
-                    <p className="text-[9px] text-[#073C35] font-medium pt-0.5">{newsletterMessage}</p>
-                  )}
-                  {newsletterStatus === "error" && (
-                    <p className="text-[9px] text-red-700 font-medium pt-0.5">{newsletterMessage}</p>
-                  )}
-                </div>
+
               </div>
 
               {/* TABLET LAYOUT (>= 640px and < 1024px) - Elegant 3-Column Spread */}
@@ -678,43 +561,7 @@ export function Footer() {
                   </div>
                 </div>
 
-                {/* 3. Newsletter Column */}
-                <div className="max-w-[210px] md:max-w-[250px] text-left">
-                  <h4 className="font-serif text-[11px] md:text-xs font-bold tracking-wider text-[#694208] uppercase mb-0.5">
-                    Join Our Journey
-                  </h4>
-                  <p className="text-[10px] md:text-[11px] text-[#221811] mb-1.5 leading-tight">
-                    Exclusive previews & special offers.
-                  </p>
-                  <form onSubmit={handleNewsletterSubmit} className="relative flex items-center w-full">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (newsletterStatus === "error") setNewsletterStatus("idle");
-                      }}
-                      placeholder="Enter your email"
-                      disabled={newsletterStatus === "loading"}
-                      className="w-full h-7 md:h-7.5 pl-3 pr-8 rounded-full bg-[#FFFCF5] border border-[#D5CCBB] text-[10.5px] md:text-xs text-[#30251F] placeholder:text-[#6B5A4A]/70 focus:outline-none focus:border-[#073C35] shadow-xs"
-                      aria-label="Email address for newsletter"
-                    />
-                    <button
-                      type="submit"
-                      disabled={newsletterStatus === "loading"}
-                      aria-label="Subscribe to newsletter"
-                      className="absolute right-0.5 top-1/2 -translate-y-1/2 h-6 w-6 md:h-6.5 md:w-6.5 rounded-full bg-[#073C35] text-[#FFFCF5] hover:bg-[#073C35]/90 flex items-center justify-center shadow-xs"
-                    >
-                      <ArrowRight className="h-3 w-3" />
-                    </button>
-                  </form>
-                  {newsletterStatus === "success" && (
-                    <p className="text-[10px] text-[#073C35] font-medium pt-1">{newsletterMessage}</p>
-                  )}
-                  {newsletterStatus === "error" && (
-                    <p className="text-[10px] text-red-700 font-medium pt-1">{newsletterMessage}</p>
-                  )}
-                </div>
+
               </div>
             </div>
 

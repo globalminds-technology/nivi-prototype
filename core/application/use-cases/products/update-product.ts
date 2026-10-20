@@ -37,6 +37,19 @@ export class UpdateProduct {
     if (dto.gallery !== undefined) updates.gallery = dto.gallery;
     if (dto.tags !== undefined) updates.tags = dto.tags;
     if (dto.status !== undefined) updates.status = dto.status;
+    if (dto.attributes !== undefined) {
+      updates.attributes = dto.attributes
+        ? {
+            fabric: dto.attributes.fabric ?? null,
+            occasion: dto.attributes.occasion ?? [],
+            style: dto.attributes.style ?? [],
+            comfort: dto.attributes.comfort ?? [],
+            border: dto.attributes.border ?? null,
+            colourPalette: dto.attributes.colourPalette ?? null,
+            primaryColour: dto.attributes.primaryColour ?? null,
+          }
+        : undefined;
+    }
 
     if (dto.offer !== undefined) {
       updates.offer = dto.offer
