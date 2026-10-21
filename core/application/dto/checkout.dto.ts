@@ -39,6 +39,7 @@ export const CartLineItemDto = z.object({
 export const CheckoutInputDto = z.object({
   customer: CustomerDto,
   items: z.array(CartLineItemDto).min(1, "Cart cannot be empty"),
+  shippingMethod: z.enum(["standard", "express"]).optional(),
 });
 
 export const ConfirmPaymentDto = z.object({

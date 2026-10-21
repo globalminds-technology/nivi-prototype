@@ -41,7 +41,7 @@ export function ProductActions({ sku, name, stock }: ProductActionsProps) {
   const whatsappMessage = encodeURIComponent(
     `Hello Nivi, I would like to inquire about "${name}" (SKU: ${sku}).`,
   );
-  const whatsappUrl = `https://wa.me/919999999999?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/919150992863?text=${whatsappMessage}`;
 
   return (
     <div className="space-y-4 pt-4 border-t border-border/60">

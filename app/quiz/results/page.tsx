@@ -8,10 +8,10 @@ import {
   Palette,
   RefreshCw,
   Scissors,
-  Sparkles,
 } from "lucide-react";
 import { Header } from "@/components/store/header";
 import { Footer } from "@/components/store/footer";
+import { GoldText } from "@/components/store/gold-text";
 import { ProductCard, type StoreProductData } from "@/components/store/product-card";
 import { connection } from "next/server";
 import { productSlug, type Product } from "@/core/domain/entities/product";
@@ -45,9 +45,9 @@ interface QuizResultsPageProps {
 export const instant = false;
 
 export const metadata = {
-  title: "Your Saree Styling Recommendation — NiVi",
+  title: "Your Saree Match — NiVi Matchmaker",
   description:
-    "Discover your signature saree recommendation, draping tips, blouse pairings, and matching handcrafted sarees.",
+    "Discover your signature saree match, draping tips, blouse pairings, and matching handcrafted sarees.",
 };
 
 export default async function QuizResultsPage({ searchParams }: QuizResultsPageProps) {
@@ -199,11 +199,11 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
             </Link>
             <ChevronRight className="h-3 w-3 text-[#B0A292]" />
             <Link href="/quiz" className="hover:text-[#073C35] transition-colors">
-              Styling Quiz
+              Find Your Match
             </Link>
             <ChevronRight className="h-3 w-3 text-[#B0A292]" />
             <span className="font-semibold text-[#073C35] bg-[#073C35]/8 px-2 py-0.5 rounded">
-              Your Recommendation
+              Your Saree Match
             </span>
           </nav>
 
@@ -217,7 +217,6 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
               {/* Left Column: Title, Focus, Story */}
               <div className="lg:col-span-7 space-y-4">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFCF5]/15 text-[#EFE3CF] text-xs font-semibold backdrop-blur-md border border-[#C9A45C]/40 shadow-xs">
-                  <Sparkles className="h-3.5 w-3.5 text-[#C9A45C]" />
                   <span>Curated For Your Occasion & Style</span>
                 </div>
 
@@ -241,7 +240,7 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
                     className="inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-[#FAF7F0] border border-white/20 transition-all cursor-pointer"
                   >
                     <RefreshCw className="h-3 w-3" />
-                    <span>Retake Quiz</span>
+                    <span>Find Another Match</span>
                   </Link>
                 </div>
               </div>
@@ -337,7 +336,7 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
               <div className="bg-[#FFFCF7] border border-[#E5DAC6] border-t-4 border-t-[#073C35] rounded-2xl p-6 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div className="space-y-3">
                   <div className="h-9 w-9 rounded-xl bg-[#073C35]/10 flex items-center justify-center text-[#073C35]">
-                    <Sparkles className="h-5 w-5" />
+                    <Scissors className="h-5 w-5" />
                   </div>
                   <div>
                     <span className="text-[10.5px] font-bold text-[#8C6D37] uppercase tracking-wider block">
@@ -388,7 +387,7 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
 
                   {personalizedAdvice?.jewelleryNote && (
                     <div className="bg-[#8C6D37]/10 border border-[#8C6D37]/25 p-2.5 rounded-lg text-xs text-[#694208] flex items-start gap-1.5 mt-2">
-                      <Sparkles className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#8C6D37]" />
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#8C6D37]" />
                       <span>{personalizedAdvice.jewelleryNote}</span>
                     </div>
                   )}
@@ -404,12 +403,10 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
           <div className="space-y-6 pt-4">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#E5DAC6] pb-4">
               <div>
-                <span className="text-xs font-bold text-[#8C6D37] uppercase tracking-widest">
+                <span className="text-xs font-bold text-[#8C6D37] uppercase tracking-widest block mb-1">
                   Ready to Wear
                 </span>
-                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#221811] mt-0.5">
-                  Matching In-Stock Sarees
-                </h2>
+                <GoldText>Matching In-Stock Sarees</GoldText>
                 <p className="text-xs sm:text-sm text-[#6B5A4A] mt-1">
                   Handcrafted sarees in stock, matching your recommended weave, occasion, and style profile.
                 </p>
@@ -420,12 +417,12 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
                 className="inline-flex items-center gap-2 text-xs font-semibold text-[#073C35] hover:text-[#073C35]/80 transition-colors"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
-                <span>Retake Quiz / Change Answers</span>
+                <span>Find Another Match / Edit Preferences</span>
               </Link>
             </div>
 
             {matchedStoreProducts.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-4 lg:gap-5">
                 {matchedStoreProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -448,14 +445,14 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
             )}
           </div>
 
-          {/* Bottom Retake Quiz CTA Card */}
+          {/* Bottom Retake Matchmaker CTA Card */}
           <div className="bg-[#FFFCF7] border border-[#E5DAC6] rounded-2xl p-7 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs text-center sm:text-left">
             <div className="space-y-1">
               <h3 className="font-serif text-xl font-bold text-[#221811]">
                 Shopping for another special occasion?
               </h3>
               <p className="text-xs sm:text-sm text-[#6B5A4A] max-w-xl">
-                Explore tailored advice for a wedding, family festival, daily comfort, or formal office wear with a fresh quiz run.
+                Explore tailored advice for a wedding, family festival, daily comfort, or formal office wear with a fresh matchmaker session.
               </p>
             </div>
 
@@ -464,7 +461,7 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
               className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold px-7 py-3 rounded-full bg-[#073C35] text-[#FAF7F0] hover:bg-[#073C35]/90 transition-all shrink-0 shadow-md hover:shadow-lg active:scale-95"
             >
               <RefreshCw className="h-4 w-4" />
-              <span>Retake Styling Quiz</span>
+              <span>Retake Saree Matchmaker</span>
             </Link>
           </div>
         </div>

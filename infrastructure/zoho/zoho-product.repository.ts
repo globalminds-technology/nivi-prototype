@@ -41,7 +41,17 @@ export class ZohoProductRepository implements ProductRepository {
 
     const response = await this.http.get<ZohoItemsListResponse>("items", queryParams);
 
-    const items = response.items || [];
+    const items = (response.items || []).filter((raw) => {
+      const sku = String(raw.sku || "").toUpperCase();
+      const productType = String(raw.product_type || "").toLowerCase();
+      if (sku === "SHIP-STD" || sku === "SHIP-EXP" || sku.startsWith("SHIP-")) {
+        return false;
+      }
+      if (productType === "service") {
+        return false;
+      }
+      return true;
+    });
     let products = await Promise.all(
       items.map(async (raw) => {
         // If the summary item already has custom fields, map directly

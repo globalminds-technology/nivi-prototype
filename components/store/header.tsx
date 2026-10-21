@@ -14,9 +14,10 @@ import {
   Menu,
   Search,
   ShoppingBag,
-  Sparkles,
+  Clock,
+  Compass,
+  Percent,
   Tag,
-  User,
   X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -63,14 +64,12 @@ export function Header({ products = [], categories }: HeaderProps) {
     }));
   }, [categories, products]);
 
-  // Exact navigation items from desktop reference
+  // Clean navigation items without duplicates or tags
   const navItems = [
     { label: "Collections", href: "/collections" },
-    { label: "Sarees", href: "/collections" },
-    { label: "Styling Quiz", href: "/quiz", badge: "New" },
-    { label: "Offers", href: "/offers", badge: "Offers" },
-    { label: "About", href: "/#about" },
-    { label: "Contact", href: "/#contact" },
+    { label: "Find Your Match", href: "/quiz" },
+    { label: "Offers", href: "/offers" },
+    { label: "About", href: "/about" },
   ];
 
   return (
@@ -115,7 +114,7 @@ export function Header({ products = [], categories }: HeaderProps) {
                   className="h-7 sm:h-8 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
                 />
                 <span className="hidden sm:inline-block gold-quote text-[0.88rem] leading-tight select-none mt-0.5">
-                  Woven with tradition, styled for today
+                  Weaving Elegance, Celebrating Tradition.
                 </span>
               </div>
             </Link>
@@ -139,7 +138,7 @@ export function Header({ products = [], categories }: HeaderProps) {
                 />
                 <div className="hidden xl:block">
                   <span className="gold-quote text-[0.92rem] lg:text-[1.05rem] leading-tight select-none mt-0.5">
-                    Woven with tradition, styled for today
+                    Weaving Elegance, Celebrating Tradition.
                   </span>
                 </div>
               </div>
@@ -166,11 +165,6 @@ export function Header({ products = [], categories }: HeaderProps) {
                     {isActive && (
                       <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#073C35] rounded-full" />
                     )}
-                    {item.badge && (
-                      <span className="ml-1 text-[8.5px] font-semibold px-1 py-0.5 rounded-full uppercase tracking-wider bg-[#DCAEB6] text-[#30251F]">
-                        {item.badge}
-                      </span>
-                    )}
                   </Link>
                 );
               })}
@@ -182,7 +176,7 @@ export function Header({ products = [], categories }: HeaderProps) {
             {/* Search Dropdown / Trigger */}
             <SearchDropdown products={products} />
 
-            {/* DESKTOP ONLY: Wishlist, Account, and Cart Bag (Mobile accesses these via bottom navigation bar) */}
+            {/* DESKTOP ONLY: Wishlist and Cart Bag */}
             <div className="hidden md:flex items-center gap-1 md:gap-1.5 lg:gap-2.5">
               <Link
                 href="/wishlist"
@@ -200,20 +194,6 @@ export function Header({ products = [], categories }: HeaderProps) {
                     {wishlistCount}
                   </span>
                 )}
-              </Link>
-
-              <Link
-                href="/admin"
-                aria-label="Account / Admin"
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "icon-sm",
-                  className:
-                    "text-[#073C35] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-full h-8 w-8 md:h-8.5 md:w-8.5",
-                })}
-                title="Account / Admin"
-              >
-                <User className="h-4 w-4 md:h-4.5 md:w-4.5" />
               </Link>
 
               <Button
@@ -292,7 +272,7 @@ export function Header({ products = [], categories }: HeaderProps) {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#023036]/5 transition-colors"
               >
-                <Sparkles className="h-4 w-4 text-[#B87333]" />
+                <Clock className="h-4 w-4 text-[#B87333]" />
                 <span className="text-sm font-medium text-[#023036]">New Arrivals</span>
               </Link>
 
@@ -314,47 +294,37 @@ export function Header({ products = [], categories }: HeaderProps) {
                 <span className="text-sm font-medium text-[#023036]">Best Sellers</span>
               </Link>
 
-              {/* Saree Styling Quiz */}
+              {/* Saree Matchmaker */}
               <Link
                 href="/quiz"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#8C6D37]/10 to-[#8C6D37]/5 border border-[#8C6D37]/25 hover:bg-[#8C6D37]/15 transition-colors mb-2"
+                className="flex items-center gap-2 p-3 rounded-xl bg-gradient-to-r from-[#8C6D37]/10 to-[#8C6D37]/5 border border-[#8C6D37]/25 hover:bg-[#8C6D37]/15 transition-colors mb-2"
               >
-                <span className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#8C6D37]" />
-                  <span className="text-sm font-semibold text-[#073C35]">Find Your Saree Quiz</span>
-                </span>
-                <Badge className="text-[9px] bg-[#073C35] text-white">
-                  Quiz
-                </Badge>
+                <Compass className="h-4 w-4 text-[#8C6D37]" />
+                <span className="text-sm font-semibold text-[#073C35]">Find Your Match</span>
               </Link>
 
               {/* Offers */}
               <Link
                 href="/offers"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#023036]/5 to-[#056677]/10 border border-[#023036]/15 hover:bg-[#023036]/10 transition-colors"
+                className="flex items-center gap-2 p-3 rounded-xl bg-gradient-to-r from-[#023036]/5 to-[#056677]/10 border border-[#023036]/15 hover:bg-[#023036]/10 transition-colors"
               >
-                <span className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#B87333]" />
-                  <span className="text-sm font-semibold text-[#023036]">Special Offers</span>
-                </span>
-                <Badge className="text-[9px] bg-[#023036] text-white">
-                  Deals
-                </Badge>
+                <Percent className="h-4 w-4 text-[#B87333]" />
+                <span className="text-sm font-semibold text-[#023036]">Special Offers</span>
               </Link>
             </div>
 
             {/* Drawer Footer */}
             <div className="p-4 border-t border-[#023036]/15 space-y-2 bg-[#FAF8F5]">
               <a
-                href="https://wa.me/919999999999?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#023036] hover:bg-[#035354] text-white text-xs font-semibold shadow-xs transition-colors"
               >
                 <Headphones className="h-4 w-4" />
-                <span>WhatsApp Concierge</span>
+                <span>WhatsApp: +91 91509 92863</span>
               </a>
             </div>
           </div>
@@ -371,7 +341,7 @@ export function Header({ products = [], categories }: HeaderProps) {
           background: "linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(244, 238, 227, 0.98) 100%)",
         }}
       >
-        <div className="grid grid-cols-5 items-center max-w-md mx-auto px-1">
+        <div className="grid grid-cols-4 items-center max-w-md mx-auto px-1">
           {/* 1. Home */}
           <Link
             href="/"
@@ -444,21 +414,6 @@ export function Header({ products = [], categories }: HeaderProps) {
               )}
             </div>
             <span className="text-[10px] tracking-tight mt-1">Wishlist</span>
-          </Link>
-
-          {/* 5. Account */}
-          <Link
-            href="/admin"
-            className={`flex flex-col items-center justify-center py-1 transition-colors ${
-              pathname.startsWith("/admin")
-                ? "text-[#073C35] font-bold"
-                : "text-[#6B5A4A] hover:text-[#073C35]"
-            }`}
-          >
-            <div className="relative">
-              <User className="h-5 w-5 stroke-[1.8px]" />
-            </div>
-            <span className="text-[10px] tracking-tight mt-1">Account</span>
           </Link>
         </div>
       </nav>

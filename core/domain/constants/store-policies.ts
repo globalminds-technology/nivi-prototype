@@ -110,7 +110,7 @@ export const STORE_POLICIES: Record<string, PolicySection> = {
         heading: "⏰ Claim Window: 12–18 Hours of Delivery",
         paragraphs: [
           "Any damage or wrong-product issue must be reported to NiVi within 12–18 hours of delivery.",
-          "Please submit your claim via Email and WhatsApp including:",
+          "Please submit your claim via Email (connect@brandnivi.com) and WhatsApp (+91 91509 92863) including:",
         ],
         bulletPoints: [
           { text: "Continuous unboxing video" },
@@ -166,7 +166,7 @@ export const STORE_POLICIES: Record<string, PolicySection> = {
     id: "disclaimers",
     title: "Product & Craft Disclaimers",
     badge: "Sungudi & Handloom",
-    iconName: "Sparkles",
+    iconName: "Info",
     summary: "Traditional Sungudi river sand marks, artisan smudges, and zari line relaxation characteristics.",
     content: [
       {

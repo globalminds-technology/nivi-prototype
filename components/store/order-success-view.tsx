@@ -9,10 +9,9 @@ import {
   Mail,
   MapPin,
   MessageCircle,
+  MessageSquare,
   Package,
   ShieldCheck,
-  Sparkles,
-  Star,
   Tag,
   Truck,
 } from "lucide-react";
@@ -61,6 +60,9 @@ interface StoredOrderDetails {
     }>;
     subtotal: { minor: number };
     discount: { minor: number };
+    shipping?: { minor: number };
+    shippingMethod?: "standard" | "express";
+    shippingLabel?: string;
     tax: { minor: number };
     total: { minor: number };
   };
@@ -100,7 +102,7 @@ export function OrderSuccessView() {
   const whatsappMessage = encodeURIComponent(
     `Hello Nivi Concierge! I just placed an order (Invoice: ${invoiceNumber}). Could you provide delivery updates?`,
   );
-  const whatsappUrl = `https://wa.me/919840000000?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/919150992863?text=${whatsappMessage}`;
 
   return (
     <div className="container max-w-3xl mx-auto py-12 px-4 sm:px-6">
@@ -170,9 +172,8 @@ export function OrderSuccessView() {
                           {line.offerLabel && (
                             <Badge
                               variant="secondary"
-                              className="text-[9px] bg-amber-500/10 text-amber-700 dark:text-amber-400 border-none px-1.5 py-0 inline-flex items-center gap-1"
+                              className="text-[9px] bg-amber-500/10 text-amber-700 dark:text-amber-400 border-none px-1.5 py-0 inline-flex items-center"
                             >
-                              <Sparkles className="w-2.5 h-2.5" />
                               <span>{line.offerLabel}</span>
                             </Badge>
                           )}
@@ -213,9 +214,13 @@ export function OrderSuccessView() {
                   <div className="flex items-center justify-between text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Truck className="w-3 h-3 text-primary" />
-                      <span>Insured Domestic Shipping</span>
+                      <span>{quote.shippingLabel || "Shipping"}</span>
                     </span>
-                    <span className="font-medium text-emerald-600 dark:text-emerald-400">FREE</span>
+                    <span className="font-mono font-medium text-foreground">
+                      {quote.shipping && quote.shipping.minor > 0
+                        ? formatInr(quote.shipping.minor)
+                        : "FREE"}
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between text-muted-foreground">
@@ -283,7 +288,7 @@ export function OrderSuccessView() {
               <div className="text-xs text-left">
                 <p className="font-medium">Have bespoke requests or questions?</p>
                 <p className="text-muted-foreground">
-                  Our Chennai boutique concierge is available directly on WhatsApp.
+                  Our concierge is available on WhatsApp (+91 91509 92863) or email at connect@brandnivi.com.
                 </p>
               </div>
               <a
@@ -309,7 +314,7 @@ export function OrderSuccessView() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <div className="p-1 rounded-md bg-amber-500/10 text-amber-600">
-                  <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+                  <MessageSquare className="w-4 h-4 text-amber-600" />
                 </div>
                 <div>
                   <CardTitle className="font-serif text-lg font-medium">

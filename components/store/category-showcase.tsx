@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Category } from "@/core/domain/entities/category";
 
 interface CategoryShowcaseProps {
@@ -14,7 +14,6 @@ export function CategoryShowcase({ categories }: CategoryShowcaseProps) {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-border/60 pb-4">
         <div>
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-primary tracking-wider uppercase mb-1">
-            <Sparkles className="h-3 w-3 text-brand" />
             <span>Master Crafts & Weaves</span>
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-foreground">

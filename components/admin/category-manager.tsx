@@ -8,7 +8,6 @@ import {
   Layers,
   Pencil,
   Plus,
-  Sparkles,
   Trash2,
   UploadCloud,
   X,

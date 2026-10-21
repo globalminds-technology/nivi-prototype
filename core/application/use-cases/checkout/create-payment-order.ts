@@ -16,7 +16,7 @@ export class CreatePaymentOrder {
   ) {}
 
   async execute(dto: CheckoutInputDto): Promise<CreatePaymentOrderResult> {
-    const quote = await this.quoteCart.execute(dto.items);
+    const quote = await this.quoteCart.execute(dto.items, dto.shippingMethod || "standard");
 
     const snapshot: CheckoutSnapshot = {
       quote,
@@ -46,6 +46,7 @@ export class CreatePaymentOrder {
         customerEmail: dto.customer.email,
         customerPhone: dto.customer.phone,
         itemCount: String(dto.items.length),
+        shippingMethod: dto.shippingMethod || "standard",
       },
     });
 

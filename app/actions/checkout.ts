@@ -19,6 +19,7 @@ export interface QuoteCartResponse {
 
 export async function quoteCartAction(
   items: unknown,
+  shippingMethod: "standard" | "express" = "standard",
 ): Promise<QuoteCartResponse> {
   try {
     const parsed = z.array(CartLineItemDto).min(1).safeParse(items);
@@ -29,7 +30,7 @@ export async function quoteCartAction(
       };
     }
 
-    const quote = await container.quoteCart().execute(parsed.data);
+    const quote = await container.quoteCart().execute(parsed.data, shippingMethod);
     return { success: true, quote };
   } catch (err: unknown) {
     if (err instanceof DomainError && err.code === "OUT_OF_STOCK") {
@@ -43,6 +44,19 @@ export async function quoteCartAction(
     return {
       success: false,
       error: err instanceof Error ? err.message : "Failed to calculate order quote",
+    };
+  }
+}
+
+export async function getShippingOptionsAction() {
+  try {
+    const options = await container.getShippingOptions();
+    return { success: true, options: [...options] };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to load shipping rates",
+      options: [],
     };
   }
 }

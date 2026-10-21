@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {} from "lucide-react";
 import { Great_Vibes } from "next/font/google";
@@ -75,7 +75,11 @@ export function Footer() {
 
 
 
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState<number>(2026);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className="relative w-full overflow-hidden bg-[#E4DDCD] text-[#30251F] mt-auto select-none">
@@ -142,7 +146,7 @@ export function Footer() {
                     <span
                       className="gold-quote text-center whitespace-nowrap text-[0.72rem] md:text-[0.82rem] lg:text-[1rem] xl:text-[1.18rem] mt-1 md:mt-1.5 lg:mt-2.5 select-none"
                     >
-                      Woven with tradition, styled for today
+                      Weaving Elegance, Celebrating Tradition.
                     </span>
 
                     {/* Circular Outline Social Icons (Instagram, Facebook, YouTube) starting under NiVi */}
@@ -222,7 +226,7 @@ export function Footer() {
                   </h4>
                   <ul className="space-y-1 text-[11px] xl:text-[12px] text-[#221811] font-medium leading-tight">
                     <li>
-                      <Link href="/#about" className="hover:text-[#073C35] transition-colors inline-block">
+                      <Link href="/about" className="hover:text-[#073C35] transition-colors inline-block">
                         Our Story
                       </Link>
                     </li>
@@ -266,9 +270,14 @@ export function Footer() {
                   </h4>
                   <ul className="space-y-1 text-[11px] xl:text-[12px] text-[#221811] font-medium leading-tight">
                     <li>
-                      <Link href="/#contact" className="hover:text-[#073C35] transition-colors inline-block">
-                        Contact Us
-                      </Link>
+                      <a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] transition-colors inline-block text-[10px] xl:text-[11px]">
+                        connect@brandnivi.com
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://wa.me/919150992863" target="_blank" rel="noopener noreferrer" className="hover:text-[#073C35] transition-colors inline-block">
+                        +91 91509 92863
+                      </a>
                     </li>
                     <li>
                       <button
@@ -391,7 +400,7 @@ export function Footer() {
                     className="h-6 w-auto object-contain mt-1 drop-shadow-sm"
                   />
                   <span className="gold-quote text-center text-[0.88rem] mt-0.5">
-                    Woven with tradition, styled for today
+                    Weaving Elegance, Celebrating Tradition.
                   </span>
 
                   {/* Social Icons */}
@@ -445,10 +454,9 @@ export function Footer() {
                       About
                     </h4>
                     <ul className="space-y-0.5 text-[9.5px] text-[#221811] font-medium">
-                      <li><Link href="/#about" className="hover:text-[#073C35]">Our Story</Link></li>
+                      <li><Link href="/about" className="hover:text-[#073C35]">Our Story</Link></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">Craft</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">Ethics</button></li>
-                      <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">Blog</button></li>
                     </ul>
                   </div>
 
@@ -457,10 +465,10 @@ export function Footer() {
                       Care
                     </h4>
                     <ul className="space-y-0.5 text-[9.5px] text-[#221811] font-medium">
-                      <li><Link href="/#contact" className="hover:text-[#073C35]">Contact</Link></li>
+                      <li><a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] break-all">connect@brandnivi.com</a></li>
+                      <li><a href="tel:9150992863" className="hover:text-[#073C35]">+91 91509 92863</a></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("shipping")} className="hover:text-[#073C35]">Shipping</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("returns")} className="hover:text-[#073C35]">Returns</button></li>
-                      <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">FAQs</button></li>
                     </ul>
                   </div>
                 </div>
@@ -487,7 +495,7 @@ export function Footer() {
                     className="h-6 md:h-7.5 w-auto object-contain mt-1 drop-shadow-sm"
                   />
                   <span className="gold-quote text-[0.88rem] md:text-[0.98rem] mt-0.5 select-none">
-                    Woven with tradition, styled for today
+                    Weaving Elegance, Celebrating Tradition.
                   </span>
 
                   {/* Social Icons */}
@@ -541,7 +549,7 @@ export function Footer() {
                       About
                     </h4>
                     <ul className="space-y-1 text-[10.5px] md:text-[11.5px] text-[#221811] font-medium leading-tight">
-                      <li><Link href="/#about" className="hover:text-[#073C35]">Our Story</Link></li>
+                      <li><Link href="/about" className="hover:text-[#073C35]">Our Story</Link></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">Craft</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">Ethics</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">Blog</button></li>
@@ -553,7 +561,8 @@ export function Footer() {
                       Care
                     </h4>
                     <ul className="space-y-1 text-[10.5px] md:text-[11.5px] text-[#221811] font-medium leading-tight">
-                      <li><Link href="/#contact" className="hover:text-[#073C35]">Contact</Link></li>
+                      <li><a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35]">connect@brandnivi.com</a></li>
+                      <li><a href="tel:9150992863" className="hover:text-[#073C35]">+91 91509 92863</a></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("shipping")} className="hover:text-[#073C35]">Shipping</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("returns")} className="hover:text-[#073C35]">Returns</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">FAQs</button></li>

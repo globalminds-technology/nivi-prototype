@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Package, Search, Sparkles, X } from "lucide-react";
+import { Package, Search, X } from "lucide-react";
 import type { StoreProductData } from "./product-card";
 
 interface SearchDropdownProps {
@@ -246,8 +246,7 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
                       ₹{(product.priceMinor / 100).toLocaleString("en-IN")}
                     </span>
                     {product.offer?.active && (
-                      <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-[#B87333]">
-                        <Sparkles className="w-2.5 h-2.5 text-[#B87333]" />
+                      <span className="inline-flex items-center text-[9px] font-semibold text-[#B87333]">
                         {product.offer.label || `${product.offer.value}% OFF`}
                       </span>
                     )}

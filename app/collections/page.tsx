@@ -1,12 +1,10 @@
 import { connection } from "next/server";
 import { Header } from "@/components/store/header";
 import { Footer } from "@/components/store/footer";
-import { CircularCategoryBar } from "@/components/store/circular-category-bar";
 import { CollectionsView } from "@/components/store/collections-view";
 import type { StoreProductData } from "@/components/store/product-card";
 import { productSlug } from "@/core/domain/entities/product";
 import { Money } from "@/core/domain/value-objects/money";
-import { CategoryRepository } from "@/infrastructure/categories/category-repository";
 import { container } from "@/infrastructure/di/container";
 
 export const instant = false;
@@ -53,9 +51,6 @@ export default async function CollectionsPage({ searchParams }: CollectionsPageP
   const categoryFilter = (params.category || "").trim();
   const tagFilter = (params.tag || "").trim();
   const sort = (params.sort || "featured").trim().toLowerCase();
-
-  const categoryRepo = new CategoryRepository();
-  const categories = await categoryRepo.list();
 
   let storeProducts: StoreProductData[] = [];
   try {
@@ -151,7 +146,7 @@ export default async function CollectionsPage({ searchParams }: CollectionsPageP
       break;
   }
 
-  const limit = 20;
+  const limit = 25;
   const total = filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / limit));
   const validPage = Math.min(page, totalPages);
@@ -163,10 +158,7 @@ export default async function CollectionsPage({ searchParams }: CollectionsPageP
       {/* 1. Header with Deep Teal & Gold theme */}
       <Header products={storeProducts} />
 
-      {/* 2. Round-shaped Category Bar */}
-      <CircularCategoryBar categories={categories} />
-
-      {/* 3. Main Collections View */}
+      {/* 2. Main Collections View */}
       <main className="flex-1 container mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-20">
         <CollectionsView
           initialProducts={initialPaginated}
@@ -179,14 +171,13 @@ export default async function CollectionsPage({ searchParams }: CollectionsPageP
             hasPrev: validPage > 1,
           }}
           availableCategories={availableCategories}
-          availableTags={availableTags}
-          initialTag={tagFilter}
           initialCategory={categoryFilter}
           initialQuery={query}
+          initialSort={sort}
         />
       </main>
 
-      {/* 4. Footer */}
+      {/* 3. Footer */}
       <Footer />
     </div>
   );

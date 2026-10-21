@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
           Back to Store
         </Link>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono bg-muted/60 px-2.5 py-1 rounded-full border border-border/50">
-          <Sparkles className="h-3 w-3 text-primary" />
+          <ShieldCheck className="h-3 w-3 text-primary" />
           <span>Internal Console</span>
         </div>
       </div>

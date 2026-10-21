@@ -9,15 +9,17 @@
     "active": true,
     "productIds": [
       "4251796000000059001",
-      "4251796000000034184"
+      "4251796000000034184",
+      "4251796000000054001",
+      "4251796000000170001"
     ],
     "bannerImageUrl": "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/banners/offer_1791544958921_1791807628449.png",
     "bannerTitle": null,
     "bannerSubtitle": null,
     "bannerCtaText": null,
     "createdAt": "2026-10-09T11:22:38.921Z",
-    "updatedAt": "2026-10-12T12:20:34.146Z",
-    "displayOrder": 1,
+    "updatedAt": "2026-10-21T07:06:00.011Z",
+    "displayOrder": 0,
     "imagePosition": "50% 50%",
     "imagePositionX": 50,
     "imagePositionY": 50

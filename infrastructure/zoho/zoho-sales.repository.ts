@@ -174,11 +174,16 @@ export class ZohoSalesRepository implements SalesRepository {
       };
     });
 
+    const shippingMajor = input.snapshot.quote.shipping
+      ? Money.toMajor(input.snapshot.quote.shipping)
+      : 0;
+
     const payload: Record<string, unknown> = {
       customer_id: input.contactId,
       date: today,
       reference_number: input.referenceNumber,
       is_inclusive_tax: input.snapshot.quote.taxInclusive,
+      shipping_charge: shippingMajor > 0 ? shippingMajor : undefined,
       line_items: lineItems,
       notes: "Thank you for shopping with Nivi!",
     };
@@ -227,15 +232,24 @@ export class ZohoSalesRepository implements SalesRepository {
       .filter(Boolean)
       .join(", ");
 
+    const shippingMajor = input.snapshot.quote.shipping
+      ? Money.toMajor(input.snapshot.quote.shipping)
+      : 0;
+    const shippingMethodLabel =
+      input.snapshot.quote.shippingLabel ||
+      (input.snapshot.quote.shippingMethod === "express" ? "Express Delivery" : "Standard Shipping");
+
     const payload: Record<string, unknown> = {
       customer_id: input.contactId,
       date: today,
       reference_number: input.referenceNumber,
       is_inclusive_tax: input.snapshot.quote.taxInclusive,
+      shipping_charge: shippingMajor > 0 ? shippingMajor : undefined,
       line_items: lineItems,
       notes: [
         "Order placed via NiVi Storefront.",
         `Payment Ref: ${input.referenceNumber}`,
+        `Shipping: ${shippingMethodLabel} (${shippingMajor > 0 ? `₹${shippingMajor}` : "Free"})`,
         `Deliver to: ${input.snapshot.customer.name}, ${input.snapshot.customer.phone}`,
         deliveryAddress,
       ].join("\n"),

@@ -82,13 +82,24 @@ export function quoteLine(
   });
 }
 
-export function buildQuote(lines: readonly QuoteLine[], policy: PricingPolicy): Quote {
+export function buildQuote(
+  lines: readonly QuoteLine[],
+  policy: PricingPolicy,
+  shipping?: { amount: Money; method: "standard" | "express"; label?: string },
+): Quote {
+  const linesTotal = Money.sum(lines.map((l) => l.lineTotal));
+  const shippingAmount = shipping?.amount || Money.zero();
+  const total = Money.add(linesTotal, shippingAmount);
+
   return Object.freeze({
     lines: Object.freeze([...lines]),
     subtotal: Money.sum(lines.map((l) => l.lineSubtotal)),
     discount: Money.sum(lines.map((l) => l.lineDiscount)),
+    shipping: shippingAmount,
+    shippingMethod: shipping?.method,
+    shippingLabel: shipping?.label,
     tax: Money.sum(lines.map((l) => l.lineTax)),
-    total: Money.sum(lines.map((l) => l.lineTotal)),
+    total,
     taxInclusive: policy.taxInclusive,
   });
 }

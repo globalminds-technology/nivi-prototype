@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, Layers, LogOut, Package, PlusCircle, ShieldCheck, Sparkles } from "lucide-react";
+import { ExternalLink, Layers, LogOut, Package, PlusCircle, ShieldCheck, Tag, Truck } from "lucide-react";
 import { logoutAdminAction } from "@/app/actions/admin-auth";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -72,8 +72,20 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
                 className: "gap-2",
               })}
             >
-              <Sparkles className="h-4 w-4" />
+              <Tag className="h-4 w-4" />
               Offers & Banners
+            </Link>
+
+            <Link
+              href="/admin/shipping"
+              className={buttonVariants({
+                variant: pathname === "/admin/shipping" ? "secondary" : "ghost",
+                size: "sm",
+                className: "gap-2",
+              })}
+            >
+              <Truck className="h-4 w-4" />
+              Shipping
             </Link>
 
             <Link

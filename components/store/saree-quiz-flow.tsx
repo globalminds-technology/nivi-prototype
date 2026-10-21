@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import type { SareeQuizAnswers } from "@/core/domain/entities/saree-quiz";
 
 interface QuizStep {
@@ -173,8 +173,7 @@ export function SareeQuizFlow() {
       {/* Header & Progress Indicator */}
       <div className="mb-8">
         <div className="flex items-center justify-between text-xs font-medium text-[#694208] mb-2 tracking-wider uppercase">
-          <span className="flex items-center gap-1.5 font-serif font-bold">
-            <Sparkles className="h-3.5 w-3.5 text-[#073C35]" />
+          <span className="font-serif font-bold">
             Find Your Perfect Saree
           </span>
           <span className="font-sans font-semibold">
@@ -279,8 +278,8 @@ export function SareeQuizFlow() {
               <span>Curating your match...</span>
             ) : currentStepIndex === QUIZ_STEPS.length - 1 ? (
               <>
-                <span>Find My Saree Style</span>
-                <Sparkles className="h-4 w-4" />
+                <span>Find My Saree Match</span>
+                <ArrowRight className="h-4 w-4" />
               </>
             ) : (
               <>

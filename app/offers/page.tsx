@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { connection } from "next/server";
-import { ArrowLeft, ArrowRight, Sparkles, Tag } from "lucide-react";
+import { ArrowLeft, ArrowRight, Package, Tag } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Footer } from "@/components/store/footer";
 import { Header } from "@/components/store/header";
 import { ProductCard, type StoreProductData } from "@/components/store/product-card";
+import { GoldText } from "@/components/store/gold-text";
 import type { OfferCampaign } from "@/core/domain/entities/offer-campaign";
 import { productSlug } from "@/core/domain/entities/product";
 import { Money } from "@/core/domain/value-objects/money";
@@ -95,9 +96,7 @@ export default async function OffersPage() {
             <ArrowLeft className="mr-1.5 h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
             Back to Catalog
           </Link>
-          <h1 className="font-script text-4xl sm:text-5xl md:text-6xl font-normal tracking-wide text-foreground leading-tight">
-            Special Offers & Promotions
-          </h1>
+          <GoldText>Special Offers & Promotions</GoldText>
           <p className="text-xs sm:text-sm text-muted-foreground">
             Limited-time festive discounts and exclusive promotional collections.
           </p>
@@ -150,8 +149,7 @@ export default async function OffersPage() {
 
                       {/* Badge top-right */}
                       <div className="absolute top-3 right-3">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 text-black px-2.5 py-0.5 text-xs font-bold shadow-md">
-                          <Sparkles className="h-3 w-3" />
+                        <span className="inline-flex items-center rounded-full bg-amber-400 text-black px-2.5 py-0.5 text-xs font-bold shadow-md">
                           {discountText}
                         </span>
                       </div>
@@ -191,7 +189,7 @@ export default async function OffersPage() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
+              <Tag className="h-4 w-4 text-primary" />
               <span>All Discounted Ensembles</span>
             </h2>
             <span className="text-xs text-muted-foreground font-mono">
@@ -201,7 +199,7 @@ export default async function OffersPage() {
 
           {offerProducts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border/80 p-12 text-center bg-card/40 my-8 space-y-3">
-              <Sparkles className="mx-auto h-8 w-8 text-muted-foreground/50" />
+              <Package className="mx-auto h-8 w-8 text-muted-foreground/50" />
               <h3 className="font-medium text-foreground text-base">No active individual offers right now</h3>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
                 Our promotional calendar is refreshed frequently. Check out the campaigns above or explore our catalog.
@@ -211,7 +209,7 @@ export default async function OffersPage() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3 lg:gap-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
               {offerProducts.map((product) => (
                 <ProductCard key={product.sku} product={product} />
               ))}

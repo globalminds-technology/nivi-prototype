@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowUpDown, Filter, Heart, Search, Sparkles, X } from "lucide-react";
+import { ArrowUpDown, Filter, Heart, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProductCard, type StoreProductData } from "@/components/store/product-card";
+import { GoldText } from "@/components/store/gold-text";
 import { useWishlist } from "@/hooks/use-wishlist";
 
 interface CatalogGridProps {
@@ -126,10 +127,8 @@ export function CatalogGrid({
     <div id="catalog" className="space-y-6 scroll-mt-24">
       {/* Header and Filter Controls - Center Aligned */}
       <div className="space-y-5 border-b border-neutral-200/80 pb-6 text-center">
-        <div className="space-y-1.5">
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-neutral-900">
-            {showWishlistOnly ? "Your Saved Wishlist" : "Complete Handloom Showcase"}
-          </h2>
+        <div className="space-y-1.5 flex flex-col items-center justify-center">
+          <GoldText>{showWishlistOnly ? "Your Saved Wishlist" : "Complete Handloom Showcase"}</GoldText>
           <p className="text-xs sm:text-sm text-neutral-500 max-w-md mx-auto">
             Showing {filtered.length} {filtered.length === 1 ? "masterpiece" : "masterpieces"} ready for express delivery across India
           </p>
@@ -252,7 +251,6 @@ export function CatalogGrid({
                     : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                 }`}
               >
-                <Sparkles className="h-3 w-3 text-amber-300" />
                 <span>On Offer</span>
               </button>
 
@@ -308,7 +306,7 @@ export function CatalogGrid({
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3 lg:gap-3.5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
           {filtered.map((product) => (
             <ProductCard key={product.sku} product={product} />
           ))}

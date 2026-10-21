@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ChevronRight, Package } from "lucide-react";
+import { GoldText } from "@/components/store/gold-text";
 import { Header } from "@/components/store/header";
 import { Footer } from "@/components/store/footer";
 import { CatalogGrid } from "@/components/store/catalog-grid";
@@ -138,15 +139,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 />
               </div>
             )}
-            <div className="relative z-10 max-w-2xl mx-auto text-center space-y-4">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                <Sparkles className="h-3 w-3" />
-                <span>Heritage Handloom</span>
-              </div>
-
-              <h1 className="font-script text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-wide text-foreground leading-tight">
-                {category.name}
-              </h1>
+            <div className="relative z-10 max-w-2xl mx-auto text-center space-y-3">
+              <GoldText>{category.name}</GoldText>
 
               {category.description && (
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
@@ -175,7 +169,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           ) : (
             <div className="text-center py-16 px-6 rounded-3xl border border-border/70 bg-card max-w-lg mx-auto shadow-2xs space-y-4">
               <div className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
-                <Sparkles className="h-6 w-6" />
+                <Package className="h-6 w-6" />
               </div>
               <div className="space-y-1">
                 <h3 className="font-serif text-xl font-bold text-foreground">

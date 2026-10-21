@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Heart, Sparkles } from "lucide-react";
+import { ArrowLeft, Heart } from "lucide-react";
 import { useWishlist } from "@/hooks/use-wishlist";
 import { ProductCard, type StoreProductData } from "@/components/store/product-card";
+import { GoldText } from "@/components/store/gold-text";
 
 interface WishlistClientProps {
   products: StoreProductData[];
@@ -16,15 +17,13 @@ export function WishlistClient({ products }: WishlistClientProps) {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Centered Heading with ShinyText */}
+      {/* Centered Heading with GoldText */}
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
           <Heart className="w-3.5 h-3.5 fill-current" />
           <span>Your Curated Favorites</span>
         </div>
-        <h1 className="font-script text-4xl sm:text-5xl md:text-6xl font-normal tracking-wide text-neutral-900 leading-tight">
-          Saved Heritage Wishlist
-        </h1>
+        <GoldText>Saved Heritage Wishlist</GoldText>
         <p className="text-xs sm:text-sm text-neutral-500 max-w-md mx-auto">
           {count > 0
             ? `You have saved ${count} handcrafted piece${count === 1 ? "" : "s"} for your upcoming celebrations.`
@@ -44,15 +43,14 @@ export function WishlistClient({ products }: WishlistClientProps) {
             </p>
           </div>
           <Link
-            href="/"
+            href="/collections"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#083B2F] via-[#0E5343] to-[#04261D] text-white text-xs font-semibold tracking-wide shadow-md hover:shadow-lg transition-all duration-300"
           >
-            <Sparkles className="w-4 h-4 text-amber-300" />
             <span>Explore Handloom Collections</span>
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3 lg:gap-3.5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
           {savedProducts.map((product) => (
             <ProductCard key={product.sku} product={product} />
           ))}

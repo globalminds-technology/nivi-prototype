@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ShieldCheck, Sparkles, Truck } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { ArrowLeft, ShieldCheck, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/store/footer";
 import { Header } from "@/components/store/header";
@@ -65,7 +59,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  // Load all products for header search and cart
+  // Load active products for header search and related carousel
   let allProducts: StoreProductData[] = [];
   try {
     const list = await container.listProducts().execute({ status: "active" });
@@ -119,7 +113,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
-        name: "Nivi",
+        name: "NiVi",
       },
     },
   };
@@ -134,6 +128,38 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     // Graceful fallback if reviews aren't ready
   }
 
+  // Extract only genuine saree attributes present in Zoho Books (no placeholders)
+  const specItems: { label: string; value: string | readonly string[] }[] = [];
+  if (product.category && product.category.trim()) {
+    specItems.push({ label: "Category", value: product.category.trim() });
+  }
+  if (product.attributes?.fabric && product.attributes.fabric.trim()) {
+    specItems.push({ label: "Fabric", value: product.attributes.fabric.trim() });
+  }
+  if (product.attributes?.border && product.attributes.border.trim()) {
+    specItems.push({ label: "Border Type", value: product.attributes.border.trim() });
+  }
+  if (product.attributes?.primaryColour && product.attributes.primaryColour.trim()) {
+    specItems.push({ label: "Colour", value: product.attributes.primaryColour.trim() });
+  }
+  if (product.attributes?.colourPalette && product.attributes.colourPalette.trim()) {
+    specItems.push({ label: "Palette", value: product.attributes.colourPalette.trim() });
+  }
+  if (product.attributes?.occasion && product.attributes.occasion.length > 0) {
+    specItems.push({ label: "Occasion", value: product.attributes.occasion });
+  }
+  if (product.attributes?.style && product.attributes.style.length > 0) {
+    specItems.push({ label: "Style", value: product.attributes.style });
+  }
+  if (product.attributes?.comfort && product.attributes.comfort.length > 0) {
+    specItems.push({ label: "Feel & Comfort", value: product.attributes.comfort });
+  }
+
+  // Related products from the same category or active collection
+  const relatedProducts = allProducts
+    .filter((p) => p.sku !== product.sku)
+    .slice(0, 8);
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header products={allProducts} />
@@ -143,54 +169,71 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="flex-1 container mx-auto px-4 sm:px-6 py-8 md:py-12 space-y-12">
-        {/* Breadcrumb navigation */}
-        <nav aria-label="Breadcrumb">
-          <Link
-            href="/"
-            className="inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
-          >
-            <ArrowLeft className="mr-1.5 h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Back to All Collections</span>
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-10">
+        {/* Breadcrumb Navigation */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[#6B5A4A] flex-wrap">
+          <Link href="/" className="hover:text-[#073C35] transition-colors">
+            Home
           </Link>
+          <span>/</span>
+          <Link href="/collections" className="hover:text-[#073C35] transition-colors">
+            Collections
+          </Link>
+          {product.category && (
+            <>
+              <span>/</span>
+              <span className="text-[#6B5A4A]">{product.category}</span>
+            </>
+          )}
+          <span>/</span>
+          <span className="text-[#221811] font-medium truncate max-w-[200px] sm:max-w-xs">
+            {product.name}
+          </span>
         </nav>
 
-        {/* Product Hero Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 items-start">
-          {/* Left: Gallery */}
-          <div>
+        {/* Product Hero Grid (Compact 2-Column: Left Gallery, Right Details) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left: Product Gallery (Sticky on desktop, constrained to viewport height) */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24">
             <ProductGallery images={allImages} productName={product.name} />
           </div>
 
-          {/* Right: Info & Purchase */}
-          <div className="space-y-6">
+          {/* Right: Real Product Info & Actions */}
+          <div className="lg:col-span-7 space-y-5">
+            {/* Header: SKU, Badges & Title */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
+                <span className="font-mono text-[11px] text-[#6B5A4A] tracking-wider uppercase bg-[#D5CCBB]/35 px-2 py-0.5 rounded-sm">
                   SKU: {product.sku}
                 </span>
 
                 {product.offer?.active && (
-                  <Badge className="bg-primary text-primary-foreground font-medium text-xs gap-1">
-                    <Sparkles className="h-3 w-3" />
-                    <span>{product.offer.label || `${product.offer.type === "percent" ? product.offer.percent : Money.toMajor(product.offer.amount)}% OFF`}</span>
+                  <Badge className="bg-[#073C35] text-[#FAF7F0] font-medium text-[11px] gap-1 border-0">
+                    <span>
+                      {product.offer.label ||
+                        `${product.offer.type === "percent" ? product.offer.percent : Money.toMajor(product.offer.amount)}% OFF`}
+                    </span>
                   </Badge>
                 )}
 
                 {product.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="capitalize text-[10px]">
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="capitalize text-[10.5px] bg-[#D5CCBB]/40 text-[#30251F] border-0"
+                  >
                     {tag.replace(/_/g, " ")}
                   </Badge>
                 ))}
               </div>
 
-              <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-tight">
+              <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#221811] leading-tight">
                 {product.name}
               </h1>
             </div>
 
             {/* Pricing */}
-            <div className="pt-2">
+            <div className="pt-1">
               <PriceTag
                 priceMinor={product.price.minor}
                 offer={
@@ -208,23 +251,23 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 }
                 size="lg"
               />
-              <p className="text-[11px] text-muted-foreground mt-1">
+              <p className="text-[11.5px] text-[#6B5A4A] mt-1">
                 Inclusive of all taxes. Free express shipping across India.
               </p>
             </div>
 
-            {/* Stock indicator */}
+            {/* Stock Indicator */}
             <div className="flex items-center gap-2 text-xs">
               <span
                 className={`h-2.5 w-2.5 rounded-full ${
                   product.stock > 5
-                    ? "bg-green-500"
+                    ? "bg-emerald-600"
                     : product.stock > 0
                       ? "bg-amber-500"
                       : "bg-red-500"
                 }`}
               />
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-[#221811]">
                 {product.stock > 5
                   ? "In Stock — Ready for dispatch"
                   : product.stock > 0
@@ -233,87 +276,112 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </span>
             </div>
 
-            {/* Product Actions (Add to bag, Qty, Wishlist, WhatsApp) */}
+            {/* Actions: Quantity Selector + Add to Bag + Wishlist + WhatsApp Direct Inquiry */}
             <ProductActions
               sku={product.sku}
               name={product.name}
               stock={product.stock}
             />
 
-            {/* Description */}
+            {/* Genuine Description from Zoho Books */}
             {product.description && (
-              <div className="pt-4 border-t border-border/50 space-y-2">
-                <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
-                  Curator&apos;s Notes
+              <div className="pt-4 border-t border-[#D5CCBB]/70 space-y-2">
+                <h3 className="text-xs font-serif font-bold text-[#694208] uppercase tracking-wider">
+                  Description
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                <p className="text-xs sm:text-sm text-[#4A3D33] leading-relaxed whitespace-pre-line">
                   {product.description}
                 </p>
               </div>
             )}
 
-            {/* Accordion Specs & Information */}
-            <div className="pt-2">
-              <Accordion defaultValue={["craftsmanship"]}>
-                <AccordionItem value="craftsmanship">
-                  <AccordionTrigger>Craftsmanship & Textile Story</AccordionTrigger>
-                  <AccordionContent>
-                    <p className="text-muted-foreground leading-relaxed text-xs">
-                      Every piece at Nivi is individually crafted by generational artisans. From hand-spun mulberry silk to intricate zari borders, slight variations in weave and texture attest to authentic handloom provenance.
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="care">
-                  <AccordionTrigger>Care & Preservation</AccordionTrigger>
-                  <AccordionContent>
-                    <ul className="list-disc pl-4 space-y-1 text-muted-foreground text-xs">
-                      <li>Dry clean exclusively for pure silk and zari weaves.</li>
-                      <li>Store wrapped in unbleached cotton muslin cloth.</li>
-                      <li>Avoid spraying perfume directly onto metal or metallic zari threads.</li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="shipping">
-                  <AccordionTrigger>Shipping & Authenticity Guarantee</AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-2 text-muted-foreground text-xs">
-                      <p className="flex items-center gap-1.5 text-foreground font-medium">
-                        <Truck className="h-3.5 w-3.5 text-primary" />
-                        <span>Complimentary Express Shipping in India</span>
-                      </p>
-                      <p>
-                        Dispatched within 24–48 hours from our studio. Complete GST invoice and courier tracking details are emailed immediately upon dispatch.
-                      </p>
-                      <p className="flex items-center gap-1.5 text-foreground font-medium pt-1">
-                        <ShieldCheck className="h-3.5 w-3.5 text-green-600" />
-                        <span>100% Genuine Handloom Certification</span>
-                      </p>
+            {/* Real Saree Specifications Grid (Only Non-Empty Attributes) */}
+            {specItems.length > 0 && (
+              <div className="pt-4 border-t border-[#D5CCBB]/70 space-y-3">
+                <h3 className="text-xs font-serif font-bold text-[#694208] uppercase tracking-wider">
+                  Saree Specifications
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {specItems.map((spec) => (
+                    <div
+                      key={spec.label}
+                      className="p-2.5 rounded-xl bg-[#FAF7F0] border border-[#D5CCBB]/60"
+                    >
+                      <span className="text-[10px] font-sans uppercase tracking-wider text-[#7C6A59] block">
+                        {spec.label}
+                      </span>
+                      <div className="text-xs font-medium text-[#221811] mt-0.5">
+                        {Array.isArray(spec.value) ? (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {spec.value.map((v) => (
+                              <span
+                                key={v}
+                                className="inline-block text-[10px] bg-[#073C35]/10 text-[#073C35] px-1.5 py-0.5 rounded font-sans font-medium"
+                              >
+                                {v}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          spec.value
+                        )}
+                      </div>
                     </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Genuine Store Policies & Authenticity Guarantees */}
+            <div className="pt-4 border-t border-[#D5CCBB]/70 grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-[#4A3D33]">
+              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#FAF7F0]/60 border border-[#D5CCBB]/50">
+                <Truck className="h-4 w-4 text-[#073C35] shrink-0" />
+                <span>Complimentary Express Shipping in 2–5 days</span>
+              </div>
+              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#FAF7F0]/60 border border-[#D5CCBB]/50">
+                <ShieldCheck className="h-4 w-4 text-[#073C35] shrink-0" />
+                <span>100% Genuine Handcrafted Guarantee</span>
+              </div>
+            </div>
+
+            {/* Saree Matchmaker Discovery Banner */}
+            <div className="p-3.5 rounded-xl bg-[#073C35] text-[#FAF7F0] flex items-center justify-between gap-3 shadow-xs">
+              <div className="space-y-0.5">
+                <p className="font-serif text-xs font-semibold text-white">
+                  Find Your Perfect Saree Match
+                </p>
+                <p className="text-[10.5px] text-[#E5C378]">
+                  Take our 2-min Saree Matchmaker for personalized drape & blouse recommendations
+                </p>
+              </div>
+              <Link
+                href="/quiz"
+                className="shrink-0 px-3.5 py-1.5 rounded-full bg-[#FAF7F0] text-[#073C35] text-[11px] font-semibold hover:bg-white transition-colors"
+              >
+                Find Match
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Verified Patron Reviews Section */}
-        <ProductReviews
-          sku={product.sku}
-          productName={product.name}
-          reviews={reviewData.reviews}
-          summary={reviewData.summary}
-        />
+        {/* Verified Patron Reviews (Only displayed when real reviews exist) */}
+        {reviewData.reviews.length > 0 && (
+          <ProductReviews
+            sku={product.sku}
+            productName={product.name}
+            reviews={reviewData.reviews}
+            summary={reviewData.summary}
+          />
+        )}
 
-        {/* You May Also Cherish - Related Saree Carousel (4.25 Desktop / 2.25 Mobile peek) */}
-        {allProducts.filter((p) => p.sku !== product.sku).length > 0 && (
-          <div className="pt-6 border-t border-border/50">
+        {/* Related Sarees from Active Collection */}
+        {relatedProducts.length > 0 && (
+          <div className="pt-6 border-t border-[#D5CCBB]/70">
             <FeaturedCarousel
-              products={allProducts.filter((p) => p.sku !== product.sku).slice(0, 8)}
+              products={relatedProducts}
               title="You May Also Cherish"
               subtitle="Complementary weaves handpicked by our heritage curators"
-              viewAllHref="/#catalog"
+              viewAllHref="/collections"
             />
           </div>
         )}

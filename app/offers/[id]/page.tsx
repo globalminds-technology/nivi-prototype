@@ -2,10 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { ArrowLeft, Calendar, Percent, Sparkles, Tag } from "lucide-react";
+import { ArrowLeft, Calendar, Percent, Tag } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Footer } from "@/components/store/footer";
 import { Header } from "@/components/store/header";
+import { GoldText } from "@/components/store/gold-text";
 import { ProductCard, type StoreProductData } from "@/components/store/product-card";
 import { productSlug } from "@/core/domain/entities/product";
 import { Money } from "@/core/domain/value-objects/money";
@@ -162,7 +163,6 @@ export default async function CampaignOffersPage({ params }: PageProps) {
                 {campaign.bannerTitle || campaign.name}
               </h1>
               <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/60 bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-700">
-                <Sparkles className="h-3 w-3 text-amber-600" />
                 <span>{discountBadgeText}</span>
               </span>
             </div>
@@ -184,9 +184,7 @@ export default async function CampaignOffersPage({ params }: PageProps) {
         {/* Sarees Grid Section */}
         <section className="space-y-4">
           <div className="flex flex-col items-center justify-center text-center mb-2">
-            <h2 className="font-script text-3xl sm:text-4xl md:text-5xl font-normal tracking-wide text-foreground leading-tight">
-              Exclusive Sarees in this Collection
-            </h2>
+            <GoldText>Exclusive Sarees</GoldText>
             <span className="text-xs text-muted-foreground font-medium mt-0.5">
               {campaignProducts.length} items available
             </span>
@@ -209,7 +207,7 @@ export default async function CampaignOffersPage({ params }: PageProps) {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3 lg:gap-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
               {campaignProducts.map((product) => (
                 <ProductCard key={product.sku} product={product} />
               ))}

@@ -55,6 +55,9 @@ import { ListReviews } from "@/core/application/use-cases/reviews/list-reviews";
 import { IssueReviewLink } from "@/core/application/use-cases/reviews/issue-review-link";
 import { ZohoReviewRepository } from "@/infrastructure/reviews/zoho-review.repository";
 
+import { ZohoShippingRepository } from "@/infrastructure/shipping/zoho-shipping.repository";
+import type { ShippingRepository } from "@/core/application/ports/shipping-repository";
+
 // Low-level services
 const clock = lazy<Clock>(() => new SystemClock());
 const cacheInvalidator = lazy<CacheInvalidator>(() => new NextCacheInvalidator());
@@ -72,6 +75,7 @@ const productRepository = lazy<ProductRepository>(
 );
 const salesRepository = lazy<SalesRepository>(() => new ZohoSalesRepository(zohoHttp()));
 const reviewRepository = lazy<ReviewRepository>(() => new ZohoReviewRepository(zohoHttp()));
+const shippingRepository = lazy<ShippingRepository>(() => new ZohoShippingRepository(zohoHttp()));
 
 // Payment & Notification Infrastructure
 const paymentGateway = lazy<PaymentGateway>(() => new RazorpayPaymentGateway());
@@ -99,7 +103,7 @@ const listAdminProducts = lazy(() => new ListProducts(rawProductRepository()));
 const getAdminProductById = lazy(() => new GetProductById(rawProductRepository()));
 
 // Use Cases — Checkout & Orders
-const quoteCart = lazy(() => new QuoteCart(productRepository(), clock()));
+const quoteCart = lazy(() => new QuoteCart(productRepository(), clock(), { taxInclusive: true }, shippingRepository()));
 const createPaymentOrder = lazy(() => new CreatePaymentOrder(quoteCart(), paymentGateway()));
 const confirmPayment = lazy(
   () =>
@@ -133,9 +137,16 @@ export const container = {
   productRepository,
   salesRepository,
   reviewRepository,
+  shippingRepository,
   paymentGateway,
   mailer,
   tokenSigner,
+
+  // Shipping
+  getShippingOptions: () => shippingRepository().getShippingOptions(),
+  getShippingOptionByType: (type: "standard" | "express") => shippingRepository().getOptionByType(type),
+  updateShippingRates: (rates: { standardRate?: number; expressRate?: number }) =>
+    shippingRepository().updateRates(rates),
 
   // Use-cases
   createUploadUrl,

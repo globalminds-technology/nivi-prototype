@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Package, Sparkles } from "lucide-react";
+import { Package } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -92,8 +92,7 @@ export function SearchDialog({ products, open, onOpenChange }: SearchDialogProps
 
               <div className="flex items-center gap-1.5 shrink-0">
                 {product.offer?.active && (
-                  <span className="text-[10px] text-primary font-medium flex items-center gap-0.5">
-                    <Sparkles className="h-2.5 w-2.5" />
+                  <span className="text-[10px] text-primary font-medium">
                     Offer
                   </span>
                 )}

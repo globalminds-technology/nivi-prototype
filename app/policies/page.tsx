@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/store/header";
 import { Footer } from "@/components/store/footer";
 import { STORE_POLICIES } from "@/core/domain/constants/store-policies";
-import { Truck, RotateCcw, XCircle, Sparkles, AlertTriangle, CheckCircle2, Info, ArrowLeft } from "lucide-react";
+import { Truck, RotateCcw, XCircle, AlertTriangle, CheckCircle2, Info, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Shipping, Return & Exchange Policies — NiVi Sarees",
@@ -53,7 +53,7 @@ export default async function PoliciesPage({ searchParams }: PoliciesPageProps) 
             { key: "shipping", label: "Shipping Policy", icon: Truck },
             { key: "returns", label: "Return & Exchange", icon: RotateCcw },
             { key: "cancellation", label: "Cancellation", icon: XCircle },
-            { key: "disclaimers", label: "Craft Disclaimers", icon: Sparkles },
+            { key: "disclaimers", label: "Craft Disclaimers", icon: Info },
           ].map((t) => {
             const Icon = t.icon;
             const isActive = activeTab === t.key;

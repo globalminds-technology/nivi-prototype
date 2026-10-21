@@ -28,6 +28,9 @@ export type Quote = Readonly<{
   lines: readonly QuoteLine[];
   subtotal: Money;
   discount: Money;
+  shipping: Money;
+  shippingMethod?: "standard" | "express";
+  shippingLabel?: string;
   tax: Money;
   total: Money;
   taxInclusive: boolean;

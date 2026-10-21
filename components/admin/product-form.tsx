@@ -7,12 +7,12 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Compass,
   FolderPlus,
   ImagePlus,
   Layers,
   Plus,
   Save,
-  Sparkles,
   Tag,
   Trash2,
   UploadCloud,
@@ -964,7 +964,7 @@ export function ProductForm({
           <Card className="shadow-xs border-border/70">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-emerald-600" />
+                <Compass className="h-4 w-4 text-emerald-600" />
                 <CardTitle className="text-base font-semibold">Saree Quiz & Styling Attributes</CardTitle>
               </div>
               <CardDescription>

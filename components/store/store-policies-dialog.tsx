@@ -5,7 +5,6 @@ import {
   Truck,
   RotateCcw,
   XCircle,
-  Sparkles,
   AlertTriangle,
   Info,
   CheckCircle2,
@@ -27,7 +26,7 @@ const TAB_CONFIG: { key: PolicyTabKey; label: string; icon: React.ComponentType<
   { key: "shipping", label: "Shipping Policy", icon: Truck },
   { key: "returns", label: "Return & Exchange", icon: RotateCcw },
   { key: "cancellation", label: "Cancellation", icon: XCircle },
-  { key: "disclaimers", label: "Craft Disclaimers", icon: Sparkles },
+  { key: "disclaimers", label: "Craft Disclaimers", icon: Info },
 ];
 
 export function StorePoliciesDialog({
@@ -53,7 +52,7 @@ export function StorePoliciesDialog({
                 NiVi Store & Craft Policies
               </h3>
               <p className="text-[11px] text-[#6B5A4A]">
-                Woven with Tradition, Styled for Today
+                Weaving Elegance, Celebrating Tradition.
               </p>
             </div>
           </div>
@@ -166,8 +165,8 @@ export function StorePoliciesDialog({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#D5CCBB] bg-[#F4EFE6] flex items-center justify-between text-xs text-[#6B5A4A]">
-          <span>Need help? WhatsApp: +91 99999 99999</span>
+        <div className="px-5 py-3 border-t border-[#D5CCBB] bg-[#F4EFE6] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#6B5A4A]">
+          <span>Need help? WhatsApp/Phone: +91 91509 92863 | Email: connect@brandnivi.com</span>
           <button
             type="button"
             onClick={onClose}

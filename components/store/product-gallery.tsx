@@ -23,38 +23,44 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Main Large Image */}
-      <div className="rounded-2xl border border-border/80 overflow-hidden bg-muted/20 shadow-xs relative">
-        <AspectRatio ratio={4 / 5}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={activeImage}
-            alt={productName}
-            className="h-full w-full object-cover transition-all duration-300"
-          />
-        </AspectRatio>
+    <div className="w-full max-w-[460px] mx-auto space-y-3">
+      {/* Main Image Container with Viewport-Friendly Height */}
+      <div className="relative w-full rounded-2xl border border-[#D5CCBB]/80 overflow-hidden bg-[#FAF7F0] shadow-sm aspect-[4/5] max-h-[500px] flex items-center justify-center group">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={activeImage}
+          alt={productName}
+          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+        />
+
+        {/* Image index counter badge */}
+        {images.length > 1 && (
+          <div className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded-full bg-black/60 text-white text-[11px] font-mono tracking-wider backdrop-blur-xs select-none">
+            {selectedIdx + 1} / {images.length}
+          </div>
+        )}
       </div>
 
       {/* Thumbnails row */}
       {images.length > 1 && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+        <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 scrollbar-none">
           {images.map((img, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => setSelectedIdx(idx)}
-              className={`relative h-18 w-18 rounded-xl border overflow-hidden shrink-0 transition-all ${
+              aria-label={`View image ${idx + 1}`}
+              className={`relative h-15 w-15 sm:h-16 sm:w-16 rounded-xl border overflow-hidden shrink-0 transition-all duration-200 cursor-pointer ${
                 selectedIdx === idx
-                  ? "border-primary ring-2 ring-primary/20 shadow-xs"
-                  : "border-border/70 opacity-70 hover:opacity-100"
+                  ? "border-[#C9A45C] ring-2 ring-[#C9A45C]/40 shadow-xs scale-105"
+                  : "border-[#D5CCBB]/70 opacity-65 hover:opacity-100 hover:border-[#C9A45C]/60"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={img}
                 alt={`${productName} thumbnail ${idx + 1}`}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-top"
               />
             </button>
           ))}

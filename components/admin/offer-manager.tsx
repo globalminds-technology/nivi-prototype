@@ -28,7 +28,6 @@ import {
   RotateCcw,
   Search,
   Sliders,
-  Sparkles,
   Square,
   Tag,
   Trash2,
@@ -1029,7 +1028,7 @@ export function OfferManager({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <CardTitle className="font-serif text-xl flex items-center gap-2.5">
-                <Sparkles className="h-5 w-5 text-primary" />
+                <Tag className="h-5 w-5 text-primary" />
                 <span>Flagship Homepage Hero Banner</span>
                 <Badge
                   variant={heroBanner.active ? "default" : "outline"}
@@ -1665,7 +1664,7 @@ export function OfferManager({
         <CardContent className="p-5 space-y-3">
           {orderedCampaigns.length === 0 ? (
             <div className="text-center py-10 px-4 border border-dashed border-border/60 rounded-xl bg-muted/20">
-              <Sparkles className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+              <Tag className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
               <p className="text-sm font-semibold text-foreground">No Offers Created Yet</p>
               <p className="text-xs text-muted-foreground max-w-md mx-auto mt-1 mb-4">
                 Create your first promotional offer. You can attach sarees immediately and upload an optional banner to display it on the homepage hero carousel.

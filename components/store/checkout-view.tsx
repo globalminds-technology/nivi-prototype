@@ -12,9 +12,10 @@ import {
   Package,
   RotateCcw,
   ShieldCheck,
-  Sparkles,
+  Info,
   Truck,
   XCircle,
+  Zap,
 } from "lucide-react";
 import {
   Accordion,
@@ -36,9 +37,11 @@ import { useCart } from "@/hooks/use-cart";
 import {
   confirmPaymentAction,
   createPaymentOrderAction,
+  getShippingOptionsAction,
   quoteCartAction,
 } from "@/app/actions/checkout";
 import type { Quote } from "@/core/domain/entities/order";
+import type { ShippingOption } from "@/core/application/ports/shipping-repository";
 import { INDIAN_MOBILE_PATTERN, PINCODE_PATTERN, GSTIN_PATTERN } from "@/core/domain/entities/customer";
 import type { StoreProductData } from "./product-card";
 
@@ -92,6 +95,10 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   const [isQuoting, setIsQuoting] = useState(false);
   const [quoteError, setQuoteError] = useState<string | null>(null);
 
+  // Shipping Method State
+  const [shippingMethod, setShippingMethod] = useState<"standard" | "express">("standard");
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
+
   // Form Fields
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -130,7 +137,16 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // 1. Fetch live server quote whenever cart items change
+  // Fetch live shipping options on mount
+  useEffect(() => {
+    getShippingOptionsAction().then((res) => {
+      if (res.success && res.options) {
+        setShippingOptions(res.options);
+      }
+    });
+  }, []);
+
+  // 1. Fetch live server quote whenever cart items or shipping method change
   useEffect(() => {
     if (!isLoaded || items.length === 0) {
       /* eslint-disable-next-line react-hooks/set-state-in-effect */
@@ -144,6 +160,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
 
     quoteCartAction(
       items.map((i) => ({ sku: i.sku, quantity: i.qty })),
+      shippingMethod,
     )
       .then((res) => {
         if (!isMounted) return;
@@ -164,7 +181,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
     return () => {
       isMounted = false;
     };
-  }, [isLoaded, items]);
+  }, [isLoaded, items, shippingMethod]);
 
   // Load Razorpay checkout script if not present
   useEffect(() => {
@@ -285,6 +302,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
           gstin: isBusiness && gstin.trim() ? gstin.trim() : null,
         },
         items: items.map((i) => ({ sku: i.sku, quantity: i.qty })),
+        shippingMethod,
       };
 
       const res = await createPaymentOrderAction(checkoutPayload);
@@ -522,7 +540,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
           <Card className="shadow-xs border-border/70">
             <CardHeader className="pb-4">
               <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
-                <span>Step 1 of 3</span>
+                <span>Step 1 of 4</span>
               </div>
               <CardTitle className="font-serif text-xl font-medium">
                 Contact Information
@@ -595,7 +613,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
           <Card className="shadow-xs border-border/70">
             <CardHeader className="pb-4">
               <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
-                <span>Step 2 of 3</span>
+                <span>Step 2 of 4</span>
               </div>
               <CardTitle className="font-serif text-xl font-medium">
                 Shipping Address
@@ -820,11 +838,103 @@ export function CheckoutView({ products }: CheckoutViewProps) {
             </CardContent>
           </Card>
 
-          {/* Step 3: Payment Notice */}
+          {/* Step 3: Delivery Method */}
+          <Card className="shadow-xs border-border/70">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
+                <span>Step 3 of 4</span>
+              </div>
+              <CardTitle className="font-serif text-xl font-medium">
+                Delivery Option
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Select your preferred shipping method within India.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Standard Shipping */}
+                <button
+                  type="button"
+                  onClick={() => setShippingMethod("standard")}
+                  className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
+                    shippingMethod === "standard"
+                      ? "border-[#073C35] bg-[#073C35]/5 shadow-xs"
+                      : "border-border/70 hover:border-border bg-card"
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full mb-3">
+                    <div className="flex items-center gap-2">
+                      <Truck className={`w-4 h-4 ${shippingMethod === "standard" ? "text-[#073C35]" : "text-muted-foreground"}`} />
+                      <span className="font-semibold text-sm text-foreground">
+                        {shippingOptions.find((o) => o.type === "standard")?.name || "Standard Shipping"}
+                      </span>
+                    </div>
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      shippingMethod === "standard"
+                        ? "border-[#073C35] bg-[#073C35]"
+                        : "border-muted-foreground/40"
+                    }`}>
+                      {shippingMethod === "standard" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </div>
+                  </div>
+                  <div className="flex items-baseline justify-between mt-1 pt-2 border-t border-border/40">
+                    <span className="text-xs text-muted-foreground">Within India</span>
+                    <span className="font-semibold font-mono text-sm text-[#073C35]">
+                      {(() => {
+                        const std = shippingOptions.find((o) => o.type === "standard");
+                        if (!std) return "FREE";
+                        return std.rate === 0 ? "FREE" : formatInr(std.rateMinor);
+                      })()}
+                    </span>
+                  </div>
+                </button>
+
+                {/* Express Delivery */}
+                <button
+                  type="button"
+                  onClick={() => setShippingMethod("express")}
+                  className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
+                    shippingMethod === "express"
+                      ? "border-[#694208] bg-[#694208]/5 shadow-xs"
+                      : "border-border/70 hover:border-border bg-card"
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full mb-3">
+                    <div className="flex items-center gap-2">
+                      <Zap className={`w-4 h-4 ${shippingMethod === "express" ? "text-[#694208]" : "text-muted-foreground"}`} />
+                      <span className="font-semibold text-sm text-foreground">
+                        {shippingOptions.find((o) => o.type === "express")?.name || "Express Delivery"}
+                      </span>
+                    </div>
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      shippingMethod === "express"
+                        ? "border-[#694208] bg-[#694208]"
+                        : "border-muted-foreground/40"
+                    }`}>
+                      {shippingMethod === "express" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </div>
+                  </div>
+                  <div className="flex items-baseline justify-between mt-1 pt-2 border-t border-border/40">
+                    <span className="text-xs text-muted-foreground">Express Priority</span>
+                    <span className="font-semibold font-mono text-sm text-[#694208]">
+                      {(() => {
+                        const exp = shippingOptions.find((o) => o.type === "express");
+                        if (!exp) return "₹350";
+                        return formatInr(exp.rateMinor);
+                      })()}
+                    </span>
+                  </div>
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Step 4: Payment Notice */}
           <Card className="shadow-xs border-border/70 bg-secondary/10">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
-                <span>Step 3 of 3</span>
+                <span>Step 4 of 4</span>
               </div>
               <CardTitle className="font-serif text-lg font-medium flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-primary" />
@@ -897,7 +1007,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                     <div className="p-2.5 rounded-lg bg-[#073C35]/10 border border-[#073C35]/20 text-[#073C35]">
                       🎥 <strong>Mandatory Continuous Unboxing Video:</strong> A continuous, unedited parcel-opening video is strictly mandatory showing: (1) Unopened parcel, (2) NiVi shipping label, (3) Complete unboxing process, (4) Unfolded product. Claims without continuous video will NOT be accepted.
                     </div>
-                    <p>• <strong>Claim Period:</strong> Must be reported to NiVi within <strong>12–18 hours of delivery</strong> via Email &amp; WhatsApp with unboxing video and photos.</p>
+                    <p>• <strong>Claim Period:</strong> Must be reported to NiVi within <strong>12–18 hours of delivery</strong> via Email (<a href="mailto:connect@brandnivi.com" className="underline hover:text-[#073C35]">connect@brandnivi.com</a>) &amp; WhatsApp (<a href="https://wa.me/919150992863" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#073C35]">+91 91509 92863</a>) with unboxing video and photos.</p>
                     <p>• <strong>Non-Returnable:</strong> Deal-of-the-day / offer items, customized/stitched products, or used/altered items.</p>
                   </AccordionContent>
                 </AccordionItem>
@@ -920,7 +1030,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                 <AccordionItem value="disclaimers" className="py-1">
                   <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-[#073C35]" />
+                      <Info className="w-4 h-4 text-[#073C35]" />
                       <span>4. Disclaimers (Sungudi Sarees &amp; Handloom)</span>
                     </div>
                   </AccordionTrigger>
@@ -1045,11 +1155,21 @@ export function CheckoutView({ products }: CheckoutViewProps) {
 
                 <div className="flex items-center justify-between text-muted-foreground">
                   <div className="flex items-center gap-1.5">
-                    <Truck className="w-3.5 h-3.5 text-primary" />
-                    <span>Insured Domestic Shipping</span>
+                    {shippingMethod === "express" ? (
+                      <Zap className="w-3.5 h-3.5 text-[#694208]" />
+                    ) : (
+                      <Truck className="w-3.5 h-3.5 text-primary" />
+                    )}
+                    <span>
+                      {quote?.shippingLabel || (shippingMethod === "express" ? "Express Delivery" : "Standard Shipping")}
+                    </span>
                   </div>
-                  <span className="font-medium text-emerald-600 dark:text-emerald-400">
-                    FREE
+                  <span className="font-mono font-medium text-foreground">
+                    {quote && quote.shipping.minor === 0
+                      ? "FREE"
+                      : quote
+                      ? formatInr(quote.shipping.minor)
+                      : "—"}
                   </span>
                 </div>
 
