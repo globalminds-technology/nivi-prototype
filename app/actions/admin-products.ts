@@ -204,3 +204,14 @@ export async function toggleProductStatusAction(
     return { success: false, error: "Failed to update product status in Zoho Books." };
   }
 }
+
+export async function getVendorsAction(): Promise<AdminActionResult<Array<{ id: string; name: string }>>> {
+  try {
+    await container.adminAuth.requireAdmin();
+    const vendors = await container.getVendors();
+    return { success: true, data: vendors };
+  } catch (err: unknown) {
+    console.error("Error fetching vendors from Zoho Books:", err);
+    return { success: false, error: "Failed to fetch vendors from Zoho Books." };
+  }
+}

@@ -28,6 +28,10 @@ export type Product = Readonly<{
   price: Money;
   /** Purchase/cost price from Zoho Books. */
   costPrice?: Money | null;
+  /** Preferred vendor ID from Zoho Books. */
+  vendorId?: string | null;
+  /** Preferred vendor name from Zoho Books. */
+  vendorName?: string | null;
   /** Stock on hand as reported by Zoho; may be negative if oversold. */
   stock: number;
   taxId: string | null;
@@ -62,6 +66,8 @@ export function createProduct(props: ProductProps): Product {
     name,
     category: props.category ? props.category.trim() : null,
     costPrice: props.costPrice ?? null,
+    vendorId: props.vendorId ?? null,
+    vendorName: props.vendorName ?? null,
     description: props.description.trim(),
     gallery: createGallery(props.gallery ?? []),
     tags: normalizeTags(props.tags ?? []),

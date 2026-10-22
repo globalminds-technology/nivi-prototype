@@ -223,13 +223,6 @@ export function OrderSuccessView() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-muted-foreground">
-                    <span>Taxes</span>
-                    <span className="font-mono text-muted-foreground/80">
-                      GST Included ({formatInr(quote.tax.minor)})
-                    </span>
-                  </div>
-
                   <Separator className="my-1.5" />
 
                   <div className="flex items-baseline justify-between text-sm font-semibold pt-0.5">
@@ -267,7 +260,7 @@ export function OrderSuccessView() {
                 <div className="text-xs">
                   <p className="font-medium text-foreground">Invoice Emailed</p>
                   <p className="text-muted-foreground mt-0.5">
-                    Your official GST PDF invoice and receipt have been dispatched to your email.
+                    Your official PDF invoice and order receipt have been dispatched to your email.
                   </p>
                 </div>
               </div>

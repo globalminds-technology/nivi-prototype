@@ -21,11 +21,27 @@ interface ZohoItemDetailResponse {
 }
 
 export class ZohoProductRepository implements ProductRepository {
+  private static readonly DETAIL_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+  private static readonly LIST_CACHE_TTL_MS = 3 * 60 * 1000; // 3 minutes
+  private static readonly detailCache = new Map<string, { product: Product; timestamp: number }>();
+  private static readonly listCache = new Map<string, { products: readonly Product[]; timestamp: number }>();
+
   constructor(private readonly http: ZohoHttpClient) {}
+
+  public clearMemoryCache(): void {
+    ZohoProductRepository.detailCache.clear();
+    ZohoProductRepository.listCache.clear();
+  }
 
   async list(filter?: ProductFilter): Promise<readonly Product[]> {
     const config = env();
     if (!config.ZOHO_ORG_ID) return [];
+
+    const cacheKey = JSON.stringify(filter || {});
+    const cachedList = ZohoProductRepository.listCache.get(cacheKey);
+    if (cachedList && Date.now() - cachedList.timestamp < ZohoProductRepository.LIST_CACHE_TTL_MS) {
+      return cachedList.products;
+    }
 
     const queryParams: Record<string, string> = {
       per_page: "200",
@@ -52,22 +68,43 @@ export class ZohoProductRepository implements ProductRepository {
       }
       return true;
     });
-    let products = await Promise.all(
-      items.map(async (raw) => {
-        // If the summary item already has custom fields, map directly
-        if (raw.custom_fields && raw.custom_fields.length > 0) {
-          return ZohoItemMapper.toDomain(raw, config.ZOHO_API_DOMAIN, config.ZOHO_ORG_ID || "");
-        }
-        // Otherwise fetch full single item detail to ensure all custom_fields (tags, gallery, offer) are loaded
-        try {
-          const detailed = await this.getById(raw.item_id);
-          if (detailed) return detailed;
-        } catch {
-          // fallback to summary item
-        }
-        return ZohoItemMapper.toDomain(raw, config.ZOHO_API_DOMAIN, config.ZOHO_ORG_ID || "");
-      }),
-    );
+
+    const mapItem = async (raw: ZohoItemRaw): Promise<Product> => {
+      // Check in-memory detail cache first
+      const cached = ZohoProductRepository.detailCache.get(raw.item_id);
+      if (cached && Date.now() - cached.timestamp < ZohoProductRepository.DETAIL_CACHE_TTL_MS) {
+        return cached.product;
+      }
+
+      // If summary already has custom_fields, map directly
+      if (raw.custom_fields && raw.custom_fields.length > 0) {
+        const prod = ZohoItemMapper.toDomain(raw, config.ZOHO_API_DOMAIN, config.ZOHO_ORG_ID || "");
+        ZohoProductRepository.detailCache.set(raw.item_id, { product: prod, timestamp: Date.now() });
+        return prod;
+      }
+
+      // Fetch full item detail to ensure custom_fields (tags, gallery, offer) are loaded
+      try {
+        const detailed = await this.getById(raw.item_id);
+        if (detailed) return detailed;
+      } catch {
+        // fallback to summary item
+      }
+      return ZohoItemMapper.toDomain(raw, config.ZOHO_API_DOMAIN, config.ZOHO_ORG_ID || "");
+    };
+
+    // Concurrency pool (max 5 simultaneous detail fetches to avoid Zoho 429 rate limits)
+    const productsArray: Product[] = new Array(items.length);
+    let currentIndex = 0;
+    const workerCount = Math.min(5, items.length);
+    const workers = Array.from({ length: workerCount }, async () => {
+      while (currentIndex < items.length) {
+        const i = currentIndex++;
+        productsArray[i] = await mapItem(items[i]);
+      }
+    });
+    await Promise.all(workers);
+    let products: Product[] = productsArray;
 
     if (filter?.status) {
       products = products.filter((p) => p.status === filter.status);
@@ -80,6 +117,7 @@ export class ZohoProductRepository implements ProductRepository {
       products = products.filter((p) => (p.offer !== null) === filter.hasOffer);
     }
 
+    ZohoProductRepository.listCache.set(cacheKey, { products, timestamp: Date.now() });
     return products;
   }
 
@@ -110,11 +148,18 @@ export class ZohoProductRepository implements ProductRepository {
     const config = env();
     if (!config.ZOHO_ORG_ID) return null;
 
+    const cached = ZohoProductRepository.detailCache.get(id);
+    if (cached && Date.now() - cached.timestamp < ZohoProductRepository.DETAIL_CACHE_TTL_MS) {
+      return cached.product;
+    }
+
     try {
       const response = await this.http.get<ZohoItemDetailResponse>(`items/${id}`);
       if (!response.item) return null;
       console.log(`[zoho-repo:getById] Raw item ${id}: rate=${response.item.rate}, purchase_rate=${response.item.purchase_rate}, stock=${response.item.stock_on_hand}, actual_available=${response.item.actual_available_stock}`);
-      return ZohoItemMapper.toDomain(response.item, config.ZOHO_API_DOMAIN, config.ZOHO_ORG_ID || "");
+      const domainProduct = ZohoItemMapper.toDomain(response.item, config.ZOHO_API_DOMAIN, config.ZOHO_ORG_ID || "");
+      ZohoProductRepository.detailCache.set(id, { product: domainProduct, timestamp: Date.now() });
+      return domainProduct;
     } catch (err: unknown) {
       // Check if 404
       if (err && typeof err === "object" && "status" in err && (err as { status: number }).status === 404) {
@@ -169,6 +214,10 @@ export class ZohoProductRepository implements ProductRepository {
         const putRes = await this.http.put<ZohoItemDetailResponse>(`items/${response.item.item_id}`, {
           rate: targetRate,
           purchase_rate: targetPurchaseRate,
+          can_be_sold: true,
+          can_be_purchased: true,
+          account_id: process.env.ZOHO_SALES_ACCOUNT_ID || "4251796000000000486",
+          purchase_account_id: process.env.ZOHO_COGS_ACCOUNT_ID || "4251796000000000567",
         });
         console.log(`[zoho-repo:create] Immediate PUT result: rate=${putRes.item.rate}, purchase_rate=${putRes.item.purchase_rate}`);
         response.item = putRes.item;
@@ -178,6 +227,7 @@ export class ZohoProductRepository implements ProductRepository {
     }
 
     const config = env();
+    this.clearMemoryCache();
     return ZohoItemMapper.toDomain(response.item, config.ZOHO_API_DOMAIN, config.ZOHO_ORG_ID || "");
   }
 
@@ -235,7 +285,12 @@ export class ZohoProductRepository implements ProductRepository {
     ) {
       console.log(`[zoho-repo:update] Rates not saved on main PUT (rate: ${response.item.rate}, purchase_rate: ${response.item.purchase_rate}). Enforcing rate PUT...`);
       try {
-        const ratePayload: Record<string, unknown> = {};
+        const ratePayload: Record<string, unknown> = {
+          can_be_sold: true,
+          can_be_purchased: true,
+          account_id: process.env.ZOHO_SALES_ACCOUNT_ID || "4251796000000000486",
+          purchase_account_id: process.env.ZOHO_COGS_ACCOUNT_ID || "4251796000000000567",
+        };
         if (targetRate !== undefined) ratePayload.rate = targetRate;
         if (targetPurchaseRate !== undefined) ratePayload.purchase_rate = targetPurchaseRate;
         const putRateRes = await this.http.put<ZohoItemDetailResponse>(`items/${id}`, ratePayload);
@@ -267,6 +322,7 @@ export class ZohoProductRepository implements ProductRepository {
         const adjRes = await this.http.post<{ code: number; message: string }>("inventoryadjustments", adjPayload);
         console.log("[zoho-repo:update] Inventory adjustment response:", adjRes);
 
+        this.clearMemoryCache();
         const refreshed = await this.getById(id);
         if (refreshed) {
           return refreshed;
@@ -280,6 +336,7 @@ export class ZohoProductRepository implements ProductRepository {
       }
     }
 
+    this.clearMemoryCache();
     const config = env();
     return ZohoItemMapper.toDomain(response.item, config.ZOHO_API_DOMAIN, config.ZOHO_ORG_ID || "");
   }
@@ -302,6 +359,7 @@ export class ZohoProductRepository implements ProductRepository {
     formData.append("image", blob, filename);
 
     await this.http.post(`items/${id}/image`, formData);
+    this.clearMemoryCache();
 
     return `/api/images/zoho/${id}`;
   }
@@ -312,5 +370,29 @@ export class ZohoProductRepository implements ProductRepository {
 
   async deletePrimaryImage(id: string): Promise<void> {
     await this.http.delete(`items/${id}/image`);
+    this.clearMemoryCache();
+  }
+
+  async getVendors(): Promise<Array<{ id: string; name: string }>> {
+    try {
+      const response = await this.http.get<{
+        contacts?: Array<{
+          contact_id: string;
+          contact_name: string;
+          company_name?: string;
+          status: string;
+        }>;
+      }>("contacts", {
+        contact_type: "vendor",
+        status: "active",
+      });
+      return (response.contacts || []).map((c) => ({
+        id: c.contact_id,
+        name: c.company_name?.trim() || c.contact_name?.trim(),
+      }));
+    } catch (err) {
+      console.error("[zoho-repo:getVendors] Error fetching vendors:", err);
+      return [];
+    }
   }
 }

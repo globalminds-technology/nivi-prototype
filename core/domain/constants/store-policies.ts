@@ -27,25 +27,17 @@ export const STORE_POLICIES: Record<string, PolicySection> = {
     summary: "Orders processed after full payment. Dispatched within 2-3 business days with tracking sent to your WhatsApp.",
     content: [
       {
-        heading: "Order Processing & Dispatch",
-        paragraphs: [
-          "Orders are processed only after full payment is received.",
-          "Orders are typically processed and dispatched within 2–3 business days, excluding Sundays and public holidays.",
-          "Orders are shipped through trusted courier and logistics partners across India.",
-        ],
+        heading: "Shipping Policy",
         bulletPoints: [
-          {
-            label: "WhatsApp Tracking Updates:",
-            text: "Tracking details will be shared directly to your registered WhatsApp number once your order is dispatched.",
-          },
-          {
-            label: "Transit Timelines:",
-            text: "Once the parcel is handed over to the courier partner, delivery timelines may vary depending on destination pincode, courier service speed, local logistics, and unforeseen delays.",
-          },
-          {
-            label: "International Shipping:",
-            text: "International shipping charges vary depending on parcel weight, destination country, customs clearance, and courier tariff.",
-          },
+          { text: "Orders are processed only after full payment is received." },
+          { text: "Orders are shipped through trusted courier/logistics partners." },
+          { text: "Delivery timelines may vary depending on the destination, courier service, customs clearance, and unforeseen delays." },
+          { text: "Tracking details will be shared once the order is dispatched to your whatsapp" },
+          { text: "Once the parcel is handed over to the courier, delivery is subject to the courier partner's service and timelines." },
+          { label: "International shipping charges:", text: "may vary depending on the parcel weight, destination, and courier charges." },
+        ],
+        paragraphs: [
+          "Orders are typically processed and dispatched within 2-3 business days, excluding Sundays and public holidays.",
         ],
       },
     ],
@@ -56,83 +48,91 @@ export const STORE_POLICIES: Record<string, PolicySection> = {
     title: "Return & Exchange Policy",
     badge: "12–18 Hour Claim Window",
     iconName: "RotateCcw",
-    summary: "Accepted strictly for wrong or damaged items. Continuous unedited parcel unboxing video is mandatory.",
+    summary: "Returns/exchanges accepted only for wrong or damaged items. Continuous unboxing video is mandatory.",
     content: [
       {
-        heading: "Important Notice: Please Read Carefully",
+        heading: "Return & Exchange Policy",
         paragraphs: [
-          "At NiVi, every saree is carefully checked and packed by hand before dispatch to ensure heirloom quality.",
+          "Please read carefully before placing your order.",
         ],
         callouts: [
           {
             type: "warning",
-            title: "NiVi does NOT accept returns or exchanges for:",
+            title: "NiVi does not accept returns or exchanges for:",
             text: "• Change of mind\n• Colour preference\n• Size issues\n• Fabric feel or texture preference\n• Minor colour variations",
           },
           {
             type: "info",
-            title: "10–15% Colour Variation Notice",
-            text: "A 10–15% colour variation may naturally occur due to studio lighting, photography, digital device screen calibrations, and artisan dye-lot differences. Such subtle variations are not considered a product defect.",
+            title: "Colour Variation Notice",
+            text: "A 10–15% colour variation may occur due to lighting, photography, screen settings, and dye-lot differences. Such variations are not considered a product defect.",
           },
         ],
       },
       {
-        heading: "When Returns / Exchanges Are Accepted",
-        paragraphs: [
-          "Returns and exchanges are accepted strictly and exclusively for:",
-        ],
+        heading: "Returns/Exchanges Are Accepted Only For:",
         bulletPoints: [
-          { label: "Wrong Product Received:", text: "You received a completely different item than ordered." },
-          { label: "Damaged Product Received:", text: "The saree arrived physically damaged in transit." },
+          { text: "Wrong product received" },
+          { text: "Damaged product received" },
         ],
       },
       {
-        heading: "🎥 Mandatory Unboxing Video Requirement",
+        heading: "Mandatory Unboxing Video",
         paragraphs: [
-          "A continuous, unedited parcel-opening video is strictly mandatory for any damage or wrong-product claim.",
-          "The video recording must clearly show all 4 stages without any cuts or pauses:",
+          "A continuous, unedited parcel-opening video is mandatory for any damage or wrong-product claim.",
+          "The video must clearly show:",
         ],
         bulletPoints: [
-          { label: "1. Unopened Parcel:", text: "All sides of the sealed outer courier parcel before opening." },
-          { label: "2. Shipping Label:", text: "Clear, readable close-up of the pasted NiVi shipping label with your AWB number." },
-          { label: "3. Complete Opening Process:", text: "The continuous cutting of seal and unboxing in real time." },
-          { label: "4. Product Received:", text: "Clear unfolding showing the entire saree and the reported defect." },
+          { label: "1.", text: "The unopened parcel" },
+          { label: "2.", text: "The shipping label" },
+          { label: "3.", text: "The complete opening process" },
+          { label: "4.", text: "The product received" },
         ],
         callouts: [
           {
             type: "warning",
-            title: "Strict Video Requirement",
-            text: "Claims submitted without a proper, continuous, unedited unboxing video will NOT be accepted under any circumstances.",
+            title: "Important",
+            text: "Claims without a proper continuous unboxing video may not be accepted.",
           },
         ],
       },
       {
-        heading: "⏰ Claim Window: 12–18 Hours of Delivery",
+        heading: "Claim Period",
         paragraphs: [
-          "Any damage or wrong-product issue must be reported to NiVi within 12–18 hours of delivery.",
-          "Please submit your claim via Email (connect@brandnivi.com) and WhatsApp (+91 91509 92863) including:",
+          "1. Any damage or wrong-product issue must be reported to NiVi within 12-18 hours of delivery.",
+          "The following must be provided with the claim thru email and whatsapp:",
         ],
         bulletPoints: [
           { text: "Continuous unboxing video" },
-          { text: "Clear high-resolution photographs of the product" },
-          { text: "Photographs of the outer packaging and shipping label" },
+          { text: "Clear photographs of the product" },
+          { text: "Photographs of the packaging and shipping label" },
         ],
       },
       {
-        heading: "💰 Refund & Exchange Resolution",
+        heading: "Refund / Exchange",
         paragraphs: [
-          "If your claim is verified and approved, NiVi may provide a replacement, exchange, or refund depending on current inventory availability and the case circumstances.",
-          "Return shipping arrangements and applicable instructions will be communicated once the return is approved.",
-          "Refunds, where applicable, are initiated after the returned product reaches our facility and undergoes physical quality verification.",
+          "If the claim is approved, NiVi may provide a replacement, exchange, or refund, depending on product availability and the circumstances of the case.",
+          "Return shipping arrangements and applicable charges will be communicated when the return is approved.",
+          "Refunds, where applicable, will be processed after the returned product is received and successfully verified.",
         ],
       },
       {
-        heading: "🚫 Non-Returnable & Non-Exchangeable Items",
+        heading: "Non-Returnable Items",
+        paragraphs: [
+          "The following items are non-returnable and non-exchangeable:",
+        ],
         bulletPoints: [
-          { text: "Deal-of-the-Day / special-offer / sale products" },
-          { text: "Customized, fall/pico stitched, or altered products" },
-          { text: "Products that have been worn, washed, draped, scented, or damaged after delivery" },
-          { text: "Items without original packaging or attached NiVi tags" },
+          { text: "Deal-of-the-Day / special-offer products" },
+          { text: "Customized or stitched products" },
+          { text: "Products that have been used, washed, altered, or damaged after delivery" },
+          { text: "Items without original packaging or NiVi tags, where applicable" },
+        ],
+      },
+      {
+        heading: "Shop With Confidence",
+        paragraphs: [
+          "At NiVi, every saree is carefully checked and packed before dispatch.",
+          "We request our customers to review the product details, photographs, colour, measurements, and other information carefully before confirming the order.",
+          "Thank you for choosing NiVi - Woven with Tradition, Styled for Today",
         ],
       },
     ],
@@ -141,22 +141,15 @@ export const STORE_POLICIES: Record<string, PolicySection> = {
   cancellation: {
     id: "cancellation",
     title: "Cancellation Policy",
-    badge: "Strict No-Cancellation",
+    badge: "Cancellation Not Allowed",
     iconName: "XCircle",
-    summary: "Once an order is confirmed and payment is completed, cancellations are not permitted.",
+    summary: "Once an order is confirmed and payment is received, cancellation is not allowed.",
     content: [
       {
-        heading: "Order Cancellation Guidelines",
-        paragraphs: [
-          "Once an order is confirmed and payment is received, cancellation is not allowed under any circumstances.",
-          "Because each saree is reserved from live boutique stock and swiftly allotted to the packing and courier queue, we cannot cancel or modify orders once placed.",
-        ],
-        callouts: [
-          {
-            type: "warning",
-            title: "Confirm Before Paying",
-            text: "Please carefully confirm the product, colour, weave, measurements, and all delivery details before making payment.",
-          },
+        heading: "Cancellation Policy",
+        bulletPoints: [
+          { text: "Once an order is confirmed and payment is received, cancellation is not allowed." },
+          { text: "Please carefully confirm the product, colour, size, and other details before making payment." },
         ],
       },
     ],
@@ -165,51 +158,70 @@ export const STORE_POLICIES: Record<string, PolicySection> = {
   disclaimers: {
     id: "disclaimers",
     title: "Product & Craft Disclaimers",
-    badge: "Sungudi & Handloom",
+    badge: "Handloom & Sungudi",
     iconName: "Info",
-    summary: "Traditional Sungudi river sand marks, artisan smudges, and zari line relaxation characteristics.",
+    summary: "Handloom silk cotton variations and traditional handmade Sungudi saree craft characteristics.",
     content: [
       {
-        heading: "🌸 Sungudi Sarees – Artisan Craft Disclaimer",
+        heading: "HANDLOOM SILK COTTON SAREES – DISCLAIMER",
         paragraphs: [
-          "Traditional Sungudi cotton sarees are handcrafted by master tie-and-dye artisans. Border designs may naturally vary.",
-          "Please note the following intrinsic artisan characteristics:",
+          "Please Note:",
+        ],
+        bulletPoints: [
+          {
+            label: "1. Handloom Variations:",
+            text: "Minor irregularities in weaving, texture, and thread appearance are natural characteristics of handloom sarees.",
+          },
+          {
+            label: "2. Colour Variation:",
+            text: "Slight colour variations may occur due to lighting, photography, and differences in screen settings.",
+          },
+          {
+            label: "3. Weaving Marks:",
+            text: "Minor weaving irregularities, thread knots, or small slubs may be present and are not considered defects.",
+          },
+          {
+            label: "4. Zari & Border:",
+            text: "Slight variations in zari work, border alignment, or design placement may occur due to the handmade weaving process.",
+          },
+          {
+            label: "5. Fabric Texture:",
+            text: "Handloom silk cotton sarees may have slight variations in texture and finish, reflecting their handcrafted nature.",
+          },
+        ],
+        callouts: [
+          {
+            type: "info",
+            title: "Artisan Craftsmanship",
+            text: "Every handloom saree is unique. Thank you for appreciating and supporting our traditional weavers through NiVi - Woven with Tradition, Styled for Today.",
+          },
+        ],
+      },
+      {
+        heading: "SUNGUDI SAREES – DISCLAIMER",
+        paragraphs: [
+          "Border designs may vary.",
+          "Please Note:",
         ],
         bulletPoints: [
           {
             label: "1. Sand Marks:",
-            text: "Minor sand marks are completely normal in Sungudi cotton sarees, as the fabric is traditionally dried on open river sand after hand-dyeing.",
+            text: "Minor sand marks are normal in Sungudi cotton sarees, as the fabric is traditionally dried on river sand after dyeing.",
           },
           {
             label: "2. Handmade Nature:",
-            text: "Minor smudges, small wax droplets, or dye irregularities are natural hallmarks of authentic handmade sarees and should not be considered stains or defects.",
+            text: "Minor smudges or irregularities are natural characteristics of handmade sarees and should not be considered stains or defects.",
           },
           {
             label: "3. Zari Line Marks:",
-            text: "Zari line marks may occur during traditional starching and hot-iron pressing. These are not considered damage, as the marks naturally relax and soften after washing.",
+            text: "Zari line marks may occur during starching and ironing. These are not considered damage, as the marks are expected to relax after washing.",
           },
         ],
         callouts: [
           {
             type: "success",
-            title: "Woven with Tradition",
-            text: "Thank you for understanding and appreciating the genuine beauty and human touch of traditional handmade Sungudi sarees.",
-          },
-        ],
-      },
-      {
-        heading: "🌿 Pure Handloom & Silk Weave Authenticity",
-        paragraphs: [
-          "Authentic handloom sarees (such as Kanchipuram, Banarasi, Linen, and Silk Cotton) feature unique artisan handcrafting:",
-        ],
-        bulletPoints: [
-          {
-            label: "Organic Slubs & Texture:",
-            text: "Hand-spun natural silk and cotton threads exhibit organic texture variations, subtle thread joints, and slub lines that distinguish real handloom textiles from machine-made polyester imitations.",
-          },
-          {
-            label: "Care & Preservation:",
-            text: "Dry clean exclusively for pure silk and zari weaves. Store gently wrapped in unbleached cotton muslin cloth. Avoid spraying perfume directly onto pure metallic zari.",
+            title: "Traditional Heritage",
+            text: "Thank you for understanding and appreciating the beauty of traditional handmade Sungudi sarees.",
           },
         ],
       },

@@ -187,20 +187,23 @@ export function CategoryManager({ initialCategories }: CategoryManagerProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-5">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D5CCBB]/80 pb-5">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
-            <span>Product Categories</span>
-            <Badge variant="outline" className="font-mono text-xs text-primary border-brand/40">
+          <div className="flex items-center gap-2.5">
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-[#073C35]">
+              Product Categories
+            </h1>
+            <Badge variant="outline" className="font-mono text-xs text-[#073C35] bg-[#073C35]/10 border-[#073C35]/25">
               {categories.length} Total
             </Badge>
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage your store collections and upload category cover cards. Mapped to your items via the category field.
+          </div>
+          <p className="text-sm text-[#6B5A4A] mt-1 font-sans">
+            Manage your store collections and category cover artwork. Mapped to your inventory via the category attribute.
           </p>
         </div>
 
-        <Button onClick={openCreateDialog} className="gap-2 shadow-xs">
+        <Button onClick={openCreateDialog} className="gap-2 shadow-xs bg-[#073C35] hover:bg-[#0a4d44] text-[#FFFCF5] rounded-xl font-semibold cursor-pointer">
           <Plus className="h-4 w-4" />
           <span>New Category</span>
         </Button>
@@ -208,24 +211,24 @@ export function CategoryManager({ initialCategories }: CategoryManagerProps) {
 
       {/* Categories Grid or Empty State */}
       {categories.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border/80 p-12 text-center bg-card/40 my-8">
-          <Layers className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
-          <h3 className="font-serif text-lg font-bold text-foreground">No Categories Created Yet</h3>
-          <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
+        <div className="rounded-2xl border border-dashed border-[#D5CCBB] p-12 text-center bg-[#FFFCF5] my-8 shadow-xs">
+          <Layers className="mx-auto h-10 w-10 text-[#073C35]/40 mb-3" />
+          <h3 className="font-serif text-lg font-bold text-[#30251F]">No Categories Created Yet</h3>
+          <p className="text-xs text-[#6B5A4A] mt-1 max-w-md mx-auto font-sans">
             You haven&apos;t created any categories yet. Click &quot;New Category&quot; above to create your first collection.
           </p>
-          <Button onClick={openCreateDialog} className="mt-4 gap-2 text-xs">
+          <Button onClick={openCreateDialog} className="mt-4 gap-2 text-xs bg-[#073C35] hover:bg-[#0a4d44] text-[#FFFCF5] rounded-xl font-semibold">
             <Plus className="h-3.5 w-3.5" />
             <span>Create Category</span>
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
           {categories.map((cat) => (
-          <Card key={cat.slug} className="group overflow-hidden rounded-xl border border-[#d2c8b5] bg-card shadow-[0_2px_12px_rgba(70,50,20,0.05)] hover:shadow-[0_8px_24px_rgba(70,50,20,0.1)] hover:border-brand/60 transition-all flex flex-col justify-between p-0 gap-0">
+          <Card key={cat.slug} className="group overflow-hidden rounded-xl border border-[#D5CCBB] bg-[#FFFCF5] shadow-[0_2px_10px_rgba(7,60,53,0.04)] hover:shadow-[0_6px_20px_rgba(7,60,53,0.08)] hover:border-[#073C35]/40 transition-all flex flex-col justify-between p-0 gap-0">
             <div>
               {/* Cover Image */}
-              <div className="relative aspect-4/3 w-full overflow-hidden rounded-t-xl bg-[#ede7d8] border-b border-[#d2c8b5]">
+              <div className="relative aspect-16/10 w-full overflow-hidden rounded-t-xl bg-[#E4DDCD]/40 border-b border-[#D5CCBB]">
                 {cat.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -234,26 +237,26 @@ export function CategoryManager({ initialCategories }: CategoryManagerProps) {
                     className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  <div className="h-full w-full flex flex-col items-center justify-center text-muted-foreground/60 p-4 text-center">
-                    <Layers className="h-8 w-8 mb-2 opacity-50 text-brand" />
-                    <span className="text-xs">No Cover Image</span>
+                  <div className="h-full w-full flex flex-col items-center justify-center text-[#6B5A4A]/50 p-2 text-center">
+                    <Layers className="h-6 w-6 mb-1 opacity-40 text-[#073C35]" />
+                    <span className="text-[10px] font-sans">No Image</span>
                   </div>
                 )}
 
-                <div className="absolute top-2 right-2">
-                  <Badge className="bg-[#faf8f2]/95 text-foreground text-[10px] font-mono border border-[#d2c8b5] backdrop-blur-xs shadow-2xs">
+                <div className="absolute top-1.5 right-1.5">
+                  <Badge className="bg-[#FFFCF5]/95 text-[#30251F] text-[9px] font-mono border border-[#D5CCBB] backdrop-blur-xs px-1.5 py-0 shadow-2xs">
                     {cat.slug}
                   </Badge>
                 </div>
               </div>
 
               {/* Card Body */}
-              <CardHeader className="p-4 pb-2">
-                <CardTitle className="text-base font-semibold tracking-tight text-foreground font-serif">
+              <CardHeader className="p-3 pb-1">
+                <CardTitle className="text-sm font-bold tracking-tight text-[#30251F] font-serif truncate" title={cat.name}>
                   {cat.name}
                 </CardTitle>
                 {cat.description && (
-                  <CardDescription className="text-xs line-clamp-2 mt-1">
+                  <CardDescription className="text-[11px] text-[#6B5A4A] line-clamp-1 mt-0.5 font-sans" title={cat.description}>
                     {cat.description}
                   </CardDescription>
                 )}
@@ -261,30 +264,31 @@ export function CategoryManager({ initialCategories }: CategoryManagerProps) {
             </div>
 
             {/* Actions */}
-            <CardContent className="p-4 pt-2 border-t border-[#d2c8b5]/60 mt-3 flex items-center justify-between">
+            <CardContent className="p-2.5 pt-1.5 border-t border-[#D5CCBB]/50 mt-1 flex items-center justify-between">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => openEditDialog(cat)}
-                className="gap-1.5 text-xs h-8 border-[#d2c8b5] hover:bg-background"
+                className="gap-1 text-[11px] h-7 px-2 border-[#D5CCBB] text-[#073C35] hover:bg-[#073C35]/8 rounded-lg cursor-pointer"
               >
-                <Pencil className="h-3 w-3" />
+                <Pencil className="h-2.5 w-2.5" />
                 <span>Edit</span>
               </Button>
 
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon-sm"
                 onClick={() => handleDelete(cat.slug)}
                 disabled={isPending}
-                className="text-xs h-8 text-destructive hover:bg-destructive/10"
+                className="text-xs h-7 w-7 text-red-700 hover:bg-red-50 hover:text-red-800 rounded-lg cursor-pointer p-0"
+                title="Delete category"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-3 w-3" />
               </Button>
             </CardContent>
           </Card>
-        ))}
-      </div>
+          ))}
+        </div>
       )}
 
       {/* Create / Edit Dialog */}

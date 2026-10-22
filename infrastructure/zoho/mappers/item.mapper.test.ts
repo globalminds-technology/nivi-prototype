@@ -143,7 +143,10 @@ describe("ZohoItemMapper", () => {
 
     expect(payload.product_type).toBe("goods");
     expect(payload.item_type).toBe("sales_and_purchases");
+    expect(payload.can_be_sold).toBe(true);
+    expect(payload.can_be_purchased).toBe(true);
     expect(payload.track_inventory).toBe(true);
+    expect(payload.inventory_valuation_method).toBe("fifo");
     expect(payload.initial_stock).toBe(15);
     expect(payload.initial_stock_rate).toBe(2500);
     expect(payload.inventory_account_id).toBeDefined();

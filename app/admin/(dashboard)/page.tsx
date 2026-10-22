@@ -71,27 +71,32 @@ export default async function AdminProductsPage() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Heading */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#D5CCBB]/80">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
-            Product Catalog
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage your store items, gallery media, custom tags, and special offers. Synchronized with Zoho Books.
+          <div className="flex items-center gap-2.5">
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-[#073C35]">
+              Product Catalog
+            </h1>
+            <span className="text-[10px] uppercase tracking-wider font-mono bg-[#073C35]/10 text-[#073C35] border border-[#073C35]/25 font-bold px-2.5 py-0.5 rounded-full shadow-2xs">
+              Zoho Synced
+            </span>
+          </div>
+          <p className="text-sm text-[#6B5A4A] mt-1 font-sans">
+            Manage your store items, media galleries, custom tags, pricing, and active offers. Synchronized with Zoho Books.
           </p>
         </div>
       </div>
 
       {errorNotice && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Zoho Books Connection Notice</AlertTitle>
-          <AlertDescription className="space-y-2">
+        <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-900 rounded-xl">
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <AlertTitle className="text-sm font-bold">Zoho Books Connection Notice</AlertTitle>
+          <AlertDescription className="space-y-2 text-xs text-red-800">
             <p>{errorNotice}</p>
-            <p className="text-xs opacity-80">
-              Ensure <code className="bg-destructive/20 px-1 py-0.5 rounded">ZOHO_CLIENT_ID</code>,{" "}
-              <code className="bg-destructive/20 px-1 py-0.5 rounded">ZOHO_CLIENT_SECRET</code>, and{" "}
-              <code className="bg-destructive/20 px-1 py-0.5 rounded">ZOHO_REFRESH_TOKEN</code> are configured in your environment.
+            <p className="opacity-80">
+              Ensure <code className="bg-red-100 px-1 py-0.5 rounded font-mono">ZOHO_CLIENT_ID</code>,{" "}
+              <code className="bg-red-100 px-1 py-0.5 rounded font-mono">ZOHO_CLIENT_SECRET</code>, and{" "}
+              <code className="bg-red-100 px-1 py-0.5 rounded font-mono">ZOHO_REFRESH_TOKEN</code> are configured in your environment.
             </p>
           </AlertDescription>
         </Alert>
@@ -99,47 +104,55 @@ export default async function AdminProductsPage() {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
+        <Card className="shadow-[0_2px_12px_rgba(7,60,53,0.04)] border-[#D5CCBB] bg-[#FFFCF5] hover:border-[#073C35]/40 transition-all rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Total Items</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs font-semibold text-[#6B5A4A] tracking-wider uppercase font-mono">Total Items</CardTitle>
+            <div className="h-7 w-7 rounded-lg bg-[#073C35]/8 flex items-center justify-center text-[#073C35]">
+              <Package className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-mono text-foreground">{totalCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Catalog items</p>
+            <div className="text-2xl sm:text-3xl font-bold font-mono text-[#073C35]">{totalCount}</div>
+            <p className="text-xs text-[#6B5A4A] mt-1">Catalog items</p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
+        <Card className="shadow-[0_2px_12px_rgba(7,60,53,0.04)] border-[#D5CCBB] bg-[#FFFCF5] hover:border-emerald-500/40 transition-all rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Active Catalog</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <CardTitle className="text-xs font-semibold text-[#6B5A4A] tracking-wider uppercase font-mono">Active Catalog</CardTitle>
+            <div className="h-7 w-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-700">
+              <CheckCircle2 className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-mono text-foreground">{activeCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Visible on storefront</p>
+            <div className="text-2xl sm:text-3xl font-bold font-mono text-emerald-800">{activeCount}</div>
+            <p className="text-xs text-[#6B5A4A] mt-1">Live on storefront</p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
+        <Card className="shadow-[0_2px_12px_rgba(7,60,53,0.04)] border-[#D5CCBB] bg-[#FFFCF5] hover:border-[#C9A45C]/50 transition-all rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground">In Stock</CardTitle>
-            <Package className="h-4 w-4 text-primary" />
+            <CardTitle className="text-xs font-semibold text-[#6B5A4A] tracking-wider uppercase font-mono">In Stock</CardTitle>
+            <div className="h-7 w-7 rounded-lg bg-[#C9A45C]/15 flex items-center justify-center text-[#8C6D37]">
+              <Package className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-mono text-foreground">{inStockCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Ready for purchase</p>
+            <div className="text-2xl sm:text-3xl font-bold font-mono text-[#073C35]">{inStockCount}</div>
+            <p className="text-xs text-[#6B5A4A] mt-1">Ready for checkout</p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
+        <Card className="shadow-[0_2px_12px_rgba(7,60,53,0.04)] border-[#D5CCBB] bg-[#FFFCF5] hover:border-stone-400 transition-all rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground">Inactive Catalog</CardTitle>
-            <EyeOff className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs font-semibold text-[#6B5A4A] tracking-wider uppercase font-mono">Inactive Catalog</CardTitle>
+            <div className="h-7 w-7 rounded-lg bg-stone-100 flex items-center justify-center text-stone-600">
+              <EyeOff className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-mono text-foreground">{inactiveCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Hidden from storefront</p>
+            <div className="text-2xl sm:text-3xl font-bold font-mono text-stone-700">{inactiveCount}</div>
+            <p className="text-xs text-[#6B5A4A] mt-1">Hidden from storefront</p>
           </CardContent>
         </Card>
       </div>

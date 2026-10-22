@@ -8,6 +8,7 @@ import {
 } from "@/core/application/dto/checkout.dto";
 import type { CheckoutSnapshot, Quote } from "@/core/domain/entities/order";
 import { DomainError } from "@/core/domain/errors/domain-errors";
+import { matchIndianState, PINCODE_PATTERN } from "@/core/domain/entities/customer";
 import { z } from "zod";
 
 export interface QuoteCartResponse {
@@ -148,6 +149,90 @@ export async function confirmPaymentAction(
     return {
       success: false,
       error: err instanceof Error ? err.message : "Payment verification failed",
+    };
+  }
+}
+
+export interface PincodeLookupResult {
+  success: boolean;
+  city?: string;
+  district?: string;
+  state?: string;
+  places?: string[];
+  error?: string;
+}
+
+/**
+ * Looks up postal details (City/District, State, Localities) using India Post / postal PIN API.
+ * Results are cached to provide instant lookups.
+ */
+export async function lookupPincodeAction(pincode: string): Promise<PincodeLookupResult> {
+  const clean = pincode.replace(/\D/g, "").slice(0, 6);
+  if (!PINCODE_PATTERN.test(clean)) {
+    return {
+      success: false,
+      error: "Please enter a valid 6-digit Indian PIN code",
+    };
+  }
+
+  try {
+    const res = await fetch(`https://api.postalpincode.in/pincode/${clean}`, {
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(6000),
+    });
+
+    if (!res.ok) {
+      return {
+        success: false,
+        error: "Postal directory service temporarily unavailable",
+      };
+    }
+
+    const data = await res.json();
+    if (
+      Array.isArray(data) &&
+      data[0]?.Status === "Success" &&
+      Array.isArray(data[0]?.PostOffice) &&
+      data[0].PostOffice.length > 0
+    ) {
+      const offices = data[0].PostOffice as Array<{
+        District?: string;
+        Block?: string;
+        Division?: string;
+        State?: string;
+        Name?: string;
+      }>;
+
+      const first = offices[0];
+      const city = first.District || first.Block || first.Division || "";
+      const rawState = first.State || "";
+      const matchedState = matchIndianState(rawState) || rawState;
+      const places = Array.from(
+        new Set(
+          offices
+            .map((o) => o.Name?.trim())
+            .filter((name): name is string => Boolean(name && name.length > 0)),
+        ),
+      );
+
+      return {
+        success: true,
+        city,
+        district: city,
+        state: matchedState,
+        places,
+      };
+    }
+
+    return {
+      success: false,
+      error: data[0]?.Message || "No postal records found for this PIN code",
+    };
+  } catch (err: unknown) {
+    console.error("Postal PIN lookup failed:", err);
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to lookup PIN code",
     };
   }
 }

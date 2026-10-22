@@ -215,6 +215,9 @@ export class ZohoItemMapper {
         ? Money.ofMajor(Number(raw.purchase_rate))
         : null;
 
+    const vendorId = raw.vendor_id ? String(raw.vendor_id) : null;
+    const vendorName = raw.vendor_name ? String(raw.vendor_name) : null;
+
     return createProduct({
       id: raw.item_id,
       sku,
@@ -222,6 +225,8 @@ export class ZohoItemMapper {
       description: raw.description || "",
       price: Money.ofMajor(raw.rate || 0),
       costPrice,
+      vendorId,
+      vendorName,
       stock,
       taxId: raw.tax_id ?? null,
       taxPercentage: Number(raw.tax_percentage ?? 0),
@@ -245,14 +250,23 @@ export class ZohoItemMapper {
     if (props.costPrice !== undefined) {
       payload.purchase_rate = props.costPrice ? Money.toMajor(props.costPrice) : 0;
     }
+    if (props.vendorId !== undefined) {
+      payload.vendor_id = props.vendorId || "";
+    }
     if (props.taxId !== undefined && props.taxId) payload.tax_id = props.taxId;
     if (props.status !== undefined) payload.status = props.status;
+
+    payload.can_be_sold = true;
+    payload.can_be_purchased = true;
+    payload.account_id = process.env.ZOHO_SALES_ACCOUNT_ID || "4251796000000000486";
+    payload.purchase_account_id = process.env.ZOHO_COGS_ACCOUNT_ID || "4251796000000000567";
 
     // Enable Zoho Inventory tracking (Only valid on POST when creating new items)
     if (!isUpdate) {
       payload.product_type = "goods";
       payload.item_type = "sales_and_purchases";
       payload.track_inventory = true;
+      payload.inventory_valuation_method = "fifo";
 
       const purchaseRateNum =
         props.costPrice !== undefined && props.costPrice !== null
@@ -273,8 +287,6 @@ export class ZohoItemMapper {
         payload.initial_stock_rate = initialStockRate;
       }
       payload.inventory_account_id = process.env.ZOHO_INVENTORY_ACCOUNT_ID || "4251796000000000626";
-      payload.purchase_account_id = process.env.ZOHO_COGS_ACCOUNT_ID || "4251796000000000567";
-      payload.account_id = process.env.ZOHO_SALES_ACCOUNT_ID || "4251796000000000486";
     }
 
     // Build custom_fields array only if non-empty custom fields are explicitly present.

@@ -29,6 +29,9 @@ export class UpdateProduct {
     if (dto.costPrice !== undefined) {
       updates.costPrice = dto.costPrice !== null ? Money.ofMajor(dto.costPrice) : null;
     }
+    if (dto.vendorId !== undefined) {
+      updates.vendorId = dto.vendorId || null;
+    }
     if (dto.stock !== undefined) updates.stock = dto.stock;
     if (dto.taxId !== undefined) updates.taxId = dto.taxId;
     if (dto.taxPercentage !== undefined) updates.taxPercentage = dto.taxPercentage;

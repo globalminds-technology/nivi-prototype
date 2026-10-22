@@ -28,6 +28,7 @@ export const ProductInputDto = z.object({
   description: z.string().default(""),
   price: z.number().nonnegative("Price cannot be negative"), // In Major units (Rupees) - Selling Price
   costPrice: z.number().nonnegative("Cost price cannot be negative").optional().nullable(), // Purchase Price
+  vendorId: z.string().optional().nullable(),
   stock: z.number().int().default(0),
   taxId: z.string().optional().nullable(),
   taxPercentage: z.number().min(0).max(100).default(0),

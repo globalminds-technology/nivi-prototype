@@ -44,6 +44,8 @@ export interface InitialProductData {
   description: string;
   price: number; // in Rupees - Selling Price
   costPrice?: number | null; // in Rupees - Purchase Price
+  vendorId?: string | null;
+  vendorName?: string | null;
   stock: number;
   category?: string | null;
   taxId?: string | null;
@@ -74,6 +76,7 @@ interface ProductFormProps {
   initialData?: InitialProductData;
   isEditing?: boolean;
   availableCategories?: Category[];
+  availableVendors?: Array<{ id: string; name: string }>;
 }
 
 const COMMON_TAGS = ["featured", "new_arrival", "bestseller", "bridal", "handcrafted", "limited_edition"];
@@ -150,6 +153,7 @@ export function ProductForm({
   initialData,
   isEditing = false,
   availableCategories = [],
+  availableVendors = [],
 }: ProductFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -168,6 +172,7 @@ export function ProductForm({
       ? String(initialData.costPrice)
       : "",
   );
+  const [vendorId, setVendorId] = useState(initialData?.vendorId ?? "");
   const [stock, setStock] = useState(initialData?.stock !== undefined ? String(initialData.stock) : "0");
   const [status, setStatus] = useState<"active" | "inactive">(initialData?.status ?? "active");
 
@@ -236,6 +241,7 @@ export function ProductForm({
     setDescription("");
     setPrice("");
     setCostPrice("");
+    setVendorId("");
     setStock("0");
     setStatus("active");
     setImageFile(null);
@@ -403,6 +409,7 @@ export function ProductForm({
         category: category.trim() || null,
         price: priceNum,
         costPrice: parsedCostPrice,
+        vendorId: vendorId ? vendorId.trim() : null,
         stock: parsedStock,
         taxId: null,
         taxPercentage: 0,
@@ -467,20 +474,20 @@ export function ProductForm({
   return (
     <form onSubmit={handleSubmit} autoComplete="off" className="space-y-6 max-w-4xl mx-auto pb-16">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D5CCBB]/80 pb-5">
         <div className="flex items-center gap-3">
           <Link
             href="/admin"
-            className={buttonVariants({ variant: "outline", size: "sm", className: "h-9 w-9 p-0 rounded-lg" })}
+            className={buttonVariants({ variant: "outline", size: "sm", className: "h-9 w-9 p-0 rounded-xl border-[#D5CCBB] bg-[#FFFCF5] hover:bg-[#073C35]/8 text-[#073C35]" })}
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#073C35]">
               {isEditing ? `Edit: ${initialData?.name ?? "Product"}` : "Add New Saree"}
             </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-              Manage product details, pricing, and showcase media
+            <p className="text-xs sm:text-sm text-[#6B5A4A] mt-0.5 font-sans">
+              Manage product details, pricing, stock ledger, and media gallery
             </p>
           </div>
         </div>
@@ -488,11 +495,11 @@ export function ProductForm({
         <div className="flex items-center gap-2">
           <Link
             href="/admin"
-            className={buttonVariants({ variant: "outline", size: "sm", className: "text-xs" })}
+            className={buttonVariants({ variant: "outline", size: "sm", className: "text-xs border-[#D5CCBB] bg-[#FFFCF5] hover:bg-[#073C35]/8 text-[#30251F] rounded-xl" })}
           >
             Cancel
           </Link>
-          <Button type="submit" disabled={isPending} className="gap-2 text-xs shadow-xs">
+          <Button type="submit" disabled={isPending} className="gap-2 text-xs shadow-xs bg-[#073C35] hover:bg-[#0a4d44] text-[#FFFCF5] font-semibold rounded-xl cursor-pointer">
             {isPending ? (
               <>
                 <Spinner className="h-3.5 w-3.5" />
@@ -514,28 +521,28 @@ export function ProductForm({
         onValueChange={(val) => setActiveTab(val as "details" | "media" | "attributes" | "tags")}
         className="w-full space-y-6"
       >
-        <TabsList className="grid grid-cols-4 w-full h-11 bg-muted/60 p-1 rounded-xl">
-          <TabsTrigger value="details" className="text-xs gap-1.5 data-[state=active]:shadow-xs">
-            <span className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">1</span>
+        <TabsList className="grid grid-cols-4 w-full h-12 bg-[#FFFCF5] border border-[#D5CCBB] p-1 rounded-2xl shadow-2xs">
+          <TabsTrigger value="details" className="text-xs gap-1.5 data-[state=active]:bg-[#073C35] data-[state=active]:text-[#FFFCF5] data-[state=active]:shadow-xs rounded-xl font-medium">
+            <span className="w-4 h-4 rounded-full bg-[#073C35]/15 data-[state=active]:bg-white/20 text-[#073C35] data-[state=active]:text-white flex items-center justify-center text-[10px] font-bold">1</span>
             <span className="truncate">Details</span>
           </TabsTrigger>
-          <TabsTrigger value="media" className="text-xs gap-1.5 data-[state=active]:shadow-xs">
-            <span className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
+          <TabsTrigger value="media" className="text-xs gap-1.5 data-[state=active]:bg-[#073C35] data-[state=active]:text-[#FFFCF5] data-[state=active]:shadow-xs rounded-xl font-medium">
+            <span className="w-4 h-4 rounded-full bg-[#073C35]/15 data-[state=active]:bg-white/20 text-[#073C35] data-[state=active]:text-white flex items-center justify-center text-[10px] font-bold">2</span>
             <span className="truncate">Media ({totalPhotosCount + (imagePreview ? 1 : 0)})</span>
           </TabsTrigger>
-          <TabsTrigger value="attributes" className="text-xs gap-1.5 data-[state=active]:shadow-xs">
-            <span className="w-4 h-4 rounded-full bg-emerald-800/20 text-emerald-800 flex items-center justify-center text-[10px] font-bold">3</span>
+          <TabsTrigger value="attributes" className="text-xs gap-1.5 data-[state=active]:bg-[#073C35] data-[state=active]:text-[#FFFCF5] data-[state=active]:shadow-xs rounded-xl font-medium">
+            <span className="w-4 h-4 rounded-full bg-[#073C35]/15 data-[state=active]:bg-white/20 text-[#073C35] data-[state=active]:text-white flex items-center justify-center text-[10px] font-bold">3</span>
             <span className="truncate">Quiz & Styling</span>
           </TabsTrigger>
-          <TabsTrigger value="tags" className="text-xs gap-1.5 data-[state=active]:shadow-xs">
-            <span className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">4</span>
+          <TabsTrigger value="tags" className="text-xs gap-1.5 data-[state=active]:bg-[#073C35] data-[state=active]:text-[#FFFCF5] data-[state=active]:shadow-xs rounded-xl font-medium">
+            <span className="w-4 h-4 rounded-full bg-[#073C35]/15 data-[state=active]:bg-white/20 text-[#073C35] data-[state=active]:text-white flex items-center justify-center text-[10px] font-bold">4</span>
             <span className="truncate">Tags ({tags.length})</span>
           </TabsTrigger>
         </TabsList>
 
         {/* TAB 1: DETAILS */}
         <TabsContent value="details" className="space-y-6">
-          <Card className="shadow-xs border-border/70">
+          <Card className="shadow-[0_4px_20px_rgba(7,60,53,0.04)] border-[#D5CCBB] bg-[#FFFCF5] rounded-2xl overflow-hidden">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">General Information</CardTitle>
               <CardDescription>Primary identification, weave name, category, and pricing.</CardDescription>
@@ -629,8 +636,8 @@ export function ProductForm({
                 </Field>
               </div>
 
-              {/* Price, Cost Price & Stock Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              {/* Price, Cost Price, Preferred Vendor & Stock Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
                 <Field>
                   <FieldLabel htmlFor="price">Selling Price (INR) *</FieldLabel>
                   <div className="relative">
@@ -672,6 +679,25 @@ export function ProductForm({
                     />
                   </div>
                   <FieldDescription>Internal cost for margin tracking</FieldDescription>
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="vendorId">Preferred Vendor</FieldLabel>
+                  <select
+                    id="vendorId"
+                    value={vendorId}
+                    onChange={(e) => setVendorId(e.target.value)}
+                    disabled={isPending}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">-- None (Optional) --</option>
+                    {availableVendors.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.name}
+                      </option>
+                    ))}
+                  </select>
+                  <FieldDescription>Zoho Books supplier (optional)</FieldDescription>
                 </Field>
 
                 <Field>

@@ -4,6 +4,10 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   ExternalLink,
   EyeOff,
   MoreHorizontal,
@@ -67,6 +71,8 @@ interface ProductTableProps {
 export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [isSyncing, startSync] = useTransition();
   const [, startToggle] = useTransition();
 
@@ -104,51 +110,68 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
     return matchesSearch && matchesStatus;
   });
 
+  const totalItems = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const startIndex = (safeCurrentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalItems);
+  const paginatedProducts = filtered.slice(startIndex, endIndex);
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setCurrentPage(1);
+  };
+
+  const handleStatusFilterChange = (status: "all" | "active" | "inactive") => {
+    setStatusFilter(status);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="space-y-4">
       {/* Search & Actions Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2 flex-1 max-w-md">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#073C35]/60 pointer-events-none" />
             <Input
               placeholder="Search by name, SKU or tag..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 bg-card border-[#d2c8b5] shadow-2xs"
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-9 bg-[#FFFCF5] border-[#D5CCBB] text-[#30251F] placeholder:text-[#6B5A4A]/50 focus-visible:border-[#073C35] focus-visible:ring-[#073C35] rounded-xl shadow-2xs h-10"
             />
           </div>
 
-          <div className="flex items-center gap-1 bg-[#ede7d8]/50 p-1 rounded-lg border border-[#d2c8b5] text-xs">
+          <div className="flex items-center gap-1 bg-[#FFFCF5] p-1 rounded-xl border border-[#D5CCBB] text-xs shadow-2xs">
             <button
               type="button"
-              onClick={() => setStatusFilter("all")}
-              className={`px-2.5 py-1 rounded-md font-medium transition-all ${
+              onClick={() => handleStatusFilterChange("all")}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 statusFilter === "all"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[#073C35] text-[#FFFCF5] shadow-xs"
+                  : "text-[#6B5A4A] hover:text-[#073C35]"
               }`}
             >
               All
             </button>
             <button
               type="button"
-              onClick={() => setStatusFilter("active")}
-              className={`px-2.5 py-1 rounded-md font-medium transition-all ${
+              onClick={() => handleStatusFilterChange("active")}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 statusFilter === "active"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[#073C35] text-[#FFFCF5] shadow-xs"
+                  : "text-[#6B5A4A] hover:text-[#073C35]"
               }`}
             >
               Active
             </button>
             <button
               type="button"
-              onClick={() => setStatusFilter("inactive")}
-              className={`px-2.5 py-1 rounded-md font-medium transition-all ${
+              onClick={() => handleStatusFilterChange("inactive")}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 statusFilter === "inactive"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[#073C35] text-[#FFFCF5] shadow-xs"
+                  : "text-[#6B5A4A] hover:text-[#073C35]"
               }`}
             >
               Inactive
@@ -162,19 +185,23 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
             size="sm"
             onClick={handleSync}
             disabled={isSyncing}
-            className="gap-2"
+            className="gap-2 border-[#D5CCBB] bg-[#FFFCF5] hover:bg-[#073C35]/8 text-[#073C35] rounded-xl shadow-2xs font-medium h-10"
           >
             {isSyncing ? (
               <Spinner className="h-4 w-4" />
             ) : (
-              <RefreshCw className="h-4 w-4 text-muted-foreground" />
+              <RefreshCw className="h-4 w-4 text-[#073C35]" />
             )}
             <span>Purge & Sync Cache</span>
           </Button>
 
           <Link
             href="/admin/products/new"
-            className={buttonVariants({ size: "sm", className: "gap-1.5" })}
+            className={buttonVariants({
+              size: "sm",
+              className:
+                "gap-1.5 bg-[#073C35] hover:bg-[#0a4d44] text-[#FFFCF5] rounded-xl shadow-xs font-semibold h-10",
+            })}
           >
             <Package className="h-4 w-4" />
             <span>Add Product</span>
@@ -183,26 +210,26 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
       </div>
 
       {/* Products Table Card */}
-      <div className="rounded-xl border border-[#d2c8b5] bg-card overflow-hidden shadow-[0_2px_12px_rgba(70,50,20,0.05)]">
+      <div className="rounded-2xl border border-[#D5CCBB] bg-[#FFFCF5] overflow-hidden shadow-[0_4px_20px_rgba(7,60,53,0.05)]">
         <Table>
-          <TableHeader className="bg-[#ede7d8]/60 border-b border-[#d2c8b5]">
-            <TableRow>
-              <TableHead className="w-[80px]">Image</TableHead>
-              <TableHead>Product & SKU</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right w-[80px]">Actions</TableHead>
+          <TableHeader className="bg-[#E4DDCD]/40 border-b border-[#D5CCBB]">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-[80px] font-semibold text-[#073C35] text-xs uppercase tracking-wider">Image</TableHead>
+              <TableHead className="font-semibold text-[#073C35] text-xs uppercase tracking-wider">Product & SKU</TableHead>
+              <TableHead className="font-semibold text-[#073C35] text-xs uppercase tracking-wider">Price</TableHead>
+              <TableHead className="font-semibold text-[#073C35] text-xs uppercase tracking-wider">Stock</TableHead>
+              <TableHead className="font-semibold text-[#073C35] text-xs uppercase tracking-wider">Status</TableHead>
+              <TableHead className="text-right w-[80px] font-semibold text-[#073C35] text-xs uppercase tracking-wider">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-48 text-center text-muted-foreground">
+                <TableCell colSpan={6} className="h-48 text-center text-[#6B5A4A]">
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <Package className="h-8 w-8 text-muted-foreground/50" />
-                    <p className="font-medium text-foreground">No products found</p>
-                    <p className="text-xs text-muted-foreground max-w-sm">
+                    <Package className="h-8 w-8 text-[#073C35]/40" />
+                    <p className="font-medium text-[#30251F]">No products found</p>
+                    <p className="text-xs text-[#6B5A4A] max-w-sm">
                       {search
                         ? `No items match the search term "${search}".`
                         : "There are no products in Zoho Books or catalog yet. Click Add Product to create your first item."}
@@ -211,16 +238,16 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((product) => {
+              paginatedProducts.map((product) => {
                 const zohoItemUrl = zohoOrgId
-                  ? `https://books.zoho.in/app#/items/${product.id}?organization_id=${zohoOrgId}`
-                  : `https://books.zoho.in/app#/items/${product.id}`;
+                    ? `https://books.zoho.in/app#/items/${product.id}?organization_id=${zohoOrgId}`
+                    : `https://books.zoho.in/app#/items/${product.id}`;
 
                 return (
-                  <TableRow key={product.id} className="group">
+                  <TableRow key={product.id} className="group hover:bg-[#073C35]/2 border-b border-[#D5CCBB]/50 transition-colors">
                     {/* Primary Image Thumbnail */}
                     <TableCell>
-                      <div className="relative h-12 w-12 rounded-lg border border-border/60 bg-muted/30 overflow-hidden flex items-center justify-center">
+                      <div className="relative h-12 w-12 rounded-xl border border-[#D5CCBB] bg-[#E4DDCD]/30 overflow-hidden flex items-center justify-center shadow-2xs">
                         {product.primaryImageUrl ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img
@@ -230,28 +257,33 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                             loading="lazy"
                           />
                         ) : (
-                          <Package className="h-5 w-5 text-muted-foreground/40" />
+                          <Package className="h-5 w-5 text-[#073C35]/30" />
                         )}
                       </div>
                     </TableCell>
 
                     {/* Name & SKU */}
                     <TableCell>
-                      <div className="flex flex-col gap-0.5">
+                      <div className="flex flex-col gap-1">
                         <Link
                           href={`/admin/products/${product.id}`}
-                          className="font-medium text-foreground hover:text-primary transition-colors line-clamp-1"
+                          className="font-serif font-semibold text-[15px] text-[#30251F] hover:text-[#073C35] transition-colors line-clamp-1"
                         >
                           {product.name}
                         </Link>
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-mono text-xs text-muted-foreground">
+                          <span className="font-mono text-[11px] text-[#6B5A4A] bg-[#073C35]/5 px-2 py-0.5 rounded border border-[#073C35]/15">
                             {product.sku}
                           </span>
                           {product.category && (
-                            <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0 uppercase border-brand/40 text-primary">
+                            <Badge variant="outline" className="text-[10px] font-mono px-2 py-0.5 uppercase border-[#C9A45C]/40 text-[#8C6D37] bg-[#C9A45C]/10 rounded-full font-medium">
                               {product.category}
                             </Badge>
+                          )}
+                          {product.offer?.active && (
+                            <span className="text-[10px] px-2 py-0.5 font-bold bg-[#C9A45C]/20 text-[#7a4e0e] border border-[#C9A45C]/50 rounded-full">
+                              Offer: {product.offer.label || (product.offer.type === 'percent' ? `${product.offer.value}% OFF` : `₹${product.offer.value} OFF`)}
+                            </span>
                           )}
                           {product.tags && product.tags.length > 0 && (
                             <div className="flex items-center gap-1 flex-wrap">
@@ -259,7 +291,7 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                                 <Badge
                                   key={tag}
                                   variant="secondary"
-                                  className="text-[10px] px-1.5 py-0 font-normal bg-brand/10 text-brand-secondary border border-brand/20 capitalize"
+                                  className="text-[10px] px-2 py-0.5 font-normal bg-stone-100 text-[#30251F] border border-stone-200 rounded-full capitalize"
                                 >
                                   {tag.replace(/_/g, " ")}
                                 </Badge>
@@ -273,11 +305,11 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                     {/* Price */}
                     <TableCell>
                       <div className="flex flex-col">
-                        <span className="font-medium font-mono text-sm">
+                        <span className="font-semibold font-mono text-sm text-[#073C35]">
                           {product.priceFormatted}
                         </span>
                         {product.costPriceFormatted && (
-                          <span className="text-[11px] font-mono text-muted-foreground">
+                          <span className="text-[11px] font-mono text-[#6B5A4A]">
                             Cost: {product.costPriceFormatted}
                           </span>
                         )}
@@ -290,14 +322,14 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                         <span
                           className={`h-2 w-2 rounded-full ${
                             product.stock > 5
-                              ? "bg-green-500"
+                              ? "bg-emerald-500"
                               : product.stock > 0
                                 ? "bg-amber-500"
                                 : "bg-red-500"
                           }`}
                         />
-                        <span className="font-mono text-xs font-medium">
-                          {product.stock} units
+                        <span className="font-mono text-xs font-medium text-[#30251F]">
+                          {product.stock > 0 ? `${product.stock} units` : "Out of stock"}
                         </span>
                       </div>
                     </TableCell>
@@ -306,7 +338,11 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                     <TableCell>
                       <Badge
                         variant={product.status === "active" ? "default" : "secondary"}
-                        className="capitalize text-xs font-normal"
+                        className={`capitalize text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                          product.status === "active"
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                            : "bg-stone-100 text-stone-600 border border-stone-200"
+                        }`}
                       >
                         {product.status}
                       </Badge>
@@ -317,18 +353,18 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                       <DropdownMenu>
                         <DropdownMenuTrigger
                           render={
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-[#6B5A4A] hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-lg">
                               <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Actions</span>
                             </Button>
                           }
                         />
-                        <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuContent align="end" className="w-48 bg-[#FFFCF5] border-[#D5CCBB] shadow-lg rounded-xl">
                           <DropdownMenuGroup>
-                            <DropdownMenuLabel>Product Actions</DropdownMenuLabel>
+                            <DropdownMenuLabel className="text-xs text-[#6B5A4A] font-medium">Product Actions</DropdownMenuLabel>
                             <DropdownMenuItem
                               render={
-                                <Link href={`/admin/products/${product.id}`} className="flex items-center gap-2">
+                                <Link href={`/admin/products/${product.id}`} className="flex items-center gap-2 text-xs text-[#30251F] hover:text-[#073C35]">
                                   <Pencil className="h-3.5 w-3.5" />
                                   <span>Edit Product</span>
                                 </Link>
@@ -341,16 +377,16 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                                   product.status === "active" ? "inactive" : "active",
                                 )
                               }
-                              className="flex items-center gap-2 cursor-pointer"
+                              className="flex items-center gap-2 cursor-pointer text-xs text-[#30251F] hover:text-[#073C35]"
                             >
                               {product.status === "active" ? (
                                 <>
-                                  <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />
+                                  <EyeOff className="h-3.5 w-3.5 text-stone-500" />
                                   <span>Mark as Inactive</span>
                                 </>
                               ) : (
                                 <>
-                                  <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+                                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                                   <span>Mark as Active</span>
                                 </>
                               )}
@@ -361,7 +397,7 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                                   href={zohoItemUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center gap-2"
+                                  className="flex items-center gap-2 text-xs text-[#30251F] hover:text-[#073C35]"
                                 >
                                   <ExternalLink className="h-3.5 w-3.5" />
                                   <span>View in Zoho</span>
@@ -379,6 +415,84 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalItems > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 bg-[#FFFCF5] border border-[#D5CCBB] rounded-2xl shadow-2xs text-xs">
+          <div className="flex items-center gap-4 text-[#6B5A4A]">
+            <span>
+              Showing <span className="font-semibold text-[#073C35]">{startIndex + 1}</span>–
+              <span className="font-semibold text-[#073C35]">{endIndex}</span> of{" "}
+              <span className="font-semibold text-[#073C35]">{totalItems}</span> sarees
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              <span>Per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-white border border-[#D5CCBB] text-[#30251F] rounded-lg px-2 py-1 text-xs font-medium focus:border-[#073C35] focus:outline-none cursor-pointer"
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => setCurrentPage(1)}
+              disabled={safeCurrentPage === 1}
+              aria-label="First Page"
+              className="h-8 w-8 rounded-lg border-[#D5CCBB] text-[#073C35] disabled:opacity-40 cursor-pointer"
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={safeCurrentPage === 1}
+              aria-label="Previous Page"
+              className="h-8 w-8 rounded-lg border-[#D5CCBB] text-[#073C35] disabled:opacity-40 cursor-pointer"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <span className="px-3 py-1 font-mono font-medium text-xs text-[#073C35] bg-[#073C35]/8 rounded-lg border border-[#073C35]/15">
+              Page {safeCurrentPage} of {totalPages}
+            </span>
+
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={safeCurrentPage === totalPages}
+              aria-label="Next Page"
+              className="h-8 w-8 rounded-lg border-[#D5CCBB] text-[#073C35] disabled:opacity-40 cursor-pointer"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={safeCurrentPage === totalPages}
+              aria-label="Last Page"
+              className="h-8 w-8 rounded-lg border-[#D5CCBB] text-[#073C35] disabled:opacity-40 cursor-pointer"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

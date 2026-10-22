@@ -84,4 +84,11 @@ export class CachedProductRepository implements ProductRepository {
     if (!this.inner.deletePrimaryImage) return;
     return this.inner.deletePrimaryImage(id);
   }
+
+  async getVendors(): Promise<Array<{ id: string; name: string }>> {
+    if (this.inner.getVendors) {
+      return this.inner.getVendors();
+    }
+    return [];
+  }
 }

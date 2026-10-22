@@ -48,6 +48,7 @@ export class CreateProduct {
       description: dto.description,
       price: Money.ofMajor(dto.price),
       costPrice: dto.costPrice !== undefined && dto.costPrice !== null ? Money.ofMajor(dto.costPrice) : null,
+      vendorId: dto.vendorId ?? null,
       stock: dto.stock,
       taxId: dto.taxId ?? null,
       taxPercentage: dto.taxPercentage,

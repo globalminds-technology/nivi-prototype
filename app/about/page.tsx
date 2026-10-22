@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Heart, Sparkles, Feather } from "lucide-react";
+import { ArrowRight, Sparkles, Heart } from "lucide-react";
 import { Header } from "@/components/store/header";
 import { Footer } from "@/components/store/footer";
 import { GoldText } from "@/components/store/gold-text";
@@ -13,131 +13,88 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#221811] antialiased">
+    <div className="min-h-screen flex flex-col bg-[#FAF7F0] text-[#30251F] selection:bg-[#073C35]/15 selection:text-[#073C35] antialiased">
+      {/* ── STORE HEADER ── */}
       <Header />
 
-      <main className="flex-1">
-        {/* ── HERO SECTION: Warm, editorial, celebratory ── */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-[#F4EFE6] via-[#FAF8F5] to-[#FAF8F5] pt-14 pb-16 md:pt-20 md:pb-24 border-b border-[#E7DFD5]">
-          {/* Subtle background glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-96 bg-gradient-to-b from-[#694208]/5 to-transparent blur-3xl pointer-events-none" />
+      <main className="flex-1 py-10 sm:py-16 md:py-20 flex items-center justify-center">
+        <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
+          {/* ── LUXURY EDITORIAL PARCHMENT CARD ── */}
+          <div className="relative rounded-3xl bg-[#FFFCF7] border border-[#D5CCBB] shadow-[0_12px_40px_rgba(48,37,31,0.06)] p-6 sm:p-10 md:p-14 overflow-hidden">
+            {/* Subtle decorative gold corner watermarks */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#C9A45C]/10 via-[#C9A45C]/5 to-transparent rounded-bl-full pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#073C35]/5 via-transparent to-transparent rounded-tr-full pointer-events-none" />
 
-          <div className="container mx-auto px-4 sm:px-6 max-w-4xl relative z-10 text-center">
-            {/* Tagline Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EFE8DC] border border-[#D9CDBF] text-[#694208] text-xs md:text-sm font-medium tracking-wide uppercase shadow-xs mb-6">
-              <Sparkles className="h-3.5 w-3.5 text-[#694208]" />
-              <span>Weaving Elegance, Celebrating Tradition</span>
-            </div>
-
-            <div className="mb-4">
-              <GoldText className="text-3xl sm:text-4xl md:text-5xl">About Us</GoldText>
-            </div>
-
-            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl text-[#30251F] font-normal leading-relaxed max-w-2xl mx-auto">
-              Timeless Indian elegance, born from friendship &amp; a shared love for sarees.
-            </h1>
-          </div>
-        </section>
-
-        {/* ── CORE BRAND STORY SECTION ── */}
-        <section className="py-16 md:py-24">
-          <div className="container mx-auto px-4 sm:px-6 max-w-4xl space-y-16">
-            
-            {/* 1. Origin & Friendship */}
-            <div className="bg-[#FFFFFF] border border-[#E7DFD5] rounded-2xl p-8 sm:p-12 shadow-xs relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#694208]/5 rounded-bl-full pointer-events-none" />
-              
-              <div className="max-w-2xl">
-                <div className="flex items-center gap-2 text-[#694208] text-xs font-semibold uppercase tracking-widest mb-3">
-                  <Heart className="h-4 w-4 fill-[#694208]/20" />
-                  <span>The Origin of Our Name</span>
+            <div className="relative z-10 space-y-8 sm:space-y-10 text-center">
+              {/* Tagline Badge */}
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F4EFE6] border border-[#C9A45C]/40 text-[#694208] text-xs font-semibold tracking-wider uppercase shadow-2xs">
+                  <Sparkles className="h-3.5 w-3.5 text-[#C9A45C]" />
+                  <span>Weaving Elegance, Celebrating Tradition</span>
                 </div>
 
-                <p className="text-lg sm:text-xl text-[#30251F] leading-relaxed font-serif mb-6">
+                {/* About Us Heading */}
+                <div className="pt-1">
+                  <GoldText className="text-4xl sm:text-5xl md:text-6xl">
+                    About Us
+                  </GoldText>
+                </div>
+
+                {/* Delicate Ornamental Divider */}
+                <div className="flex items-center justify-center gap-3 pt-1">
+                  <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#C9A45C]" />
+                  <span className="text-xs text-[#C9A45C]">✦</span>
+                  <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#C9A45C]" />
+                </div>
+              </div>
+
+              {/* 1. Origin & Friendship Paragraph */}
+              <div className="space-y-4 text-left sm:text-center max-w-2xl mx-auto">
+                <p className="font-serif text-lg sm:text-xl md:text-[22px] text-[#30251F] leading-relaxed font-normal">
                   NiVi is a celebration of timeless Indian elegance, born from a beautiful friendship and a shared love for sarees.
                 </p>
 
-                <p className="text-base text-[#4E4039] leading-relaxed mb-8">
-                  Our name carries a special meaning to us—<strong className="text-[#30251F] font-semibold">“Ni” for Nirmala</strong> and <strong className="text-[#30251F] font-semibold">“Vi” for Vijayakala</strong>, representing a friendship that blossomed into a beautiful dream.
+                <p className="text-sm sm:text-base text-[#5A4A3D] leading-relaxed">
+                  Our name carries a special meaning to us—<strong className="text-[#30251F] font-semibold">&ldquo;Ni&rdquo; for Nirmala</strong> and <strong className="text-[#30251F] font-semibold">&ldquo;Vi&rdquo; for Vijayakala</strong>, representing a friendship that blossomed into a beautiful dream.
                 </p>
 
-                {/* Name Monogram Showcase */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#EFE8DC]">
-                  <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E7DFD5] flex items-center gap-4">
-                    <span className="flex items-center justify-center h-12 w-12 rounded-full bg-[#073C35] text-[#FAF8F5] font-serif font-bold text-xl">
+                {/* Subtle Monogram Seal */}
+                <div className="flex items-center justify-center gap-3 pt-2">
+                  <div className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#FAF7F0] border border-[#E4DDCD] shadow-2xs">
+                    <span className="flex items-center justify-center h-7 w-7 rounded-full bg-[#073C35] text-[#FAF7F0] font-serif font-bold text-xs shadow-2xs">
                       Ni
                     </span>
-                    <div>
-                      <div className="font-serif font-bold text-[#30251F] text-base">Nirmala</div>
-                      <div className="text-xs text-[#786960]">Co-Founder · Vision &amp; Heritage</div>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E7DFD5] flex items-center gap-4">
-                    <span className="flex items-center justify-center h-12 w-12 rounded-full bg-[#694208] text-[#FAF8F5] font-serif font-bold text-xl">
+                    <Heart className="w-3.5 h-3.5 fill-[#C9A45C] text-[#C9A45C]" />
+                    <span className="flex items-center justify-center h-7 w-7 rounded-full bg-[#C9A45C] text-[#30251F] font-serif font-bold text-xs shadow-2xs">
                       Vi
                     </span>
-                    <div>
-                      <div className="font-serif font-bold text-[#30251F] text-base">Vijayakala</div>
-                      <div className="text-xs text-[#786960]">Co-Founder · Curation &amp; Artistry</div>
-                    </div>
+                    <span className="text-xs font-serif font-semibold text-[#30251F] pl-1">
+                      Nirmala &amp; Vijayakala
+                    </span>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* 2. Curation & Craftsmanship */}
-            <div className="bg-[#FFFFFF] border border-[#E7DFD5] rounded-2xl p-8 sm:p-12 shadow-xs">
-              <div className="flex items-center gap-2 text-[#073C35] text-xs font-semibold uppercase tracking-widest mb-3">
-                <Feather className="h-4 w-4" />
-                <span>Our Curation Philosophy</span>
+              {/* 2. Curation & Philosophy Card */}
+              <div className="p-5 sm:p-7 rounded-2xl bg-[#FAF7F0] border border-[#E8DEC8] text-left sm:text-center space-y-3 shadow-2xs">
+                <p className="text-sm sm:text-base text-[#4E4039] leading-relaxed">
+                  At NiVi, we curate sarees that bring together tradition, craftsmanship, quality and contemporary elegance. From exquisite silks and handwoven classics to versatile cottons and contemporary weaves, every saree is thoughtfully selected to make every woman feel graceful, confident and beautiful.
+                </p>
               </div>
 
-              <p className="text-lg sm:text-xl text-[#30251F] font-serif leading-relaxed mb-6">
-                At NiVi, we curate sarees that bring together tradition, craftsmanship, quality and contemporary elegance.
-              </p>
-
-              <p className="text-base text-[#4E4039] leading-relaxed mb-8">
-                From exquisite silks and handwoven classics to versatile cottons and contemporary weaves, every saree is thoughtfully selected to make every woman feel graceful, confident and beautiful.
-              </p>
-
-              {/* Three Value Pillars */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-[#EFE8DC]">
-                <div className="space-y-2">
-                  <h3 className="font-serif font-bold text-[#694208] text-base">Exquisite Silks</h3>
-                  <p className="text-xs sm:text-sm text-[#786960] leading-relaxed">
-                    Handwoven pure silks steeped in centuries of heritage, weaving royal lustre into every celebratory drape.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-serif font-bold text-[#694208] text-base">Handwoven Classics</h3>
-                  <p className="text-xs sm:text-sm text-[#786960] leading-relaxed">
-                    Authentic weaves honouring master artisans with impeccable textures and enduring heirloom quality.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-serif font-bold text-[#694208] text-base">Versatile Cottons</h3>
-                  <p className="text-xs sm:text-sm text-[#786960] leading-relaxed">
-                    Light, breathable, and effortlessly sophisticated weaves curated for modern everyday poise.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. The Poetic Creed (Closing Quote) */}
-            <div className="relative rounded-2xl bg-gradient-to-br from-[#073C35] to-[#042420] text-[#FAF8F5] p-8 sm:p-14 text-center shadow-md overflow-hidden">
-              <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-                <p className="font-serif text-2xl sm:text-3xl italic leading-relaxed text-[#F5F0EB]">
-                  “NiVi — where every weave tells a story, and every saree becomes a cherished memory.”
+              {/* 3. The Poetic Creed (Closing Ribbon) */}
+              <div className="relative rounded-2xl bg-gradient-to-br from-[#073C35] via-[#052C27] to-[#031C18] text-[#FAF7F0] p-6 sm:p-8 border border-[#C9A45C]/40 shadow-md space-y-4">
+                <p className="font-serif text-lg sm:text-xl md:text-2xl italic leading-relaxed text-[#FFFCF5]">
+                  &ldquo;NiVi — where every weave tells a story, and every saree becomes a cherished memory.&rdquo;
                 </p>
 
-                <div className="pt-4">
+                <div className="pt-2">
                   <Link
                     href="/collections"
                     className={buttonVariants({
                       variant: "default",
                       className:
-                        "bg-[#C5A880] hover:bg-[#B39368] text-[#221811] font-medium px-8 py-3 rounded-full text-sm sm:text-base inline-flex items-center gap-2 shadow-xs transition-colors",
+                        "bg-[#C9A45C] hover:bg-[#B38F46] text-[#221811] font-semibold px-7 py-2.5 rounded-full text-xs sm:text-sm inline-flex items-center gap-2 shadow-xs transition-transform hover:scale-105",
                     })}
                   >
                     <span>Explore Handcrafted Collections</span>
@@ -146,11 +103,11 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-
           </div>
-        </section>
+        </div>
       </main>
 
+      {/* ── STORE FOOTER ── */}
       <Footer />
     </div>
   );

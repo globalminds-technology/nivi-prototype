@@ -42,7 +42,10 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     notFound();
   }
 
-  const categories = await categoryRepository.list();
+  const [categories, vendors] = await Promise.all([
+    categoryRepository.list(),
+    container.getVendors(),
+  ]);
 
   const initialData: InitialProductData = {
     id: product.id,
@@ -52,6 +55,8 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     description: product.description,
     price: Money.toMajor(product.price),
     costPrice: product.costPrice ? Money.toMajor(product.costPrice) : null,
+    vendorId: product.vendorId ?? null,
+    vendorName: product.vendorName ?? null,
     stock: product.stock,
     taxId: product.taxId,
     taxPercentage: product.taxPercentage,
@@ -86,7 +91,12 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
   return (
     <div className="py-2">
-      <ProductForm initialData={initialData} isEditing={true} availableCategories={categories} />
+      <ProductForm
+        initialData={initialData}
+        isEditing={true}
+        availableCategories={categories}
+        availableVendors={vendors}
+      />
     </div>
   );
 }

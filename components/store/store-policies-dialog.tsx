@@ -11,6 +11,7 @@ import {
   Video,
   X,
   ExternalLink,
+  ShieldCheck,
 } from "lucide-react";
 import { STORE_POLICIES, type PolicySection } from "@/core/domain/constants/store-policies";
 
@@ -46,7 +47,9 @@ export function StorePoliciesDialog({
         {/* Header */}
         <div className="px-5 py-4 border-b border-[#D5CCBB]/70 flex items-center justify-between bg-[#F4EFE6]">
           <div className="flex items-center gap-2.5">
-            <span className="text-xl">🌸</span>
+            <div className="w-8 h-8 rounded-full bg-[#073C35]/10 border border-[#073C35]/20 flex items-center justify-center text-[#073C35] shrink-0">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
             <div>
               <h3 className="font-serif text-lg md:text-xl font-bold text-[#073C35] leading-tight">
                 NiVi Store & Craft Policies

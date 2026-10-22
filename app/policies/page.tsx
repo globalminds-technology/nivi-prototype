@@ -37,7 +37,6 @@ export default async function PoliciesPage({ searchParams }: PoliciesPageProps) 
             Back to Home
           </Link>
           <div className="flex items-center justify-center gap-2">
-            <span className="text-2xl">🌸</span>
             <h1 className="font-script text-4xl sm:text-5xl md:text-6xl text-[#073C35] leading-tight">
               Store & Craft Policies
             </h1>

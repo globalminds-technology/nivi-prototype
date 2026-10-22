@@ -5,24 +5,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  AlertCircle,
   ArrowLeft,
+  ArrowRight,
+  Check,
   CheckCircle2,
-  CreditCard,
+  ChevronDown,
+  ChevronUp,
+  Edit2,
+  Info,
+  Loader2,
   Lock,
+  MapPin,
   Package,
   RotateCcw,
-  ShieldCheck,
-  Info,
+  ShoppingBag,
   Truck,
   XCircle,
   Zap,
 } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { StorePoliciesDialog, type PolicyTabKey } from "./store-policies-dialog";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -38,11 +39,16 @@ import {
   confirmPaymentAction,
   createPaymentOrderAction,
   getShippingOptionsAction,
+  lookupPincodeAction,
   quoteCartAction,
 } from "@/app/actions/checkout";
 import type { Quote } from "@/core/domain/entities/order";
 import type { ShippingOption } from "@/core/application/ports/shipping-repository";
-import { INDIAN_MOBILE_PATTERN, PINCODE_PATTERN, GSTIN_PATTERN } from "@/core/domain/entities/customer";
+import {
+  INDIAN_MOBILE_PATTERN,
+  INDIAN_STATES,
+  PINCODE_PATTERN,
+} from "@/core/domain/entities/customer";
 import type { StoreProductData } from "./product-card";
 
 declare global {
@@ -54,33 +60,6 @@ declare global {
   }
 }
 
-const INDIAN_STATES = [
-  "Andhra Pradesh",
-  "Assam",
-  "Bihar",
-  "Chandigarh",
-  "Chhattisgarh",
-  "Delhi",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jammu & Kashmir",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Tamil Nadu",
-  "Telangana",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal",
-];
-
 interface CheckoutViewProps {
   products: StoreProductData[];
 }
@@ -89,6 +68,15 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   const router = useRouter();
   const { items, isLoaded, clearCart } = useCart();
   const [isPending, startTransition] = useTransition();
+
+  // Wizard Step State: 1 = Details & Address, 2 = Delivery & Payment
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
+
+  // Mobile Order Summary Drawer Toggle
+  const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
+
+  // Store & Handloom Guidelines Quick Toggle
+  const [guidelinesOpen, setGuidelinesOpen] = useState(false);
 
   // Quote State from server
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -99,7 +87,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   const [shippingMethod, setShippingMethod] = useState<"standard" | "express">("standard");
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
 
-  // Form Fields
+  // Form Fields - Contact
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -110,6 +98,10 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   const [shippingCity, setShippingCity] = useState("");
   const [shippingState, setShippingState] = useState("Tamil Nadu");
   const [shippingPincode, setShippingPincode] = useState("");
+  const [shippingPincodeLoading, setShippingPincodeLoading] = useState(false);
+  const [shippingPincodeSuccess, setShippingPincodeSuccess] = useState(false);
+  const [shippingPincodeError, setShippingPincodeError] = useState<string | null>(null);
+  const [shippingPlaces, setShippingPlaces] = useState<string[]>([]);
 
   // Billing Address
   const [sameAsShipping, setSameAsShipping] = useState(true);
@@ -118,10 +110,110 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   const [billingCity, setBillingCity] = useState("");
   const [billingState, setBillingState] = useState("Tamil Nadu");
   const [billingPincode, setBillingPincode] = useState("");
+  const [billingPincodeLoading, setBillingPincodeLoading] = useState(false);
+  const [billingPincodeSuccess, setBillingPincodeSuccess] = useState(false);
+  const [billingPincodeError, setBillingPincodeError] = useState<string | null>(null);
+  const [billingPlaces, setBillingPlaces] = useState<string[]>([]);
 
-  // Business GST
-  const [isBusiness, setIsBusiness] = useState(false);
-  const [gstin, setGstin] = useState("");
+  const handleShippingPincodeChange = async (val: string) => {
+    const clean = val.replace(/\D/g, "").slice(0, 6);
+    setShippingPincode(clean);
+
+    if (formErrors.shippingPincode) {
+      setFormErrors((prev) => {
+        const next = { ...prev };
+        delete next.shippingPincode;
+        return next;
+      });
+    }
+
+    if (clean.length < 6) {
+      setShippingPincodeSuccess(false);
+      setShippingPincodeError(null);
+      setShippingPlaces([]);
+      return;
+    }
+
+    if (clean.length === 6) {
+      setShippingPincodeLoading(true);
+      setShippingPincodeError(null);
+      try {
+        const res = await lookupPincodeAction(clean);
+        if (res.success && res.city && res.state) {
+          setShippingCity(res.city);
+          setShippingState(res.state);
+          setShippingPlaces(res.places || []);
+          setShippingPincodeSuccess(true);
+          setShippingPincodeError(null);
+          setFormErrors((prev) => {
+            const next = { ...prev };
+            delete next.shippingCity;
+            delete next.shippingState;
+            delete next.shippingPincode;
+            return next;
+          });
+        } else {
+          setShippingPincodeSuccess(false);
+          setShippingPincodeError(res.error || "PIN code not found. Please enter city & state manually.");
+        }
+      } catch {
+        setShippingPincodeSuccess(false);
+        setShippingPincodeError("Unable to auto-detect area. Please enter city & state manually.");
+      } finally {
+        setShippingPincodeLoading(false);
+      }
+    }
+  };
+
+  const handleBillingPincodeChange = async (val: string) => {
+    const clean = val.replace(/\D/g, "").slice(0, 6);
+    setBillingPincode(clean);
+
+    if (formErrors.billingPincode) {
+      setFormErrors((prev) => {
+        const next = { ...prev };
+        delete next.billingPincode;
+        return next;
+      });
+    }
+
+    if (clean.length < 6) {
+      setBillingPincodeSuccess(false);
+      setBillingPincodeError(null);
+      setBillingPlaces([]);
+      return;
+    }
+
+    if (clean.length === 6) {
+      setBillingPincodeLoading(true);
+      setBillingPincodeError(null);
+      try {
+        const res = await lookupPincodeAction(clean);
+        if (res.success && res.city && res.state) {
+          setBillingCity(res.city);
+          setBillingState(res.state);
+          setBillingPlaces(res.places || []);
+          setBillingPincodeSuccess(true);
+          setBillingPincodeError(null);
+          setFormErrors((prev) => {
+            const next = { ...prev };
+            delete next.billingCity;
+            delete next.billingState;
+            delete next.billingPincode;
+            return next;
+          });
+        } else {
+          setBillingPincodeSuccess(false);
+          setBillingPincodeError(res.error || "PIN code not found. Please enter city & state manually.");
+        }
+      } catch {
+        setBillingPincodeSuccess(false);
+        setBillingPincodeError("Unable to auto-detect area. Please enter city & state manually.");
+      } finally {
+        setBillingPincodeLoading(false);
+      }
+    }
+  };
 
   // Store Policies Consent & Dialog State
   const [policiesAgreed, setPoliciesAgreed] = useState(false);
@@ -133,9 +225,139 @@ export function CheckoutView({ products }: CheckoutViewProps) {
     setPolicyDialogOpen(true);
   };
 
-  // UI Processing State
+  // UI Processing State & Inline Validation
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  // Industry Standard Inline Field Validators
+  const validateNameField = (val: string): string | null => {
+    if (!val.trim()) return "Full name is required";
+    if (val.trim().length < 2) return "Full name must be at least 2 characters";
+    return null;
+  };
+
+  const validateEmailField = (val: string): string | null => {
+    if (!val.trim()) return "Email address is required for your invoice and dispatch receipt";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim())) {
+      return "Please enter a valid email address (e.g. priya@example.com)";
+    }
+    return null;
+  };
+
+  const validatePhoneField = (val: string): string | null => {
+    const clean = val.replace(/\D/g, "");
+    if (!clean) return "10-digit mobile number is required for delivery coordination";
+    if (!/^[6-9]/.test(clean)) return "Indian mobile numbers must start with 6, 7, 8, or 9";
+    if (clean.length !== 10) return `Mobile number must be 10 digits (currently ${clean.length}/10)`;
+    return null;
+  };
+
+  const validateLine1Field = (val: string): string | null => {
+    if (!val.trim()) return "Flat, building, and street address is required";
+    if (val.trim().length < 3) return "Address must be at least 3 characters";
+    return null;
+  };
+
+  const validateCityField = (val: string): string | null => {
+    if (!val.trim()) return "City / District is required";
+    if (val.trim().length < 2) return "City must be at least 2 characters";
+    return null;
+  };
+
+  const validateStateField = (val: string): string | null => {
+    if (!val.trim()) return "State is required";
+    return null;
+  };
+
+  const validatePincodeField = (val: string): string | null => {
+    const clean = val.replace(/\D/g, "");
+    if (!clean) return "6-digit PIN code is required";
+    if (clean.length !== 6) return `PIN code must be 6 digits (currently ${clean.length}/6)`;
+    if (!PINCODE_PATTERN.test(clean)) return "Enter a valid 6-digit Indian PIN code";
+    return null;
+  };
+
+  const setFieldError = (field: string, error: string | null) => {
+    setFormErrors((prev) => {
+      const next = { ...prev };
+      if (error) {
+        next[field] = error;
+      } else {
+        delete next[field];
+      }
+      return next;
+    });
+  };
+
+  const markTouched = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  // Field change handlers with live clearing
+  const handleNameChange = (val: string) => {
+    setName(val);
+    if (touched.name || formErrors.name) {
+      setFieldError("name", validateNameField(val));
+    }
+  };
+
+  const handleEmailChange = (val: string) => {
+    setEmail(val);
+    if (touched.email || formErrors.email) {
+      setFieldError("email", validateEmailField(val));
+    }
+  };
+
+  const handlePhoneChange = (val: string) => {
+    const digits = val.replace(/\D/g, "").slice(0, 10);
+    setPhone(digits);
+    if (touched.phone || formErrors.phone) {
+      setFieldError("phone", validatePhoneField(digits));
+    }
+  };
+
+  const handleShippingLine1Change = (val: string) => {
+    setShippingLine1(val);
+    if (touched.shippingLine1 || formErrors.shippingLine1) {
+      setFieldError("shippingLine1", validateLine1Field(val));
+    }
+  };
+
+  const handleShippingCityChange = (val: string) => {
+    setShippingCity(val);
+    if (touched.shippingCity || formErrors.shippingCity) {
+      setFieldError("shippingCity", validateCityField(val));
+    }
+  };
+
+  const handleShippingStateChange = (val: string) => {
+    setShippingState(val);
+    if (touched.shippingState || formErrors.shippingState) {
+      setFieldError("shippingState", validateStateField(val));
+    }
+  };
+
+  const handleBillingLine1Change = (val: string) => {
+    setBillingLine1(val);
+    if (touched.billingLine1 || formErrors.billingLine1) {
+      setFieldError("billingLine1", validateLine1Field(val));
+    }
+  };
+
+  const handleBillingCityChange = (val: string) => {
+    setBillingCity(val);
+    if (touched.billingCity || formErrors.billingCity) {
+      setFieldError("billingCity", validateCityField(val));
+    }
+  };
+
+  const handleBillingStateChange = (val: string) => {
+    setBillingState(val);
+    if (touched.billingState || formErrors.billingState) {
+      setFieldError("billingState", validateStateField(val));
+    }
+  };
 
   // Fetch live shipping options on mount
   useEffect(() => {
@@ -146,7 +368,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
     });
   }, []);
 
-  // 1. Fetch live server quote whenever cart items or shipping method change
+  // Fetch live server quote whenever cart items or shipping method change
   useEffect(() => {
     if (!isLoaded || items.length === 0) {
       /* eslint-disable-next-line react-hooks/set-state-in-effect */
@@ -193,66 +415,89 @@ export function CheckoutView({ products }: CheckoutViewProps) {
     }
   }, []);
 
-  const validateForm = (): boolean => {
+  // Step 1 validation
+  const validateStep1 = (): boolean => {
+    const allTouched: Record<string, boolean> = {
+      name: true,
+      email: true,
+      phone: true,
+      shippingPincode: true,
+      shippingCity: true,
+      shippingState: true,
+      shippingLine1: true,
+    };
+    if (!sameAsShipping) {
+      allTouched.billingPincode = true;
+      allTouched.billingCity = true;
+      allTouched.billingState = true;
+      allTouched.billingLine1 = true;
+    }
+    setTouched((prev) => ({ ...prev, ...allTouched }));
+
     const errors: Record<string, string> = {};
 
-    if (!name.trim() || name.trim().length < 2) {
-      errors.name = "Full name is required (min 2 characters)";
-    }
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      errors.email = "Enter a valid email address";
-    }
-    const cleanPhone = phone.replace(/[\s-]/g, "");
-    if (!INDIAN_MOBILE_PATTERN.test(cleanPhone)) {
-      errors.phone = "Enter a valid 10-digit Indian mobile number";
-    }
+    const nameErr = validateNameField(name);
+    if (nameErr) errors.name = nameErr;
 
-    if (!shippingLine1.trim() || shippingLine1.trim().length < 3) {
-      errors.shippingLine1 = "Address line 1 is required";
-    }
-    if (!shippingCity.trim() || shippingCity.trim().length < 2) {
-      errors.shippingCity = "City is required";
-    }
-    if (!shippingState.trim()) {
-      errors.shippingState = "State is required";
-    }
-    if (!PINCODE_PATTERN.test(shippingPincode.trim())) {
-      errors.shippingPincode = "Enter a valid 6-digit Indian PIN code";
-    }
+    const emailErr = validateEmailField(email);
+    if (emailErr) errors.email = emailErr;
+
+    const phoneErr = validatePhoneField(phone);
+    if (phoneErr) errors.phone = phoneErr;
+
+    const pincodeErr = validatePincodeField(shippingPincode);
+    if (pincodeErr) errors.shippingPincode = pincodeErr;
+
+    const cityErr = validateCityField(shippingCity);
+    if (cityErr) errors.shippingCity = cityErr;
+
+    const stateErr = validateStateField(shippingState);
+    if (stateErr) errors.shippingState = stateErr;
+
+    const line1Err = validateLine1Field(shippingLine1);
+    if (line1Err) errors.shippingLine1 = line1Err;
 
     if (!sameAsShipping) {
-      if (!billingLine1.trim() || billingLine1.trim().length < 3) {
-        errors.billingLine1 = "Billing address line 1 is required";
-      }
-      if (!billingCity.trim() || billingCity.trim().length < 2) {
-        errors.billingCity = "Billing city is required";
-      }
-      if (!billingState.trim()) {
-        errors.billingState = "Billing state is required";
-      }
-      if (!PINCODE_PATTERN.test(billingPincode.trim())) {
-        errors.billingPincode = "Enter a valid 6-digit Indian PIN code";
-      }
-    }
+      const bPincodeErr = validatePincodeField(billingPincode);
+      if (bPincodeErr) errors.billingPincode = bPincodeErr;
 
-    if (isBusiness && gstin.trim()) {
-      if (!GSTIN_PATTERN.test(gstin.trim())) {
-        errors.gstin = "Enter a valid 15-character GSTIN (e.g. 33AAAAA0000A1Z5)";
-      }
+      const bCityErr = validateCityField(billingCity);
+      if (bCityErr) errors.billingCity = bCityErr;
+
+      const bStateErr = validateStateField(billingState);
+      if (bStateErr) errors.billingState = bStateErr;
+
+      const bLine1Err = validateLine1Field(billingLine1);
+      if (bLine1Err) errors.billingLine1 = bLine1Err;
     }
 
     setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+    const isValid = Object.keys(errors).length === 0;
+    if (!isValid) {
+      toast.error("Please fill in all required contact and delivery fields.");
+    }
+    return isValid;
+  };
+
+  const handleContinueToStep2 = () => {
+    if (validateStep1()) {
+      setCurrentStep(2);
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
   };
 
   const handleProceedToPayment = async () => {
-    if (!policiesAgreed) {
-      toast.error("Please confirm that you have read and agreed to NiVi's Store & Craft Policies (including mandatory continuous unboxing video requirement).");
+    if (!validateStep1()) {
+      setCurrentStep(1);
       return;
     }
 
-    if (!validateForm()) {
-      toast.error("Please fill in all required delivery details correctly.");
+    if (!policiesAgreed) {
+      toast.error(
+        "Please confirm that you have read and agreed to NiVi's Store Policies (including mandatory continuous unboxing video requirement).",
+      );
       return;
     }
 
@@ -299,7 +544,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                 pincode: billingPincode.trim(),
                 country: "India",
               },
-          gstin: isBusiness && gstin.trim() ? gstin.trim() : null,
+          gstin: null,
         },
         items: items.map((i) => ({ sku: i.sku, quantity: i.qty })),
         shippingMethod,
@@ -325,7 +570,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
       // When Razorpay keys are not configured or in direct order mode, create order & invoice in Zoho Books directly
       if (res.keyId === "rzp_test_mode" || res.orderId.startsWith("order_test_")) {
         try {
-          toast.loading("Placing your order and generating Zoho Books invoice...", { id: "payment-verify" });
+          toast.loading("Placing your order and generating receipt...", { id: "payment-verify" });
           const confirmRes = await confirmPaymentAction(
             {
               razorpayOrderId: res.orderId,
@@ -392,7 +637,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
         key: res.keyId,
         amount: res.amountMinor,
         currency: res.currency || "INR",
-        name: "Nivi Sarees",
+        name: "NiVi",
         description: "Handcrafted Heritage Sarees",
         order_id: res.orderId,
         prefill: {
@@ -404,7 +649,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
           customerName: name.trim(),
         },
         theme: {
-          color: "#800020",
+          color: "#073C35",
         },
         modal: {
           ondismiss: () => {
@@ -418,7 +663,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
           razorpay_signature: string;
         }) => {
           try {
-            toast.loading("Verifying payment and generating your invoice...", { id: "payment-verify" });
+            toast.loading("Verifying payment and generating receipt...", { id: "payment-verify" });
             const confirmRes = await confirmPaymentAction(
               {
                 razorpayOrderId: response.razorpay_order_id,
@@ -432,7 +677,6 @@ export function CheckoutView({ products }: CheckoutViewProps) {
               toast.success("Order confirmed successfully!", { id: "payment-verify" });
               clearCart();
 
-              // Store review links in sessionStorage for smooth review prompt on success page
               if (confirmRes.reviewTokens && confirmRes.reviewTokens.length > 0) {
                 try {
                   sessionStorage.setItem(
@@ -498,7 +742,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
         <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4 text-muted-foreground">
           <Package className="w-8 h-8" />
         </div>
-        <h1 className="font-serif text-3xl font-semibold mb-2">Your Shopping Bag is Empty</h1>
+        <h1 className="font-serif text-3xl font-semibold mb-2 text-[#30251F]">Your Shopping Bag is Empty</h1>
         <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">
           Explore our handpicked curation of authentic heritage silks, festive weaves, and timeless sarees.
         </p>
@@ -506,7 +750,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
           href="/"
           className={buttonVariants({
             variant: "default",
-            className: "gap-2 shadow-sm",
+            className: "gap-2 shadow-xs bg-[#073C35] hover:bg-[#052C27] text-white",
           })}
         >
           <ArrowLeft className="w-4 h-4" />
@@ -516,265 +760,516 @@ export function CheckoutView({ products }: CheckoutViewProps) {
     );
   }
 
+  const standardOption = shippingOptions.find((o) => o.type === "standard");
+  const expressOption = shippingOptions.find((o) => o.type === "express");
+  const totalItemCount = items.reduce((s, i) => s + i.qty, 0);
+
   return (
-    <div className="container max-w-6xl mx-auto py-8 px-4 sm:px-6">
-      {/* Breadcrumb / Top Bar */}
-      <div className="flex items-center justify-between mb-8 pb-4 border-b border-border/60">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Continue Shopping</span>
-        </Link>
-        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-          <ShieldCheck className="w-4 h-4 text-primary" />
-          <span>256-Bit SSL Secure Checkout</span>
+    <div className="container max-w-6xl mx-auto py-4 sm:py-8 px-4 sm:px-6">
+      {/* Top Navigation Bar & Stepper */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#E7DFD5]">
+        <div className="flex items-center justify-between w-full sm:w-auto">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#786960] hover:text-[#073C35] font-medium transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Continue Shopping</span>
+          </Link>
+          <div className="flex sm:hidden items-center gap-1.5 text-xs font-medium text-[#786960]">
+            <Lock className="w-3.5 h-3.5 text-[#073C35]" />
+            <span>Secure Checkout</span>
+          </div>
+        </div>
+
+        {/* 2-Step Wizard Indicator */}
+        <div className="flex items-center justify-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={() => setCurrentStep(1)}
+            className={`flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
+              currentStep === 1
+                ? "text-[#073C35] font-semibold"
+                : "text-[#786960] hover:text-[#073C35]"
+            }`}
+          >
+            <span
+              className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold transition-all ${
+                currentStep === 1
+                  ? "bg-[#073C35] text-white shadow-xs"
+                  : "bg-emerald-100 text-[#073C35]"
+              }`}
+            >
+              {currentStep > 1 ? <Check className="w-3.5 h-3.5" /> : "1"}
+            </span>
+            <span>1. Contact &amp; Address</span>
+          </button>
+
+          <span className="text-[#C8BEB5] text-xs">/</span>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (validateStep1()) {
+                setCurrentStep(2);
+              }
+            }}
+            className={`flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
+              currentStep === 2
+                ? "text-[#073C35] font-semibold"
+                : "text-[#786960] hover:text-[#073C35]"
+            }`}
+          >
+            <span
+              className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold transition-all ${
+                currentStep === 2
+                  ? "bg-[#073C35] text-white shadow-xs"
+                  : "bg-[#E7DFD5] text-[#786960]"
+              }`}
+            >
+              2
+            </span>
+            <span>2. Delivery &amp; Payment</span>
+          </button>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-[#786960]">
+          <Lock className="w-3.5 h-3.5 text-[#073C35]" />
+          <span>Secure Checkout</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Delivery & Customer Details */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Step 1: Customer Contact */}
-          <Card className="shadow-xs border-border/70">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
-                <span>Step 1 of 4</span>
-              </div>
-              <CardTitle className="font-serif text-xl font-medium">
-                Contact Information
-              </CardTitle>
-              <CardDescription className="text-xs">
-                We will email your official GST invoice and tracking updates to this address.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="checkout-name" className="text-xs font-medium">
-                  Full Name *
-                </Label>
-                <Input
-                  id="checkout-name"
-                  placeholder="e.g. Priyadarshini Sundaram"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className={formErrors.name ? "border-destructive" : ""}
-                />
-                {formErrors.name && (
-                  <p className="text-[11px] text-destructive">{formErrors.name}</p>
-                )}
-              </div>
+      {/* Mobile Collapsible Order Summary Banner */}
+      <div className="lg:hidden mb-6">
+        <button
+          type="button"
+          onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
+          className="w-full flex items-center justify-between p-3.5 bg-white border border-[#E7DFD5] rounded-xl text-xs font-medium text-[#30251F] shadow-xs cursor-pointer"
+        >
+          <div className="flex items-center gap-2">
+            <ShoppingBag className="w-4 h-4 text-[#073C35]" />
+            <span className="text-[#073C35] font-semibold">
+              {mobileSummaryOpen ? "Hide Order Summary" : `Show Order Summary (${totalItemCount} ${totalItemCount === 1 ? "Item" : "Items"})`}
+            </span>
+            {mobileSummaryOpen ? (
+              <ChevronUp className="w-4 h-4 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            )}
+          </div>
+          <span className="font-mono font-bold text-sm text-[#073C35]">
+            {quote ? formatInr(quote.total.minor) : "—"}
+          </span>
+        </button>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="checkout-email" className="text-xs font-medium">
-                    Email Address *
-                  </Label>
-                  <Input
-                    id="checkout-email"
-                    type="email"
-                    placeholder="priya@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className={formErrors.email ? "border-destructive" : ""}
-                  />
-                  {formErrors.email && (
-                    <p className="text-[11px] text-destructive">{formErrors.email}</p>
-                  )}
-                </div>
+        {mobileSummaryOpen && (
+          <Card className="mt-2 border border-[#E7DFD5] bg-white shadow-sm p-4 space-y-4">
+            <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+              {items.map((item) => {
+                const product = products.find(
+                  (p) => p.sku.toLowerCase() === item.sku.toLowerCase(),
+                );
+                const quoteLine = quote?.lines.find(
+                  (ql) => ql.sku.toLowerCase() === item.sku.toLowerCase(),
+                );
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="checkout-phone" className="text-xs font-medium">
-                    Mobile Number *
-                  </Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-mono">
-                      +91
-                    </span>
-                    <Input
-                      id="checkout-phone"
-                      type="tel"
-                      placeholder="9876543210"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className={`pl-11 ${formErrors.phone ? "border-destructive" : ""}`}
-                    />
+                return (
+                  <div key={item.sku} className="flex items-center gap-3 text-xs py-2 border-b border-border/40 last:border-b-0">
+                    <div className="relative w-12 h-14 rounded-md bg-muted overflow-hidden shrink-0 border border-border/60">
+                      {product?.primaryImageUrl ? (
+                        <Image src={product.primaryImageUrl} alt={product.name} fill className="object-cover" sizes="48px" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                          <Package className="w-4 h-4 opacity-40" />
+                        </div>
+                      )}
+                      <span className="absolute bottom-0 right-0 bg-[#073C35] text-white text-[9px] font-mono px-1 rounded-tl-sm">
+                        ×{item.qty}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate text-[#30251F]">{product?.name || item.sku}</p>
+                      <p className="text-[10px] font-mono text-muted-foreground">SKU: {item.sku}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="font-mono font-semibold text-[#30251F]">
+                        {quoteLine ? formatInr(quoteLine.lineTotal.minor) : product ? formatInr(product.priceMinor * item.qty) : "—"}
+                      </p>
+                    </div>
                   </div>
-                  {formErrors.phone && (
-                    <p className="text-[11px] text-destructive">{formErrors.phone}</p>
-                  )}
-                </div>
+                );
+              })}
+            </div>
+
+            <Separator />
+
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Subtotal</span>
+                <span className="font-mono text-[#30251F]">{quote ? formatInr(quote.subtotal.minor) : "Calculating..."}</span>
               </div>
-            </CardContent>
+              {quote && quote.discount.minor > 0 && (
+                <div className="flex items-center justify-between text-emerald-700 font-medium">
+                  <span>Festive Discount</span>
+                  <span className="font-mono">-{formatInr(quote.discount.minor)}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <Truck className="w-3.5 h-3.5 text-[#073C35]" />
+                  <span>{quote?.shippingLabel || (shippingMethod === "express" ? "Express Delivery" : "Standard Shipping")}</span>
+                </span>
+                <span className="font-mono font-medium text-foreground">
+                  {quote && quote.shipping.minor === 0 ? "FREE" : quote ? formatInr(quote.shipping.minor) : "—"}
+                </span>
+              </div>
+              <Separator />
+              <div className="flex items-baseline justify-between text-sm font-semibold pt-1">
+                <span className="font-serif text-[#30251F]">Total Amount</span>
+                <span className="font-mono text-lg font-bold text-[#073C35]">
+                  {quote ? formatInr(quote.total.minor) : "—"}
+                </span>
+              </div>
+            </div>
           </Card>
+        )}
+      </div>
 
-          {/* Step 2: Shipping Address */}
-          <Card className="shadow-xs border-border/70">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
-                <span>Step 2 of 4</span>
-              </div>
-              <CardTitle className="font-serif text-xl font-medium">
-                Shipping Address
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Handcrafted packages are delivered insured via BlueDart / Delhivery across India.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="shipping-line1" className="text-xs font-medium">
-                  Flat, House No., Building, Street *
-                </Label>
-                <Input
-                  id="shipping-line1"
-                  placeholder="e.g. 14B, Heritage Garden Enclave, 4th Cross"
-                  value={shippingLine1}
-                  onChange={(e) => setShippingLine1(e.target.value)}
-                  className={formErrors.shippingLine1 ? "border-destructive" : ""}
-                />
-                {formErrors.shippingLine1 && (
-                  <p className="text-[11px] text-destructive">{formErrors.shippingLine1}</p>
-                )}
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="shipping-line2" className="text-xs font-medium">
-                  Landmark, Area / Sector (Optional)
-                </Label>
-                <Input
-                  id="shipping-line2"
-                  placeholder="e.g. Near Kapaleeshwarar Temple"
-                  value={shippingLine2}
-                  onChange={(e) => setShippingLine2(e.target.value)}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="shipping-city" className="text-xs font-medium">
-                    City *
-                  </Label>
-                  <Input
-                    id="shipping-city"
-                    placeholder="e.g. Chennai"
-                    value={shippingCity}
-                    onChange={(e) => setShippingCity(e.target.value)}
-                    className={formErrors.shippingCity ? "border-destructive" : ""}
-                  />
-                  {formErrors.shippingCity && (
-                    <p className="text-[11px] text-destructive">{formErrors.shippingCity}</p>
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="shipping-state" className="text-xs font-medium">
-                    State *
-                  </Label>
-                  <select
-                    id="shipping-state"
-                    value={shippingState}
-                    onChange={(e) => setShippingState(e.target.value)}
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {INDIAN_STATES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="shipping-pincode" className="text-xs font-medium">
-                    PIN Code *
-                  </Label>
-                  <Input
-                    id="shipping-pincode"
-                    placeholder="600004"
-                    maxLength={6}
-                    value={shippingPincode}
-                    onChange={(e) => setShippingPincode(e.target.value)}
-                    className={formErrors.shippingPincode ? "border-destructive" : ""}
-                  />
-                  {formErrors.shippingPincode && (
-                    <p className="text-[11px] text-destructive">{formErrors.shippingPincode}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Billing Address Toggle */}
-              <div className="pt-3 border-t border-border/50">
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <Checkbox
-                    checked={sameAsShipping}
-                    onCheckedChange={(c) => setSameAsShipping(Boolean(c))}
-                  />
-                  <span className="text-xs font-medium">
-                    Billing address is the same as shipping address
-                  </span>
-                </label>
-              </div>
-
-              {/* Unfolded Billing Address if different */}
-              {!sameAsShipping && (
-                <div className="pt-3 space-y-4 border-t border-dashed border-border/80">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Billing Address
-                  </p>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Active Step Form */}
+        <div className="lg:col-span-7 space-y-6">
+          {/* ================= STEP 1: CONTACT & ADDRESS ================= */}
+          {currentStep === 1 && (
+            <div className="space-y-6 animate-in fade-in-50 duration-200">
+              {/* Customer Contact */}
+              <Card className="shadow-xs border border-[#E7DFD5] bg-white">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#073C35] uppercase tracking-wider">
+                    <span className="w-5 h-5 rounded-full bg-[#073C35]/10 text-[#073C35] inline-flex items-center justify-center font-bold text-[11px]">
+                      1
+                    </span>
+                    <span>Contact Information</span>
+                  </div>
+                  <CardTitle className="font-serif text-xl font-normal text-[#30251F]">
+                    Customer Details
+                  </CardTitle>
+                  <CardDescription className="text-xs text-[#786960]">
+                    We will email your order confirmation and dispatch updates here.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Full Name */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="billing-line1" className="text-xs font-medium">
-                      Flat, House No., Building, Street *
+                    <Label htmlFor="checkout-name" className="text-xs font-medium text-[#30251F]">
+                      Full Name *
                     </Label>
-                    <Input
-                      id="billing-line1"
-                      placeholder="e.g. 5A, Gandhi Road"
-                      value={billingLine1}
-                      onChange={(e) => setBillingLine1(e.target.value)}
-                      className={formErrors.billingLine1 ? "border-destructive" : ""}
-                    />
-                    {formErrors.billingLine1 && (
-                      <p className="text-[11px] text-destructive">{formErrors.billingLine1}</p>
+                    <div className="relative">
+                      <Input
+                        id="checkout-name"
+                        autoComplete="name"
+                        placeholder="e.g. Priyadarshini Sundaram"
+                        value={name}
+                        onChange={(e) => handleNameChange(e.target.value)}
+                        onBlur={() => {
+                          markTouched("name");
+                          setFieldError("name", validateNameField(name));
+                        }}
+                        className={`pr-9 ${
+                          (touched.name || formErrors.name) && formErrors.name
+                            ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                            : touched.name && !formErrors.name && name.trim().length >= 2
+                            ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                            : ""
+                        }`}
+                      />
+                      <div className="absolute right-3 top-2.5 pointer-events-none">
+                        {(touched.name || formErrors.name) && formErrors.name ? (
+                          <AlertCircle className="w-4 h-4 text-destructive" />
+                        ) : touched.name && !formErrors.name && name.trim().length >= 2 ? (
+                          <Check className="w-4 h-4 text-emerald-600" />
+                        ) : null}
+                      </div>
+                    </div>
+                    {(touched.name || formErrors.name) && formErrors.name ? (
+                      <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>{formErrors.name}</span>
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Email Address */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="checkout-email" className="text-xs font-medium text-[#30251F]">
+                        Email Address *
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="checkout-email"
+                          type="email"
+                          autoComplete="email"
+                          placeholder="priya@example.com"
+                          value={email}
+                          onChange={(e) => handleEmailChange(e.target.value)}
+                          onBlur={() => {
+                            markTouched("email");
+                            setFieldError("email", validateEmailField(email));
+                          }}
+                          className={`pr-9 ${
+                            (touched.email || formErrors.email) && formErrors.email
+                              ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                              : touched.email && !formErrors.email && email.trim()
+                              ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                              : ""
+                          }`}
+                        />
+                        <div className="absolute right-3 top-2.5 pointer-events-none">
+                          {(touched.email || formErrors.email) && formErrors.email ? (
+                            <AlertCircle className="w-4 h-4 text-destructive" />
+                          ) : touched.email && !formErrors.email && email.trim() ? (
+                            <Check className="w-4 h-4 text-emerald-600" />
+                          ) : null}
+                        </div>
+                      </div>
+                      {(touched.email || formErrors.email) && formErrors.email ? (
+                        <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                          <span>{formErrors.email}</span>
+                        </p>
+                      ) : touched.email && !formErrors.email && email.trim() ? (
+                        <p className="text-[11px] text-emerald-700 flex items-center gap-1 font-medium">
+                          <Check className="w-3 h-3 text-emerald-600 shrink-0" />
+                          <span>Order confirmation and invoice will be sent here</span>
+                        </p>
+                      ) : (
+                        <p className="text-[11px] text-muted-foreground">
+                          For order invoice and shipment tracking updates
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Mobile Phone Number */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="checkout-phone" className="text-xs font-medium text-[#30251F]">
+                          Mobile Number *
+                        </Label>
+                        {phone.length > 0 && phone.length < 10 && (
+                          <span className="text-[10px] text-muted-foreground font-mono">
+                            {phone.length}/10 digits
+                          </span>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-mono">
+                          +91
+                        </span>
+                        <Input
+                          id="checkout-phone"
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={10}
+                          autoComplete="tel"
+                          placeholder="9876543210"
+                          value={phone}
+                          onChange={(e) => handlePhoneChange(e.target.value)}
+                          onBlur={() => {
+                            markTouched("phone");
+                            setFieldError("phone", validatePhoneField(phone));
+                          }}
+                          className={`pl-11 pr-9 font-mono ${
+                            (touched.phone || formErrors.phone) && formErrors.phone
+                              ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                              : phone.length === 10 && /^[6-9]/.test(phone)
+                              ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                              : ""
+                          }`}
+                        />
+                        <div className="absolute right-3 top-2.5 pointer-events-none">
+                          {(touched.phone || formErrors.phone) && formErrors.phone ? (
+                            <AlertCircle className="w-4 h-4 text-destructive" />
+                          ) : phone.length === 10 && /^[6-9]/.test(phone) ? (
+                            <Check className="w-4 h-4 text-emerald-600" />
+                          ) : null}
+                        </div>
+                      </div>
+                      {(touched.phone || formErrors.phone) && formErrors.phone ? (
+                        <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                          <span>{formErrors.phone}</span>
+                        </p>
+                      ) : phone.length === 10 && /^[6-9]/.test(phone) ? (
+                        <p className="text-[11px] text-emerald-700 flex items-center gap-1 font-medium">
+                          <Check className="w-3 h-3 text-emerald-600 shrink-0" />
+                          <span>Verified 10-digit Indian mobile format</span>
+                        </p>
+                      ) : (
+                        <p className="text-[11px] text-muted-foreground">
+                          For delivery courier coordination &amp; dispatch SMS
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Delivery Address */}
+              <Card className="shadow-xs border border-[#E7DFD5] bg-white">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#073C35] uppercase tracking-wider">
+                    <span className="w-5 h-5 rounded-full bg-[#073C35]/10 text-[#073C35] inline-flex items-center justify-center font-bold text-[11px]">
+                      2
+                    </span>
+                    <span>Delivery Address</span>
+                  </div>
+                  <CardTitle className="font-serif text-xl font-normal text-[#30251F]">
+                    Where Should We Ship Your Saree?
+                  </CardTitle>
+                  <CardDescription className="text-xs text-[#786960]">
+                    Carefully handcrafted parcels dispatched safely across India.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* 1. PIN Code (First) */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="shipping-pincode" className="text-xs font-medium text-[#30251F] flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#073C35]" />
+                        <span>PIN Code *</span>
+                      </Label>
+                      {shippingPincodeSuccess && (
+                        <span className="text-[11px] font-medium text-emerald-700 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Verified Postal Area</span>
+                        </span>
+                      )}
+                    </div>
+                    <div className="relative">
+                      <Input
+                        id="shipping-pincode"
+                        placeholder="Enter 6-digit PIN (e.g. 600004)"
+                        maxLength={6}
+                        inputMode="numeric"
+                        value={shippingPincode}
+                        onChange={(e) => handleShippingPincodeChange(e.target.value)}
+                        onBlur={() => {
+                          markTouched("shippingPincode");
+                          setFieldError("shippingPincode", validatePincodeField(shippingPincode));
+                        }}
+                        className={`font-mono text-sm tracking-wider pr-9 ${
+                          (touched.shippingPincode || formErrors.shippingPincode) && formErrors.shippingPincode
+                            ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                            : shippingPincodeSuccess
+                            ? "border-emerald-600/70 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                            : ""
+                        }`}
+                      />
+                      <div className="absolute right-3 top-2.5">
+                        {shippingPincodeLoading ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-[#073C35]" />
+                        ) : (touched.shippingPincode || formErrors.shippingPincode) && formErrors.shippingPincode ? (
+                          <AlertCircle className="w-4 h-4 text-destructive" />
+                        ) : shippingPincodeSuccess ? (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        ) : null}
+                      </div>
+                    </div>
+                    {/* Real-time Status & Feedback */}
+                    {(touched.shippingPincode || formErrors.shippingPincode) && formErrors.shippingPincode ? (
+                      <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>{formErrors.shippingPincode}</span>
+                      </p>
+                    ) : shippingPincodeLoading ? (
+                      <p className="text-[11px] text-[#073C35] flex items-center gap-1.5 font-medium">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        <span>Auto-detecting city and state from postal directory...</span>
+                      </p>
+                    ) : shippingPincodeSuccess ? (
+                      <p className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        <span>Auto-detected: {shippingCity}, {shippingState}</span>
+                      </p>
+                    ) : shippingPincodeError ? (
+                      <p className="text-[11px] text-amber-700 flex items-center gap-1">
+                        <Info className="w-3.5 h-3.5 shrink-0" />
+                        <span>{shippingPincodeError}</span>
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-muted-foreground">
+                        Type your 6-digit PIN code to automatically fill City and State.
+                      </p>
                     )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <Label htmlFor="billing-line2" className="text-xs font-medium">
-                      Landmark, Area (Optional)
-                    </Label>
-                    <Input
-                      id="billing-line2"
-                      value={billingLine2}
-                      onChange={(e) => setBillingLine2(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* 2. City & State (Auto-filled) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label htmlFor="billing-city" className="text-xs font-medium">
-                        City *
-                      </Label>
-                      <Input
-                        id="billing-city"
-                        value={billingCity}
-                        onChange={(e) => setBillingCity(e.target.value)}
-                        className={formErrors.billingCity ? "border-destructive" : ""}
-                      />
-                      {formErrors.billingCity && (
-                        <p className="text-[11px] text-destructive">{formErrors.billingCity}</p>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="shipping-city" className="text-xs font-medium text-[#30251F]">
+                          City / District *
+                        </Label>
+                        {shippingPincodeSuccess && shippingCity && (
+                          <span className="text-[10px] text-emerald-700 font-medium">Auto-detected</span>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <Input
+                          id="shipping-city"
+                          placeholder="e.g. Chennai"
+                          value={shippingCity}
+                          onChange={(e) => handleShippingCityChange(e.target.value)}
+                          onBlur={() => {
+                            markTouched("shippingCity");
+                            setFieldError("shippingCity", validateCityField(shippingCity));
+                          }}
+                          className={`pr-9 ${
+                            (touched.shippingCity || formErrors.shippingCity) && formErrors.shippingCity
+                              ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                              : touched.shippingCity && !formErrors.shippingCity && shippingCity.trim().length >= 2
+                              ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                              : ""
+                          }`}
+                        />
+                        <div className="absolute right-3 top-2.5 pointer-events-none">
+                          {(touched.shippingCity || formErrors.shippingCity) && formErrors.shippingCity ? (
+                            <AlertCircle className="w-4 h-4 text-destructive" />
+                          ) : touched.shippingCity && !formErrors.shippingCity && shippingCity.trim().length >= 2 ? (
+                            <Check className="w-4 h-4 text-emerald-600" />
+                          ) : null}
+                        </div>
+                      </div>
+                      {(touched.shippingCity || formErrors.shippingCity) && formErrors.shippingCity && (
+                        <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                          <span>{formErrors.shippingCity}</span>
+                        </p>
                       )}
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="billing-state" className="text-xs font-medium">
-                        State *
-                      </Label>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="shipping-state" className="text-xs font-medium text-[#30251F]">
+                          State *
+                        </Label>
+                        {shippingPincodeSuccess && shippingState && (
+                          <span className="text-[10px] text-emerald-700 font-medium">Auto-detected</span>
+                        )}
+                      </div>
                       <select
-                        id="billing-state"
-                        value={billingState}
-                        onChange={(e) => setBillingState(e.target.value)}
-                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                        id="shipping-state"
+                        value={shippingState}
+                        onChange={(e) => handleShippingStateChange(e.target.value)}
+                        onBlur={() => {
+                          markTouched("shippingState");
+                          setFieldError("shippingState", validateStateField(shippingState));
+                        }}
+                        className={`flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring ${
+                          (touched.shippingState || formErrors.shippingState) && formErrors.shippingState
+                            ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                            : "border-input"
+                        }`}
                       >
                         {INDIAN_STATES.map((s) => (
                           <option key={s} value={s}>
@@ -782,278 +1277,642 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                           </option>
                         ))}
                       </select>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label htmlFor="billing-pincode" className="text-xs font-medium">
-                        PIN Code *
-                      </Label>
-                      <Input
-                        id="billing-pincode"
-                        placeholder="600001"
-                        maxLength={6}
-                        value={billingPincode}
-                        onChange={(e) => setBillingPincode(e.target.value)}
-                        className={formErrors.billingPincode ? "border-destructive" : ""}
-                      />
-                      {formErrors.billingPincode && (
-                        <p className="text-[11px] text-destructive">{formErrors.billingPincode}</p>
+                      {(touched.shippingState || formErrors.shippingState) && formErrors.shippingState && (
+                        <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                          <span>{formErrors.shippingState}</span>
+                        </p>
                       )}
                     </div>
                   </div>
-                </div>
-              )}
 
-              {/* Optional Business GST Section */}
-              <div className="pt-3 border-t border-border/50">
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <Checkbox
-                    checked={isBusiness}
-                    onCheckedChange={(c) => setIsBusiness(Boolean(c))}
-                  />
-                  <span className="text-xs font-medium">
-                    Purchasing for a registered business (Claim GST Input Credit)
-                  </span>
-                </label>
-
-                {isBusiness && (
-                  <div className="mt-3 pl-6 space-y-1.5">
-                    <Label htmlFor="checkout-gstin" className="text-xs font-medium">
-                      15-Digit GSTIN Number *
+                  {/* 3. Street Address Line 1 */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="shipping-line1" className="text-xs font-medium text-[#30251F]">
+                      Flat, House No., Building, Street *
                     </Label>
-                    <Input
-                      id="checkout-gstin"
-                      placeholder="e.g. 33AAAAA0000A1Z5"
-                      maxLength={15}
-                      value={gstin}
-                      onChange={(e) => setGstin(e.target.value.toUpperCase())}
-                      className={`font-mono uppercase ${formErrors.gstin ? "border-destructive" : ""}`}
-                    />
-                    {formErrors.gstin && (
-                      <p className="text-[11px] text-destructive">{formErrors.gstin}</p>
+                    <div className="relative">
+                      <Input
+                        id="shipping-line1"
+                        autoComplete="street-address"
+                        placeholder="e.g. 14B, Heritage Garden Enclave, 4th Cross"
+                        value={shippingLine1}
+                        onChange={(e) => handleShippingLine1Change(e.target.value)}
+                        onBlur={() => {
+                          markTouched("shippingLine1");
+                          setFieldError("shippingLine1", validateLine1Field(shippingLine1));
+                        }}
+                        className={`pr-9 ${
+                          (touched.shippingLine1 || formErrors.shippingLine1) && formErrors.shippingLine1
+                            ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                            : touched.shippingLine1 && !formErrors.shippingLine1 && shippingLine1.trim().length >= 3
+                            ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                            : ""
+                        }`}
+                      />
+                      <div className="absolute right-3 top-2.5 pointer-events-none">
+                        {(touched.shippingLine1 || formErrors.shippingLine1) && formErrors.shippingLine1 ? (
+                          <AlertCircle className="w-4 h-4 text-destructive" />
+                        ) : touched.shippingLine1 && !formErrors.shippingLine1 && shippingLine1.trim().length >= 3 ? (
+                          <Check className="w-4 h-4 text-emerald-600" />
+                        ) : null}
+                      </div>
+                    </div>
+                    {(touched.shippingLine1 || formErrors.shippingLine1) && formErrors.shippingLine1 && (
+                      <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>{formErrors.shippingLine1}</span>
+                      </p>
                     )}
                   </div>
+
+                  {/* 4. Landmark & Area Line 2 with Locality chips */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="shipping-line2" className="text-xs font-medium text-[#30251F]">
+                      Landmark, Area / Sector (Optional)
+                    </Label>
+                    <Input
+                      id="shipping-line2"
+                      placeholder="e.g. Near Kapaleeshwarar Temple"
+                      value={shippingLine2}
+                      onChange={(e) => setShippingLine2(e.target.value)}
+                    />
+
+                    {/* Postal Area Suggestion Chips */}
+                    {shippingPlaces.length > 0 && (
+                      <div className="pt-1.5">
+                        <p className="text-[11px] text-[#786960] mb-1.5 font-medium">
+                          Quick select locality / post office:
+                        </p>
+                        <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                          {shippingPlaces.map((place) => (
+                            <button
+                              key={place}
+                              type="button"
+                              onClick={() => setShippingLine2(place)}
+                              className={`text-[11px] px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
+                                shippingLine2.toLowerCase() === place.toLowerCase()
+                                  ? "bg-[#073C35] text-white border-[#073C35] font-medium shadow-2xs"
+                                  : "bg-muted/50 hover:bg-[#073C35]/10 border-border/80 text-[#30251F]"
+                              }`}
+                            >
+                              {place}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Billing Address Toggle */}
+                  <div className="pt-3 border-t border-border/50">
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                      <Checkbox
+                        checked={sameAsShipping}
+                        onCheckedChange={(c) => setSameAsShipping(Boolean(c))}
+                      />
+                      <span className="text-xs font-medium text-[#30251F]">
+                        Billing address is the same as shipping address
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Unfolded Billing Address if different */}
+                  {!sameAsShipping && (
+                    <div className="pt-3 space-y-4 border-t border-dashed border-border/80 animate-in fade-in-50 duration-150">
+                      <p className="text-xs font-semibold text-[#073C35] uppercase tracking-wider">
+                        Billing Address
+                      </p>
+
+                      {/* Billing PIN Code (First) */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="billing-pincode" className="text-xs font-medium text-[#30251F] flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-[#073C35]" />
+                            <span>Billing PIN Code *</span>
+                          </Label>
+                          {billingPincodeSuccess && (
+                            <span className="text-[11px] font-medium text-emerald-700 flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Verified</span>
+                            </span>
+                          )}
+                        </div>
+                        <div className="relative">
+                          <Input
+                            id="billing-pincode"
+                            placeholder="Enter 6-digit PIN"
+                            maxLength={6}
+                            inputMode="numeric"
+                            value={billingPincode}
+                            onChange={(e) => handleBillingPincodeChange(e.target.value)}
+                            onBlur={() => {
+                              markTouched("billingPincode");
+                              setFieldError("billingPincode", validatePincodeField(billingPincode));
+                            }}
+                            className={`font-mono text-sm tracking-wider pr-9 ${
+                              (touched.billingPincode || formErrors.billingPincode) && formErrors.billingPincode
+                                ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                                : billingPincodeSuccess
+                                ? "border-emerald-600/70 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                                : ""
+                            }`}
+                          />
+                          <div className="absolute right-3 top-2.5">
+                            {billingPincodeLoading ? (
+                              <Loader2 className="w-4 h-4 animate-spin text-[#073C35]" />
+                            ) : (touched.billingPincode || formErrors.billingPincode) && formErrors.billingPincode ? (
+                              <AlertCircle className="w-4 h-4 text-destructive" />
+                            ) : billingPincodeSuccess ? (
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            ) : null}
+                          </div>
+                        </div>
+                        {(touched.billingPincode || formErrors.billingPincode) && formErrors.billingPincode ? (
+                          <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            <span>{formErrors.billingPincode}</span>
+                          </p>
+                        ) : billingPincodeLoading ? (
+                          <p className="text-[11px] text-[#073C35] flex items-center gap-1.5 font-medium">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <span>Auto-detecting city and state...</span>
+                          </p>
+                        ) : billingPincodeSuccess ? (
+                          <p className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            <span>Auto-detected: {billingCity}, {billingState}</span>
+                          </p>
+                        ) : billingPincodeError ? (
+                          <p className="text-[11px] text-amber-700 flex items-center gap-1">
+                            <Info className="w-3.5 h-3.5 shrink-0" />
+                            <span>{billingPincodeError}</span>
+                          </p>
+                        ) : (
+                          <p className="text-[11px] text-muted-foreground">
+                            Type PIN code to auto-detect City and State.
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Billing City & State (Auto-filled) */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="billing-city" className="text-xs font-medium text-[#30251F]">
+                              City / District *
+                            </Label>
+                            {billingPincodeSuccess && billingCity && (
+                              <span className="text-[10px] text-emerald-700 font-medium">Auto-detected</span>
+                            )}
+                          </div>
+                          <div className="relative">
+                            <Input
+                              id="billing-city"
+                              value={billingCity}
+                              onChange={(e) => handleBillingCityChange(e.target.value)}
+                              onBlur={() => {
+                                markTouched("billingCity");
+                                setFieldError("billingCity", validateCityField(billingCity));
+                              }}
+                              className={`pr-9 ${
+                                (touched.billingCity || formErrors.billingCity) && formErrors.billingCity
+                                  ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                                  : touched.billingCity && !formErrors.billingCity && billingCity.trim().length >= 2
+                                  ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                                  : ""
+                              }`}
+                            />
+                            <div className="absolute right-3 top-2.5 pointer-events-none">
+                              {(touched.billingCity || formErrors.billingCity) && formErrors.billingCity ? (
+                                <AlertCircle className="w-4 h-4 text-destructive" />
+                              ) : touched.billingCity && !formErrors.billingCity && billingCity.trim().length >= 2 ? (
+                                <Check className="w-4 h-4 text-emerald-600" />
+                              ) : null}
+                            </div>
+                          </div>
+                          {(touched.billingCity || formErrors.billingCity) && formErrors.billingCity && (
+                            <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                              <span>{formErrors.billingCity}</span>
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <Label htmlFor="billing-state" className="text-xs font-medium text-[#30251F]">
+                              State *
+                            </Label>
+                            {billingPincodeSuccess && billingState && (
+                              <span className="text-[10px] text-emerald-700 font-medium">Auto-detected</span>
+                            )}
+                          </div>
+                          <select
+                            id="billing-state"
+                            value={billingState}
+                            onChange={(e) => handleBillingStateChange(e.target.value)}
+                            onBlur={() => {
+                              markTouched("billingState");
+                              setFieldError("billingState", validateStateField(billingState));
+                            }}
+                            className={`flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring ${
+                              (touched.billingState || formErrors.billingState) && formErrors.billingState
+                                ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                                : "border-input"
+                            }`}
+                          >
+                            {INDIAN_STATES.map((s) => (
+                              <option key={s} value={s}>
+                                {s}
+                              </option>
+                            ))}
+                          </select>
+                          {(touched.billingState || formErrors.billingState) && formErrors.billingState && (
+                            <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                              <span>{formErrors.billingState}</span>
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Billing Street Line 1 */}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="billing-line1" className="text-xs font-medium text-[#30251F]">
+                          Flat, House No., Building, Street *
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            id="billing-line1"
+                            placeholder="e.g. 5A, Gandhi Road"
+                            value={billingLine1}
+                            onChange={(e) => handleBillingLine1Change(e.target.value)}
+                            onBlur={() => {
+                              markTouched("billingLine1");
+                              setFieldError("billingLine1", validateLine1Field(billingLine1));
+                            }}
+                            className={`pr-9 ${
+                              (touched.billingLine1 || formErrors.billingLine1) && formErrors.billingLine1
+                                ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                                : touched.billingLine1 && !formErrors.billingLine1 && billingLine1.trim().length >= 3
+                                ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                                : ""
+                            }`}
+                          />
+                          <div className="absolute right-3 top-2.5 pointer-events-none">
+                            {(touched.billingLine1 || formErrors.billingLine1) && formErrors.billingLine1 ? (
+                              <AlertCircle className="w-4 h-4 text-destructive" />
+                            ) : touched.billingLine1 && !formErrors.billingLine1 && billingLine1.trim().length >= 3 ? (
+                              <Check className="w-4 h-4 text-emerald-600" />
+                            ) : null}
+                          </div>
+                        </div>
+                        {(touched.billingLine1 || formErrors.billingLine1) && formErrors.billingLine1 && (
+                          <p className="text-[11px] text-destructive flex items-center gap-1 font-medium">
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            <span>{formErrors.billingLine1}</span>
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Billing Landmark Line 2 */}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="billing-line2" className="text-xs font-medium text-[#30251F]">
+                          Landmark, Area (Optional)
+                        </Label>
+                        <Input
+                          id="billing-line2"
+                          value={billingLine2}
+                          onChange={(e) => setBillingLine2(e.target.value)}
+                        />
+                        {billingPlaces.length > 0 && (
+                          <div className="pt-1.5">
+                            <p className="text-[11px] text-[#786960] mb-1.5 font-medium">
+                              Quick select locality / post office:
+                            </p>
+                            <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                              {billingPlaces.map((place) => (
+                                <button
+                                  key={place}
+                                  type="button"
+                                  onClick={() => setBillingLine2(place)}
+                                  className={`text-[11px] px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
+                                    billingLine2.toLowerCase() === place.toLowerCase()
+                                      ? "bg-[#073C35] text-white border-[#073C35] font-medium shadow-2xs"
+                                      : "bg-muted/50 hover:bg-[#073C35]/10 border-border/80 text-[#30251F]"
+                                  }`}
+                                >
+                                  {place}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Continue Button */}
+                  <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border/40">
+                    <p className="text-xs text-muted-foreground hidden sm:block">
+                      Next: Choose delivery speed &amp; complete payment
+                    </p>
+                    <Button
+                      type="button"
+                      onClick={handleContinueToStep2}
+                      className="w-full sm:w-auto px-6 h-11 text-xs sm:text-sm font-semibold tracking-wide gap-2 shadow-xs cursor-pointer bg-[#073C35] hover:bg-[#052C27] text-white"
+                    >
+                      <span>Continue to Delivery Option</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* ================= STEP 2: DELIVERY & PAYMENT ================= */}
+          {currentStep === 2 && (
+            <div className="space-y-6 animate-in fade-in-50 duration-200">
+              {/* Compact Review Card of Customer Details */}
+              <Card className="border border-[#E7DFD5] bg-[#FAF8F5] shadow-xs">
+                <CardContent className="p-4 sm:p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1 text-xs">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <span className="font-semibold text-sm text-[#30251F]">{name || "Customer Name"}</span>
+                        <span className="text-[#C8BEB5]">•</span>
+                        <span className="font-mono text-[#4A3D34]">{phone ? `+91 ${phone}` : "Phone"}</span>
+                        <span className="text-[#C8BEB5]">•</span>
+                        <span className="text-[#4A3D34] truncate max-w-[200px]">{email}</span>
+                      </div>
+                      <p className="text-[#786960] pt-1">
+                        <span className="font-medium text-[#30251F]">Deliver to: </span>
+                        {shippingLine1}
+                        {shippingLine2 ? `, ${shippingLine2}` : ""}, {shippingCity}, {shippingState} - {shippingPincode}
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentStep(1)}
+                      className="h-8 text-xs border-[#073C35]/30 text-[#073C35] hover:bg-[#073C35]/10 shrink-0 gap-1.5 cursor-pointer"
+                    >
+                      <Edit2 className="w-3 h-3" />
+                      <span>Edit</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Delivery Option Selection */}
+              <Card className="shadow-xs border border-[#E7DFD5] bg-white">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#073C35] uppercase tracking-wider">
+                    <span className="w-5 h-5 rounded-full bg-[#073C35]/10 text-[#073C35] inline-flex items-center justify-center font-bold text-[11px]">
+                      2
+                    </span>
+                    <span>Shipping Method</span>
+                  </div>
+                  <CardTitle className="font-serif text-xl font-normal text-[#30251F]">
+                    Choose Delivery Option
+                  </CardTitle>
+                  <CardDescription className="text-xs text-[#786960]">
+                    Select your preferred transit speed for insured door delivery.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Standard Shipping */}
+                    <button
+                      type="button"
+                      onClick={() => setShippingMethod("standard")}
+                      className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
+                        shippingMethod === "standard"
+                          ? "border-[#073C35] bg-[#073C35]/5 shadow-xs"
+                          : "border-border/70 hover:border-border bg-card"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full mb-3">
+                        <div className="flex items-center gap-2">
+                          <Truck
+                            className={`w-4 h-4 ${shippingMethod === "standard" ? "text-[#073C35]" : "text-muted-foreground"}`}
+                          />
+                          <span className="font-semibold text-sm text-foreground">
+                            {standardOption?.name || "Standard Shipping"}
+                          </span>
+                        </div>
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            shippingMethod === "standard"
+                              ? "border-[#073C35] bg-[#073C35]"
+                              : "border-muted-foreground/40"
+                          }`}
+                        >
+                          {shippingMethod === "standard" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                      </div>
+                      <div className="flex items-baseline justify-between mt-1 pt-2 border-t border-border/40">
+                        <span className="text-xs text-muted-foreground">Within India</span>
+                        <span className="font-semibold font-mono text-sm text-[#073C35]">
+                          {(() => {
+                            const std = shippingOptions.find((o) => o.type === "standard");
+                            if (!std) return "FREE";
+                            return std.rate === 0 ? "FREE" : formatInr(std.rateMinor);
+                          })()}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* Express Delivery */}
+                    <button
+                      type="button"
+                      onClick={() => setShippingMethod("express")}
+                      className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
+                        shippingMethod === "express"
+                          ? "border-[#694208] bg-[#694208]/5 shadow-xs"
+                          : "border-border/70 hover:border-border bg-card"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full mb-3">
+                        <div className="flex items-center gap-2">
+                          <Zap
+                            className={`w-4 h-4 ${shippingMethod === "express" ? "text-[#694208]" : "text-muted-foreground"}`}
+                          />
+                          <span className="font-semibold text-sm text-foreground">
+                            {expressOption?.name || "Express Delivery"}
+                          </span>
+                        </div>
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            shippingMethod === "express"
+                              ? "border-[#694208] bg-[#694208]"
+                              : "border-muted-foreground/40"
+                          }`}
+                        >
+                          {shippingMethod === "express" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                      </div>
+                      <div className="flex items-baseline justify-between mt-1 pt-2 border-t border-border/40">
+                        <span className="text-xs text-muted-foreground">Express Priority</span>
+                        <span className="font-semibold font-mono text-sm text-[#694208]">
+                          {(() => {
+                            const exp = shippingOptions.find((o) => o.type === "express");
+                            if (!exp) return "₹350";
+                            return formatInr(exp.rateMinor);
+                          })()}
+                        </span>
+                      </div>
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Compact Collapsed Store & Handloom Policies */}
+              <Card className="shadow-xs border border-[#E7DFD5] bg-[#FAF8F5] overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setGuidelinesOpen(!guidelinesOpen)}
+                  className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-[#E7DFD5]/20 transition-colors cursor-pointer"
+                >
+                  <span className="text-xs font-semibold text-[#073C35] uppercase tracking-wider flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 text-[#073C35]" />
+                    <span>Store &amp; Handloom Guidelines (Quick Summary)</span>
+                  </span>
+                  <div className="flex items-center gap-1 text-[11px] text-[#786960]">
+                    <span className="hidden sm:inline">{guidelinesOpen ? "Hide" : "View"}</span>
+                    {guidelinesOpen ? (
+                      <ChevronUp className="w-3.5 h-3.5 text-[#073C35]" />
+                    ) : (
+                      <ChevronDown className="w-3.5 h-3.5 text-[#073C35]" />
+                    )}
+                  </div>
+                </button>
+                {guidelinesOpen && (
+                  <div className="px-4 pb-4 pt-2 text-xs text-[#4A3D34] space-y-2.5 border-t border-[#E7DFD5]/70 animate-in fade-in-50 duration-150">
+                    <div className="p-2.5 rounded-lg bg-[#073C35]/10 border border-[#073C35]/20 text-[#073C35] font-medium leading-relaxed">
+                      <strong>Mandatory Continuous Unboxing Video:</strong> A continuous, unedited video from sealed package to unfolded saree is mandatory for any transit damage or wrong product claims within 12–18 hours of delivery.
+                    </div>
+                    <p>
+                      • <strong>Handloom &amp; Sungudi Craft:</strong> Minor sand marks, dye irregularities, slubs, or weaving characteristics reflect authentic handcrafted traditions.
+                    </p>
+                    <p>
+                      • <strong>Strict No-Cancellation:</strong> Once orders are placed and confirmed, cancellations cannot be accepted.
+                    </p>
+                  </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
+              </Card>
 
-          {/* Step 3: Delivery Method */}
-          <Card className="shadow-xs border-border/70">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
-                <span>Step 3 of 4</span>
-              </div>
-              <CardTitle className="font-serif text-xl font-medium">
-                Delivery Option
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Select your preferred shipping method within India.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Standard Shipping */}
-                <button
-                  type="button"
-                  onClick={() => setShippingMethod("standard")}
-                  className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
-                    shippingMethod === "standard"
-                      ? "border-[#073C35] bg-[#073C35]/5 shadow-xs"
-                      : "border-border/70 hover:border-border bg-card"
-                  }`}
-                >
-                  <div className="flex items-center justify-between w-full mb-3">
-                    <div className="flex items-center gap-2">
-                      <Truck className={`w-4 h-4 ${shippingMethod === "standard" ? "text-[#073C35]" : "text-muted-foreground"}`} />
-                      <span className="font-semibold text-sm text-foreground">
-                        {shippingOptions.find((o) => o.type === "standard")?.name || "Standard Shipping"}
-                      </span>
-                    </div>
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                      shippingMethod === "standard"
-                        ? "border-[#073C35] bg-[#073C35]"
-                        : "border-muted-foreground/40"
-                    }`}>
-                      {shippingMethod === "standard" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                    </div>
-                  </div>
-                  <div className="flex items-baseline justify-between mt-1 pt-2 border-t border-border/40">
-                    <span className="text-xs text-muted-foreground">Within India</span>
-                    <span className="font-semibold font-mono text-sm text-[#073C35]">
-                      {(() => {
-                        const std = shippingOptions.find((o) => o.type === "standard");
-                        if (!std) return "FREE";
-                        return std.rate === 0 ? "FREE" : formatInr(std.rateMinor);
-                      })()}
+              {/* Policy Consent & Payment Action on Step 2 (Mobile & Tablet) */}
+              <div className="space-y-4">
+                <div className="p-4 rounded-xl border border-[#E7DFD5] bg-white space-y-3">
+                  <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                    <Checkbox
+                      id="policy-consent-step2"
+                      checked={policiesAgreed}
+                      onCheckedChange={(c) => setPoliciesAgreed(Boolean(c))}
+                      className="mt-0.5 shrink-0"
+                    />
+                    <span className="text-[11px] text-[#4A3D34] leading-snug">
+                      I have read and agree to NiVi&apos;s{" "}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          openPolicyDialog("shipping");
+                        }}
+                        className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#694208] cursor-pointer"
+                      >
+                        Shipping
+                      </button>
+                      ,{" "}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          openPolicyDialog("returns");
+                        }}
+                        className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#694208] cursor-pointer"
+                      >
+                        Return &amp; Exchange (Mandatory Unboxing Video)
+                      </button>
+                      ,{" "}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          openPolicyDialog("cancellation");
+                        }}
+                        className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#694208] cursor-pointer"
+                      >
+                        Cancellation
+                      </button>{" "}
+                      policies and{" "}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          openPolicyDialog("disclaimers");
+                        }}
+                        className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#694208] cursor-pointer"
+                      >
+                        Craft Disclaimers
+                      </button>
+                      .
                     </span>
+                  </label>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setCurrentStep(1)}
+                      className="w-full sm:w-auto h-11 text-xs font-medium border-[#E7DFD5] text-[#30251F] hover:bg-muted"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+                      <span>Back to Details</span>
+                    </Button>
+
+                    <Button
+                      onClick={handleProceedToPayment}
+                      disabled={isQuoting || isProcessingPayment || isPending || items.length === 0}
+                      className="w-full sm:flex-1 h-11 text-sm font-semibold tracking-wide gap-2 shadow-xs cursor-pointer bg-[#073C35] hover:bg-[#052C27] text-white"
+                      size="lg"
+                    >
+                      {isProcessingPayment ? (
+                        <>
+                          <span className="animate-spin mr-2">⏳</span>
+                          <span>Opening Payment...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="w-4 h-4" />
+                          <span>Pay {quote ? formatInr(quote.total.minor) : ""} Securely</span>
+                        </>
+                      )}
+                    </Button>
                   </div>
-                </button>
 
-                {/* Express Delivery */}
-                <button
-                  type="button"
-                  onClick={() => setShippingMethod("express")}
-                  className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
-                    shippingMethod === "express"
-                      ? "border-[#694208] bg-[#694208]/5 shadow-xs"
-                      : "border-border/70 hover:border-border bg-card"
-                  }`}
-                >
-                  <div className="flex items-center justify-between w-full mb-3">
-                    <div className="flex items-center gap-2">
-                      <Zap className={`w-4 h-4 ${shippingMethod === "express" ? "text-[#694208]" : "text-muted-foreground"}`} />
-                      <span className="font-semibold text-sm text-foreground">
-                        {shippingOptions.find((o) => o.type === "express")?.name || "Express Delivery"}
-                      </span>
-                    </div>
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                      shippingMethod === "express"
-                        ? "border-[#694208] bg-[#694208]"
-                        : "border-muted-foreground/40"
-                    }`}>
-                      {shippingMethod === "express" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                    </div>
-                  </div>
-                  <div className="flex items-baseline justify-between mt-1 pt-2 border-t border-border/40">
-                    <span className="text-xs text-muted-foreground">Express Priority</span>
-                    <span className="font-semibold font-mono text-sm text-[#694208]">
-                      {(() => {
-                        const exp = shippingOptions.find((o) => o.type === "express");
-                        if (!exp) return "₹350";
-                        return formatInr(exp.rateMinor);
-                      })()}
-                    </span>
-                  </div>
-                </button>
+                  <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1 pt-1 text-center">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#073C35] shrink-0" />
+                    <span>Order receipt and dispatch confirmation sent to your email</span>
+                  </p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Step 4: Payment Notice */}
-          <Card className="shadow-xs border-border/70 bg-secondary/10">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
-                <span>Step 4 of 4</span>
-              </div>
-              <CardTitle className="font-serif text-lg font-medium flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-primary" />
-                <span>Embedded Razorpay Gateway</span>
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Supports UPI (Google Pay, PhonePe, Paytm), Credit &amp; Debit Cards, NetBanking, and EMI.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-3 text-xs text-muted-foreground bg-background/80 p-3 rounded-md border border-border/60">
-                <Lock className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>
-                  Payments are processed directly on Nivi via bank-grade encryption. Your card details never touch our servers.
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Step 4: Store & Craft Policies Accordion */}
-          <Card className="shadow-xs border-[#D5CCBB]/80 bg-[#FAF7F0]/80">
-            <CardHeader className="pb-3 border-b border-[#D5CCBB]/50">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#073C35] uppercase tracking-wider flex items-center gap-1.5">
-                  <span>🌸</span>
-                  <span>Store &amp; Craft Policies</span>
-                </span>
-                <Badge variant="outline" className="text-[10px] bg-[#073C35]/10 text-[#073C35] border-[#073C35]/20">
-                  Please Review Before Payment
-                </Badge>
-              </div>
-              <CardTitle className="font-serif text-lg text-[#30251F]">
-                Customer Policies &amp; Handloom Disclaimers
-              </CardTitle>
-              <CardDescription className="text-xs text-[#6B5A4A]">
-                Click each section below to review dispatch schedules, return rules, mandatory unboxing video guidelines, and artisanal disclaimers.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-3">
-              <Accordion defaultValue={["returns"]} className="w-full">
-                {/* 1. SHIPPING POLICY */}
-                <AccordionItem value="shipping" className="border-b border-[#D5CCBB]/50 py-1">
-                  <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
-                    <div className="flex items-center gap-2">
-                      <Truck className="w-4 h-4 text-[#073C35]" />
-                      <span>1. Shipping Policy (Dispatched in 2–3 Days)</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs text-[#4A3D34] space-y-2 pt-1 pb-3 pl-6">
-                    <p>• <strong>Payment &amp; Dispatch:</strong> Orders processed only after full payment is received. Dispatched within 2–3 business days (excluding Sundays &amp; public holidays).</p>
-                    <p>• <strong>WhatsApp Tracking:</strong> AWB courier tracking details will be shared directly to your WhatsApp once dispatched.</p>
-                    <p>• <strong>Courier Partners:</strong> Shipped via verified courier logistics. Timelines are subject to courier partner service speeds.</p>
-                    <p>• <strong>International Shipping:</strong> Charges vary based on parcel weight, destination country, and customs clearance.</p>
-                  </AccordionContent>
-                </AccordionItem>
-
-                {/* 2. RETURN & EXCHANGE POLICY */}
-                <AccordionItem value="returns" className="border-b border-[#D5CCBB]/50 py-1">
-                  <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
-                    <div className="flex items-center gap-2">
-                      <RotateCcw className="w-4 h-4 text-[#C9A45C]" />
-                      <span>2. Return &amp; Exchange Policy (12–18 Hr Window)</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs text-[#4A3D34] space-y-2.5 pt-1 pb-3 pl-6">
-                    <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-950 font-medium">
-                      ⚠️ <strong>No returns/exchanges for:</strong> Change of mind, colour preference, size issues, fabric feel/texture, or minor 10–15% natural lighting/screen dye variation.
-                    </div>
-                    <p>• <strong>Accepted strictly for:</strong> Wrong product received or physically damaged product received.</p>
-                    <div className="p-2.5 rounded-lg bg-[#073C35]/10 border border-[#073C35]/20 text-[#073C35]">
-                      🎥 <strong>Mandatory Continuous Unboxing Video:</strong> A continuous, unedited parcel-opening video is strictly mandatory showing: (1) Unopened parcel, (2) NiVi shipping label, (3) Complete unboxing process, (4) Unfolded product. Claims without continuous video will NOT be accepted.
-                    </div>
-                    <p>• <strong>Claim Period:</strong> Must be reported to NiVi within <strong>12–18 hours of delivery</strong> via Email (<a href="mailto:connect@brandnivi.com" className="underline hover:text-[#073C35]">connect@brandnivi.com</a>) &amp; WhatsApp (<a href="https://wa.me/919150992863" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#073C35]">+91 91509 92863</a>) with unboxing video and photos.</p>
-                    <p>• <strong>Non-Returnable:</strong> Deal-of-the-day / offer items, customized/stitched products, or used/altered items.</p>
-                  </AccordionContent>
-                </AccordionItem>
-
-                {/* 3. CANCELLATION POLICY */}
-                <AccordionItem value="cancellation" className="border-b border-[#D5CCBB]/50 py-1">
-                  <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
-                    <div className="flex items-center gap-2">
-                      <XCircle className="w-4 h-4 text-red-600" />
-                      <span>3. Cancellation Policy (Strict No-Cancellation)</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs text-[#4A3D34] space-y-2 pt-1 pb-3 pl-6">
-                    <p>• <strong>No Cancellations:</strong> Once an order is confirmed and payment is completed, cancellation is not allowed under any circumstances.</p>
-                    <p>• <strong>Confirm Before Paying:</strong> Please carefully review product, colour, size, and address details before proceeding.</p>
-                  </AccordionContent>
-                </AccordionItem>
-
-                {/* 4. DISCLAIMERS */}
-                <AccordionItem value="disclaimers" className="py-1">
-                  <AccordionTrigger className="text-xs font-semibold text-[#30251F] hover:text-[#073C35]">
-                    <div className="flex items-center gap-2">
-                      <Info className="w-4 h-4 text-[#073C35]" />
-                      <span>4. Disclaimers (Sungudi Sarees &amp; Handloom)</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-xs text-[#4A3D34] space-y-2 pt-1 pb-3 pl-6">
-                    <p>• <strong>Sungudi Border Designs:</strong> Border designs may naturally vary.</p>
-                    <p>• <strong>River Sand Marks:</strong> Minor sand marks are normal in Sungudi cotton sarees, as the fabric is traditionally dried on open river sand after dyeing.</p>
-                    <p>• <strong>Handmade Nature:</strong> Minor smudges or dye irregularities are organic characteristics of handmade sarees, not stains or defects.</p>
-                    <p>• <strong>Zari Line Marks:</strong> Zari line marks may occur during traditional starching and ironing; they relax and soften naturally after washing.</p>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </CardContent>
-          </Card>
+            </div>
+          )}
         </div>
 
-        {/* Right Column: Order Summary (Sticky) */}
-        <div className="lg:col-span-5">
-          <Card className="sticky top-20 shadow-md border-border/80 bg-card">
-            <CardHeader className="pb-4 border-b border-border/60">
-              <CardTitle className="font-serif text-xl font-medium flex items-center justify-between">
+        {/* Right Column: Order Summary (Sticky on Desktop) */}
+        <div className="hidden lg:block lg:col-span-5">
+          <Card className="sticky top-20 shadow-xs border border-[#E7DFD5] bg-white">
+            <CardHeader className="pb-3 border-b border-[#E7DFD5]">
+              <CardTitle className="font-serif text-lg font-normal text-[#30251F] flex items-center justify-between">
                 <span>Order Summary</span>
-                <Badge variant="outline" className="text-[11px] font-mono">
-                  {items.reduce((s, i) => s + i.qty, 0)} {items.reduce((s, i) => s + i.qty, 0) === 1 ? "Item" : "Items"}
+                <Badge variant="outline" className="text-[11px] font-mono text-[#073C35] border-[#073C35]/30">
+                  {totalItemCount} {totalItemCount === 1 ? "Item" : "Items"}
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -1073,27 +1932,27 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                       key={item.sku}
                       className="flex items-center gap-3 text-sm py-2 border-b border-border/40 last:border-b-0"
                     >
-                      <div className="relative w-14 h-16 rounded-md bg-muted overflow-hidden shrink-0 border border-border/60">
+                      <div className="relative w-12 h-14 rounded-md bg-muted overflow-hidden shrink-0 border border-border/60">
                         {product?.primaryImageUrl ? (
                           <Image
                             src={product.primaryImageUrl}
                             alt={product.name}
                             fill
                             className="object-cover"
-                            sizes="56px"
+                            sizes="48px"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                            <Package className="w-5 h-5 opacity-40" />
+                            <Package className="w-4 h-4 opacity-40" />
                           </div>
                         )}
-                        <span className="absolute bottom-0 right-0 bg-primary/90 text-primary-foreground text-[10px] font-mono px-1 rounded-tl-sm">
+                        <span className="absolute bottom-0 right-0 bg-[#073C35] text-white text-[10px] font-mono px-1 rounded-tl-sm">
                           ×{item.qty}
                         </span>
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-xs truncate">
+                        <p className="font-medium text-xs truncate text-[#30251F]">
                           {product?.name || item.sku}
                         </p>
                         <p className="text-[11px] font-mono text-muted-foreground">
@@ -1102,7 +1961,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                         {quoteLine?.offerLabel && (
                           <Badge
                             variant="secondary"
-                            className="text-[9px] mt-0.5 bg-amber-500/10 text-amber-700 dark:text-amber-400 border-none px-1.5 py-0"
+                            className="text-[9px] mt-0.5 bg-amber-500/10 text-amber-700 border-none px-1.5 py-0"
                           >
                             {quoteLine.offerLabel}
                           </Badge>
@@ -1115,7 +1974,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                             {formatInr(quoteLine.lineSubtotal.minor)}
                           </p>
                         )}
-                        <p className="font-mono text-xs font-semibold">
+                        <p className="font-mono text-xs font-semibold text-[#30251F]">
                           {quoteLine
                             ? formatInr(quoteLine.lineTotal.minor)
                             : product
@@ -1138,16 +1997,16 @@ export function CheckoutView({ products }: CheckoutViewProps) {
               <Separator />
 
               {/* Price Breakdown */}
-              <div className="space-y-2 text-xs">
+              <div className="space-y-2.5 text-xs">
                 <div className="flex items-center justify-between text-muted-foreground">
                   <span>Subtotal</span>
-                  <span className="font-mono">
+                  <span className="font-mono text-[#30251F]">
                     {quote ? formatInr(quote.subtotal.minor) : "Calculating..."}
                   </span>
                 </div>
 
                 {quote && quote.discount.minor > 0 && (
-                  <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+                  <div className="flex items-center justify-between text-emerald-700 font-medium">
                     <span>Festive Discount</span>
                     <span className="font-mono">-{formatInr(quote.discount.minor)}</span>
                   </div>
@@ -1158,7 +2017,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                     {shippingMethod === "express" ? (
                       <Zap className="w-3.5 h-3.5 text-[#694208]" />
                     ) : (
-                      <Truck className="w-3.5 h-3.5 text-primary" />
+                      <Truck className="w-3.5 h-3.5 text-[#073C35]" />
                     )}
                     <span>
                       {quote?.shippingLabel || (shippingMethod === "express" ? "Express Delivery" : "Standard Shipping")}
@@ -1173,108 +2032,31 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span>Taxes (GST Inclusive)</span>
-                  <span className="font-mono text-muted-foreground/80">
-                    {quote ? formatInr(quote.tax.minor) : "Included"}
-                  </span>
-                </div>
-
                 <Separator className="my-2" />
 
                 <div className="flex items-baseline justify-between text-base font-semibold pt-1">
-                  <span className="font-serif">Total Amount</span>
-                  <span className="font-mono text-xl font-bold text-primary">
+                  <span className="font-serif text-[#30251F]">Total Amount</span>
+                  <span className="font-mono text-xl font-bold text-[#073C35]">
                     {quote ? formatInr(quote.total.minor) : "—"}
                   </span>
                 </div>
               </div>
 
-              {/* Policy Acknowledgment Checkbox */}
-              <div className="pt-2 pb-1 border-t border-border/50">
-                <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                  <Checkbox
-                    id="policy-consent"
-                    checked={policiesAgreed}
-                    onCheckedChange={(c) => setPoliciesAgreed(Boolean(c))}
-                    className="mt-0.5 shrink-0"
-                  />
-                  <span className="text-[11px] text-[#4A3D34] leading-snug">
-                    I have read and agree to NiVi&apos;s{" "}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openPolicyDialog("shipping");
-                      }}
-                      className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#C9A45C] cursor-pointer"
-                    >
-                      Shipping
-                    </button>
-                    ,{" "}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openPolicyDialog("returns");
-                      }}
-                      className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#C9A45C] cursor-pointer"
-                    >
-                      Return &amp; Exchange (Mandatory Unboxing Video)
-                    </button>
-                    ,{" "}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openPolicyDialog("cancellation");
-                      }}
-                      className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#C9A45C] cursor-pointer"
-                    >
-                      Cancellation
-                    </button>{" "}
-                    policies and{" "}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        openPolicyDialog("disclaimers");
-                      }}
-                      className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#C9A45C] cursor-pointer"
-                    >
-                      Craft Disclaimers
-                    </button>
-                    .
-                  </span>
-                </label>
-              </div>
-
-              {/* Pay Now Button */}
-              <Button
-                onClick={handleProceedToPayment}
-                disabled={isQuoting || isProcessingPayment || isPending || items.length === 0}
-                className="w-full h-12 text-sm font-semibold tracking-wide gap-2 shadow-md cursor-pointer"
-                size="lg"
-              >
-                {isProcessingPayment ? (
-                  <>
-                    <span className="animate-spin mr-2">⏳</span>
-                    <span>Opening Gateway...</span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-4 h-4" />
-                    <span>Pay {quote ? formatInr(quote.total.minor) : ""} Securely</span>
-                  </>
-                )}
-              </Button>
-
-              <div className="pt-2 text-center">
-                <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
-                  <span>Official GST Tax Invoice issued immediately on purchase</span>
-                </p>
-              </div>
+              {/* Call to action on Step 1 vs Step 2 */}
+              {currentStep === 1 ? (
+                <Button
+                  type="button"
+                  onClick={handleContinueToStep2}
+                  className="w-full h-11 text-xs font-semibold tracking-wide gap-2 shadow-xs cursor-pointer bg-[#073C35] hover:bg-[#052C27] text-white mt-2"
+                >
+                  <span>Continue to Delivery Option</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              ) : (
+                <div className="pt-2 text-center text-[11px] text-[#786960]">
+                  <span>Complete payment using the options in Step 2.</span>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

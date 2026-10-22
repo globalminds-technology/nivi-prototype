@@ -98,9 +98,12 @@ const listOffers = lazy(() => new ListOffers(productRepository(), clock()));
 const createProduct = lazy(() => new CreateProduct(productRepository(), cacheInvalidator()));
 const updateProduct = lazy(() => new UpdateProduct(productRepository(), cacheInvalidator()));
 const expireOffers = lazy(() => new ExpireOffers(productRepository(), clock(), cacheInvalidator()));
-const refreshCatalog = lazy(() => new RefreshCatalog(productRepository(), cacheInvalidator()));
-const listAdminProducts = lazy(() => new ListProducts(rawProductRepository()));
-const getAdminProductById = lazy(() => new GetProductById(rawProductRepository()));
+const refreshCatalog = lazy(() => {
+  (rawProductRepository() as any).clearMemoryCache?.();
+  return new RefreshCatalog(rawProductRepository(), cacheInvalidator());
+});
+const listAdminProducts = lazy(() => new ListProducts(cachedProductRepository()));
+const getAdminProductById = lazy(() => new GetProductById(cachedProductRepository()));
 
 // Use Cases — Checkout & Orders
 const quoteCart = lazy(() => new QuoteCart(productRepository(), clock(), { taxInclusive: true }, shippingRepository()));
@@ -205,6 +208,9 @@ export const container = {
   uploadCampaignBanner: async (campaignId: string, buffer: Uint8Array, contentType: "image/jpeg" | "image/png" | "image/webp") => {
     const storage = imageStorage() as R2ImageStorage;
     return storage.uploadBannerDirect(campaignId, buffer, contentType);
+  },
+  getVendors: async () => {
+    return productRepository().getVendors?.() || [];
   },
   getZohoHttp: () => zohoHttp(),
 } as const;

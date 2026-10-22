@@ -17,4 +17,5 @@ export interface ProductRepository {
   uploadPrimaryImage?(id: string, imageBlob: Blob | Uint8Array, filename: string): Promise<string>;
   getItemImage?(id: string): Promise<{ data: Uint8Array; contentType: string } | null>;
   deletePrimaryImage?(id: string): Promise<void>;
+  getVendors?(): Promise<Array<{ id: string; name: string }>>;
 }

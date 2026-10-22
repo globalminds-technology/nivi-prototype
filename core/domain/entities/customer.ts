@@ -3,6 +3,55 @@ export const PINCODE_PATTERN = /^[1-9][0-9]{5}$/;
 /** Indian mobile, 10 digits, optional +91 / 0 prefix (normalised away). */
 export const INDIAN_MOBILE_PATTERN = /^(?:\+?91|0)?([6-9][0-9]{9})$/;
 
+export const INDIAN_STATES = [
+  "Andaman and Nicobar Islands",
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chandigarh",
+  "Chhattisgarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jammu & Kashmir",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Ladakh",
+  "Lakshadweep",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Puducherry",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+] as const;
+
+export function matchIndianState(rawState: string): string | null {
+  if (!rawState) return null;
+  const normalized = rawState.trim().toLowerCase().replace(/[^a-z]/g, "");
+  return (
+    INDIAN_STATES.find(
+      (s) => s.toLowerCase().replace(/[^a-z]/g, "") === normalized
+    ) || null
+  );
+}
+
 export type Address = Readonly<{
   line1: string;
   line2: string | null;

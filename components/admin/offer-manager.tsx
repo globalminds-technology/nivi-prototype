@@ -935,15 +935,17 @@ export function OfferManager({
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-16">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D5CCBB]/80 pb-5">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground flex items-center gap-3">
-            <span>Offers & Banners</span>
-            <Badge variant="outline" className="font-mono text-xs text-primary border-brand/40">
+          <div className="flex items-center gap-2.5">
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-[#073C35]">
+              Offers & Banners
+            </h1>
+            <span className="text-[10px] uppercase tracking-wider font-mono bg-[#073C35]/10 text-[#073C35] border border-[#073C35]/25 font-bold px-2.5 py-0.5 rounded-full shadow-2xs">
               {activeCampaigns.length} Active Offers
-            </Badge>
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+            </span>
+          </div>
+          <p className="text-sm text-[#6B5A4A] mt-1 font-sans">
             Manage homepage visual hero banners, image focal positions, and promotional discount campaigns.
           </p>
         </div>
@@ -953,7 +955,7 @@ export function OfferManager({
             <>
               <Button
                 onClick={openHeroDialog}
-                className="gap-2 shadow-xs"
+                className="gap-2 shadow-xs bg-[#073C35] hover:bg-[#0a4d44] text-[#FFFCF5] rounded-xl font-semibold cursor-pointer"
               >
                 <Sliders className="h-4 w-4" />
                 <span>Adjust Initial Banner</span>
@@ -961,7 +963,7 @@ export function OfferManager({
               <Button
                 onClick={handleResetHeroBanner}
                 variant="outline"
-                className="gap-1.5 shadow-xs text-muted-foreground hover:text-foreground"
+                className="gap-1.5 shadow-2xs border-[#D5CCBB] bg-[#FFFCF5] text-[#30251F] hover:bg-[#073C35]/8 hover:text-[#073C35] rounded-xl font-medium cursor-pointer"
                 title="Reset to default NiVi banner"
                 disabled={isPending}
               >
@@ -970,7 +972,10 @@ export function OfferManager({
               </Button>
             </>
           ) : (
-            <Button onClick={openCreateDialog} className="gap-2 shadow-xs">
+            <Button
+              onClick={openCreateDialog}
+              className="gap-2 shadow-xs bg-[#073C35] hover:bg-[#0a4d44] text-[#FFFCF5] rounded-xl font-semibold cursor-pointer"
+            >
               <Plus className="h-4 w-4" />
               <span>New Offer Campaign</span>
             </Button>
@@ -979,21 +984,23 @@ export function OfferManager({
       </div>
 
       {/* Segmented Pill Navigation Tabs */}
-      <div className="flex flex-wrap items-center gap-2.5 bg-muted/30 p-1.5 rounded-2xl border border-border/60 w-fit">
+      <div className="flex flex-wrap items-center gap-2 bg-[#FFFCF5] p-1.5 rounded-2xl border border-[#D5CCBB] w-fit shadow-2xs">
         <button
           type="button"
           onClick={() => setActiveTab("banners")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === "banners"
-              ? "bg-[#083e3e] text-[#f3d998] shadow-xs border border-[#dfb76c]/40"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              ? "bg-[#073C35] text-[#FFFCF5] shadow-xs border border-[#C9A45C]/40"
+              : "text-[#6B5A4A] hover:text-[#073C35] hover:bg-[#073C35]/5"
           }`}
         >
-          <ImageIcon className="h-4 w-4 text-amber-300" />
+          <ImageIcon className="h-4 w-4 text-[#C9A45C]" />
           <span>Homepage Banners & Carousel</span>
           <Badge
             variant={activeTab === "banners" ? "secondary" : "outline"}
-            className="text-[10px] px-1.5 py-0 font-mono ml-0.5"
+            className={`text-[10px] px-1.5 py-0 font-mono ml-0.5 ${
+              activeTab === "banners" ? "bg-white/15 text-white" : ""
+            }`}
           >
             {carouselSlides.length}
           </Badge>
@@ -1004,15 +1011,17 @@ export function OfferManager({
           onClick={() => setActiveTab("offers")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
             activeTab === "offers"
-              ? "bg-[#083e3e] text-[#f3d998] shadow-xs border border-[#dfb76c]/40"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              ? "bg-[#073C35] text-[#FFFCF5] shadow-xs border border-[#C9A45C]/40"
+              : "text-[#6B5A4A] hover:text-[#073C35] hover:bg-[#073C35]/5"
           }`}
         >
-          <Tag className="h-4 w-4 text-amber-300" />
+          <Tag className="h-4 w-4 text-[#C9A45C]" />
           <span>Promotional Offers & Discounts</span>
           <Badge
             variant={activeTab === "offers" ? "secondary" : "outline"}
-            className="text-[10px] px-1.5 py-0 font-mono ml-0.5"
+            className={`text-[10px] px-1.5 py-0 font-mono ml-0.5 ${
+              activeTab === "offers" ? "bg-white/15 text-white" : ""
+            }`}
           >
             {campaignList.length}
           </Badge>
@@ -1023,8 +1032,8 @@ export function OfferManager({
       {activeTab === "banners" && (
         <div className="space-y-6 animate-in fade-in-50 duration-200">
           {/* SECTION 1: INITIAL HOMEPAGE HERO BANNER CARD */}
-          <Card className="border-[#d2c8b5] bg-card shadow-[0_2px_12px_rgba(70,50,20,0.06)] overflow-hidden">
-            <CardHeader className="p-5 pb-3 border-b border-border/50 bg-[#ede7d8]/40">
+          <Card className="border-[#D5CCBB] bg-[#FFFCF5] shadow-[0_4px_20px_rgba(7,60,53,0.05)] rounded-2xl overflow-hidden">
+            <CardHeader className="p-5 pb-3 border-b border-[#D5CCBB]/60 bg-[#E4DDCD]/30">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <CardTitle className="font-serif text-xl flex items-center gap-2.5">

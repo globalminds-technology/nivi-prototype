@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest, connection } from "next/server";
 import { container } from "@/infrastructure/di/container";
 import { productSlug } from "@/core/domain/entities/product";
 import { Money } from "@/core/domain/value-objects/money";
@@ -21,9 +21,10 @@ function normalizeCategoryStr(s?: string | null): string {
   return (s ?? "").toLowerCase().trim().replace(/[^a-z0-9]/g, "");
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  await connection();
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
 
     const pageParam = parseInt(searchParams.get("page") || "1", 10);
     const limitParam = parseInt(searchParams.get("limit") || "25", 10);

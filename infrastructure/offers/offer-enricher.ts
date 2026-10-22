@@ -128,4 +128,11 @@ export class CampaignEnrichedProductRepository implements ProductRepository {
     if (!this.inner.deletePrimaryImage) return;
     return this.inner.deletePrimaryImage(id);
   }
+
+  async getVendors() {
+    if (this.inner.getVendors) {
+      return this.inner.getVendors();
+    }
+    return [];
+  }
 }

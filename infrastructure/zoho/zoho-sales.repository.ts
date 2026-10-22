@@ -195,6 +195,28 @@ export class ZohoSalesRepository implements SalesRepository {
         invoiceNumber: res.invoice.invoice_number,
       };
     } catch (err) {
+      if (
+        err instanceof ZohoApiError &&
+        (err.code === 4505 ||
+          err.message.includes("Inventory Tracked") ||
+          err.message.includes("assembly"))
+      ) {
+        console.warn(
+          "[ZohoSalesRepository] Item is configured as purchase-only in Zoho Books. Retrying invoice creation without item_id link...",
+        );
+        const fallbackPayload = {
+          ...payload,
+          line_items: (payload.line_items as Array<Record<string, unknown>>).map((item) => {
+            const { item_id, ...rest } = item;
+            return rest;
+          }),
+        };
+        const retryRes = await this.http.post<ZohoInvoiceResponse>("invoices", fallbackPayload);
+        return {
+          invoiceId: retryRes.invoice.invoice_id,
+          invoiceNumber: retryRes.invoice.invoice_number,
+        };
+      }
       if (err instanceof ZohoApiError && (err.message.includes("is_inclusive_tax") || err.message.includes("tax"))) {
         delete payload.is_inclusive_tax;
         const retryRes = await this.http.post<ZohoInvoiceResponse>("invoices", payload);
@@ -259,7 +281,24 @@ export class ZohoSalesRepository implements SalesRepository {
     try {
       res = await this.http.post<ZohoSalesOrderResponse>("salesorders", payload);
     } catch (err) {
-      if (err instanceof ZohoApiError && (err.message.includes("is_inclusive_tax") || err.message.includes("tax"))) {
+      if (
+        err instanceof ZohoApiError &&
+        (err.code === 4505 ||
+          err.message.includes("Inventory Tracked") ||
+          err.message.includes("assembly"))
+      ) {
+        console.warn(
+          "[ZohoSalesRepository] Item is configured as purchase-only in Zoho Books. Retrying salesorder creation without item_id link...",
+        );
+        const fallbackPayload = {
+          ...payload,
+          line_items: (payload.line_items as Array<Record<string, unknown>>).map((item) => {
+            const { item_id, ...rest } = item;
+            return rest;
+          }),
+        };
+        res = await this.http.post<ZohoSalesOrderResponse>("salesorders", fallbackPayload);
+      } else if (err instanceof ZohoApiError && (err.message.includes("is_inclusive_tax") || err.message.includes("tax"))) {
         delete payload.is_inclusive_tax;
         res = await this.http.post<ZohoSalesOrderResponse>("salesorders", payload);
       } else {
