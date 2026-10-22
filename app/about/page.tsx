@@ -12,7 +12,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF7F0] text-[#30251F] selection:bg-[#073C35]/15 selection:text-[#073C35] antialiased">
+    <div className="min-h-screen flex flex-col bg-[#E4DDCD] text-[#30251F] selection:bg-[#073C35]/15 selection:text-[#073C35] antialiased">
       {/* ── STORE HEADER ── */}
       <Header />
 

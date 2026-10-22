@@ -12,15 +12,21 @@ export const metadata: Metadata = {
 
 export default function SareeQuizPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F9F6F0]">
+    <div className="min-h-screen flex flex-col bg-[#E4DDCD]">
       <Header />
       <main className="grow py-8 sm:py-12 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto text-center mb-6 sm:mb-8 space-y-1">
-          <span className="inline-block text-[11px] font-bold text-[#8C6D37] tracking-[0.2em] uppercase mb-1">
-            Personalized Saree Matchmaker
-          </span>
-          <GoldText>Find Your Perfect Saree</GoldText>
-          <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#5C4D3C] mt-2.5 leading-relaxed">
+        <div className="max-w-4xl mx-auto text-center mb-6 sm:mb-8 space-y-2 flex flex-col items-center">
+          <div className="flex items-center justify-center gap-3">
+            <span className="h-px w-6 sm:w-10 bg-[#8C6D37]/50" />
+            <span className="text-[11px] font-bold text-[#8C6D37] tracking-[0.2em] uppercase">
+              Personalized Saree Matchmaker
+            </span>
+            <span className="h-px w-6 sm:w-10 bg-[#8C6D37]/50" />
+          </div>
+          <div className="block">
+            <GoldText>Find Your Perfect Saree</GoldText>
+          </div>
+          <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#5C4D3C] pt-1 leading-relaxed">
             Take our 2-minute Saree Matchmaker. We will recommend the ideal weave, blouse silhouette, draping advice,
             and in-stock sarees crafted just for your occasion.
           </p>

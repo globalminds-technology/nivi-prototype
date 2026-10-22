@@ -186,7 +186,7 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
   }));
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F9F6F0]">
+    <div className="min-h-screen flex flex-col bg-[#E4DDCD]">
       <Header products={allStoreProducts} />
 
       <main className="grow py-8 sm:py-12">
