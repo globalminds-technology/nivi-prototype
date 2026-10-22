@@ -19,10 +19,6 @@ export function WishlistClient({ products }: WishlistClientProps) {
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Centered Heading with GoldText */}
       <div className="text-center space-y-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
-          <Heart className="w-3.5 h-3.5 fill-current" />
-          <span>Your Curated Favorites</span>
-        </div>
         <GoldText>Saved Heritage Wishlist</GoldText>
         <p className="text-xs sm:text-sm text-neutral-500 max-w-md mx-auto">
           {count > 0

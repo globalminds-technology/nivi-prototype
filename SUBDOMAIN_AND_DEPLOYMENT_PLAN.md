@@ -33,52 +33,57 @@ In Vercel Project Settings ➔ **Domains**:
 
 ---
 
-### Step 2: Next.js Subdomain Middleware
-When ready, create `middleware.ts` in the root of the repository:
+### Step 2: Next.js Subdomain Routing (`proxy.ts`)
+In Next.js 16, `middleware.ts` is replaced by `proxy.ts` (located at [proxy.ts](file:///d:/personal/nivi/proxy.ts)):
 
 ```typescript
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone();
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   const hostname = request.headers.get("host") || "";
+  const sessionCookie = request.cookies.get("admin_session")?.value;
 
-  // Extract subdomain (e.g. "admin" from "admin.nivi.in" or "admin.localhost:3000")
   const isLocalhost = hostname.includes("localhost");
   const isAdminSubdomain =
     hostname.startsWith("admin.") ||
     (isLocalhost && hostname.startsWith("admin.localhost"));
 
-  // 1. If accessing via admin.nivi.in
+  // 1. ADMIN DOMAIN (e.g. admin.nivi.in)
   if (isAdminSubdomain) {
-    // If the path doesn't already start with /admin, rewrite it internally to /admin/...
-    if (!url.pathname.startsWith("/admin")) {
-      url.pathname = `/admin${url.pathname === "/" ? "" : url.pathname}`;
-      return NextResponse.rewrite(url);
+    if (pathname === "/") {
+      const target = sessionCookie ? "/admin" : "/admin/login";
+      return NextResponse.redirect(new URL(target, request.url));
+    }
+    if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login") && !sessionCookie) {
+      const loginUrl = new URL("/admin/login", request.url);
+      loginUrl.searchParams.set("from", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    if (pathname === "/admin/login" && sessionCookie) {
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
     return NextResponse.next();
   }
 
-  // 2. Prevent regular storefront visitors from accessing raw /admin routes on nivi.in (optional)
-  // if (url.pathname.startsWith("/admin") && !isAdminSubdomain) {
-  //   return NextResponse.redirect(new URL("https://admin.nivi.in", request.url));
-  // }
+  // 2. STOREFRONT DOMAIN (nivi.in / www.nivi.in)
+  const isCustomDomainStorefront = hostname === "nivi.in" || hostname === "www.nivi.in";
+  if (isCustomDomainStorefront && pathname.startsWith("/admin")) {
+    return NextResponse.redirect(new URL(`https://admin.nivi.in${pathname}`, request.url));
+  }
+
+  // 3. Fallback for localhost / preview deployments
+  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login") && !sessionCookie) {
+    const loginUrl = new URL("/admin/login", request.url);
+    loginUrl.searchParams.set("from", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+  if (pathname === "/admin/login" && sessionCookie) {
+    return NextResponse.redirect(new URL("/admin", request.url));
+  }
 
   return NextResponse.next();
 }
-
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public assets (.png, .jpg, .jpeg, .svg, etc.)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
-};
 ```
 
 ---
