@@ -8,6 +8,7 @@ import {
   Palette,
   RefreshCw,
   Scissors,
+  Sparkles,
 } from "lucide-react";
 import { Header } from "@/components/store/header";
 import { Footer } from "@/components/store/footer";
@@ -207,208 +208,94 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
             </span>
           </nav>
 
-          {/* Grand Editorial Hero Banner */}
-          <div className="relative rounded-3xl bg-linear-to-br from-[#042A24] via-[#073C35] to-[#0A4E45] text-white p-7 sm:p-12 lg:p-14 shadow-2xl overflow-hidden border border-[#C9A45C]/40">
+          {/* Grand Regal Editorial Hero Banner (Luminous Ivory & Gold Canvas) */}
+          <div className="relative rounded-3xl bg-linear-to-br from-[#FFFDF9] via-[#FAF4EA] to-[#F3E8D5] text-[#221811] p-7 sm:p-11 lg:p-13 shadow-[0_12px_45px_rgba(78,52,24,0.07)] overflow-hidden border border-[#D5CCBB]">
             {/* Ambient luxury glow aura */}
             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-[#C9A45C]/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 bg-[#4B9488]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-1/3 -mb-20 w-80 h-80 bg-[#C9A45C]/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               {/* Left Column: Title, Focus, Story */}
               <div className="lg:col-span-7 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFCF5]/15 text-[#EFE3CF] text-xs font-semibold backdrop-blur-md border border-[#C9A45C]/40 shadow-xs">
-                  <span>Curated For Your Occasion & Style</span>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF0DC] text-[#694208] text-xs font-semibold border border-[#D4B26F]/60 shadow-2xs">
+                  <Sparkles className="h-3.5 w-3.5 text-[#8C6D37]" />
+                  <span>Curated Style Recommendation</span>
                 </div>
 
-                <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#FFFDF8] leading-tight">
+                <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#221811] leading-tight">
                   {recommendation.title}
                 </h1>
 
                 {recommendation.styleFocus && (
-                  <div className="inline-block px-3 py-1 rounded-md bg-[#C9A45C]/20 border border-[#C9A45C]/40 text-[#FAF7F0] text-xs font-medium tracking-wide">
-                    Style Focus: <span className="font-semibold text-[#EFE3CF]">{recommendation.styleFocus}</span>
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#C9A45C]/15 border border-[#C9A45C]/40 text-[#694208] text-xs font-semibold tracking-wide">
+                    <span>Style Focus:</span>
+                    <span className="font-bold text-[#30251F]">{recommendation.styleFocus}</span>
                   </div>
                 )}
 
-                <p className="text-sm sm:text-base text-white/90 leading-relaxed font-sans pt-1">
+                <p className="text-sm sm:text-base text-[#4A3D34] leading-relaxed font-normal pt-1">
                   {recommendation.whyItWorks}
                 </p>
 
-                <div className="pt-2 flex items-center gap-4">
+                <div className="pt-3 flex items-center gap-4">
                   <Link
                     href="/quiz"
-                    className="inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-[#FAF7F0] border border-white/20 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2 text-xs font-semibold px-5 py-2.5 rounded-full bg-[#073C35] hover:bg-[#073C35]/90 text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
                   >
-                    <RefreshCw className="h-3 w-3" />
+                    <RefreshCw className="h-3.5 w-3.5 text-[#C9A45C]" />
                     <span>Find Another Match</span>
                   </Link>
                 </div>
               </div>
 
-              {/* Right Column: Quick Profile Matrix */}
-              <div className="lg:col-span-5 bg-[#03231E]/80 backdrop-blur-md border border-[#C9A45C]/35 rounded-2xl p-6 sm:p-7 space-y-4 shadow-inner">
-                <div className="flex items-center gap-2 border-b border-[#C9A45C]/25 pb-3">
-                  <Crown className="h-4 w-4 text-[#C9A45C]" />
-                  <span className="font-serif text-xs font-bold uppercase tracking-widest text-[#EFE3CF]">
-                    Style Blueprint
+              {/* Right Column: Style Blueprint Card */}
+              <div className="lg:col-span-5 bg-[#FFFCF7] border border-[#D5CCBB] rounded-2xl p-6 sm:p-7 space-y-4 shadow-[0_4px_20px_rgba(78,52,24,0.05)]">
+                <div className="flex items-center justify-between border-b border-[#E5DAC6] pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="h-7 w-7 rounded-lg bg-[#C9A45C]/15 flex items-center justify-center text-[#8C6D37]">
+                      <Crown className="h-4 w-4" />
+                    </div>
+                    <span className="font-serif text-xs font-bold uppercase tracking-widest text-[#694208]">
+                      Style Blueprint
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase bg-[#C9A45C]/15 text-[#8C6D37] px-2 py-0.5 rounded border border-[#C9A45C]/30 font-semibold">
+                    Personalized
                   </span>
                 </div>
 
                 <div className="space-y-3 text-xs sm:text-sm">
-                  <div className="flex justify-between items-center gap-2 pb-2 border-b border-white/10">
-                    <span className="text-[#C5BAA9]">Signature Weave</span>
-                    <span className="font-semibold text-[#FFFDF8] text-right">{recommendation.fabric}</span>
+                  <div className="flex justify-between items-center gap-2 pb-2.5 border-b border-[#E5DAC6]/60">
+                    <span className="text-[#6B5A4A]">Signature Weave</span>
+                    <span className="font-semibold text-[#221811] text-right">{recommendation.fabric}</span>
                   </div>
-                  <div className="flex justify-between items-center gap-2 pb-2 border-b border-white/10">
-                    <span className="text-[#C5BAA9]">Ideal Occasions</span>
-                    <span className="font-semibold text-[#FFFDF8] text-right">{recommendation.occasions}</span>
+                  <div className="flex justify-between items-center gap-2 pb-2.5 border-b border-[#E5DAC6]/60">
+                    <span className="text-[#6B5A4A]">Occasions</span>
+                    <span className="font-semibold text-[#221811] text-right">{recommendation.occasions}</span>
                   </div>
-                  <div className="flex justify-between items-center gap-2 pb-2 border-b border-white/10">
-                    <span className="text-[#C5BAA9]">Selected Border</span>
-                    <span className="font-semibold text-[#FFFDF8] text-right">{answers.border || "Harmonized"}</span>
+                  <div className="flex justify-between items-center gap-2 pb-2.5 border-b border-[#E5DAC6]/60">
+                    <span className="text-[#6B5A4A]">Selected Border</span>
+                    <span className="font-semibold text-[#221811] text-right">{answers.border || "Harmonized"}</span>
                   </div>
                   <div className="flex justify-between items-center gap-2">
-                    <span className="text-[#C5BAA9]">Colour Mood</span>
-                    <span className="font-semibold text-[#FFFDF8] text-right">{answers.colourPalette?.split("—")[0] || "Curated"}</span>
+                    <span className="text-[#6B5A4A]">Colour Palette</span>
+                    <span className="font-semibold text-[#221811] text-right">{answers.colourPalette?.split("—")[0] || "Curated"}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Structured Styling Advice: 4 Luxury Cards */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <span className="h-2 w-2 rounded-full bg-[#073C35]" />
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#221811]">
-                Complete Styling Guide
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-              {/* Card 1: Saree Style */}
-              <div className="bg-[#FFFCF7] border border-[#E5DAC6] border-t-4 border-t-[#073C35] rounded-2xl p-6 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="space-y-3">
-                  <div className="h-9 w-9 rounded-xl bg-[#073C35]/10 flex items-center justify-center text-[#073C35]">
-                    <Feather className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <span className="text-[10.5px] font-bold text-[#8C6D37] uppercase tracking-wider block">
-                      The Silhouette
-                    </span>
-                    <h3 className="font-serif text-base font-bold text-[#221811] mt-0.5">
-                      Saree Style
-                    </h3>
-                  </div>
-                  <p className="text-xs sm:text-sm text-[#4A3E31] leading-relaxed">
-                    {recommendation.styleSuggestion}
-                  </p>
-                </div>
-                <div className="pt-4 border-t border-[#E5DAC6]/60 text-[11px] text-[#6B5A4A] mt-4">
-                  Fabric: <strong className="text-[#221811]">{recommendation.fabric}</strong>
-                </div>
-              </div>
-
-              {/* Card 2: Blouse Pairing */}
-              <div className="bg-[#FFFCF7] border border-[#E5DAC6] border-t-4 border-t-[#8C6D37] rounded-2xl p-6 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="space-y-3">
-                  <div className="h-9 w-9 rounded-xl bg-[#8C6D37]/10 flex items-center justify-center text-[#8C6D37]">
-                    <Scissors className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <span className="text-[10.5px] font-bold text-[#8C6D37] uppercase tracking-wider block">
-                      Cut & Neckline
-                    </span>
-                    <h3 className="font-serif text-base font-bold text-[#221811] mt-0.5">
-                      Blouse Recommendation
-                    </h3>
-                  </div>
-                  <p className="text-xs sm:text-sm text-[#4A3E31] leading-relaxed">
-                    {recommendation.blouseRecommendation}
-                  </p>
-                </div>
-                <div className="pt-4 border-t border-[#E5DAC6]/60 text-[11px] text-[#6B5A4A] mt-4">
-                  Tailored to balance the saree pallu & border
-                </div>
-              </div>
-
-              {/* Card 3: Draping Tip */}
-              <div className="bg-[#FFFCF7] border border-[#E5DAC6] border-t-4 border-t-[#073C35] rounded-2xl p-6 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="space-y-3">
-                  <div className="h-9 w-9 rounded-xl bg-[#073C35]/10 flex items-center justify-center text-[#073C35]">
-                    <Scissors className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <span className="text-[10.5px] font-bold text-[#8C6D37] uppercase tracking-wider block">
-                      Drape & Pleats
-                    </span>
-                    <h3 className="font-serif text-base font-bold text-[#221811] mt-0.5">
-                      Draping Technique
-                    </h3>
-                  </div>
-                  <p className="text-xs sm:text-sm text-[#4A3E31] leading-relaxed">
-                    {recommendation.drapingTip}
-                  </p>
-
-                  {personalizedAdvice?.drapingNote && (
-                    <div className="bg-[#073C35]/8 border border-[#073C35]/20 p-2.5 rounded-lg text-xs text-[#073C35] flex items-start gap-1.5 mt-2">
-                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                      <span>{personalizedAdvice.drapingNote}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="pt-4 border-t border-[#E5DAC6]/60 text-[11px] text-[#6B5A4A] mt-4">
-                  Keeps pleats immaculate throughout the day
-                </div>
-              </div>
-
-              {/* Card 4: Jewellery & Colours */}
-              <div className="bg-[#FFFCF7] border border-[#E5DAC6] border-t-4 border-t-[#8C6D37] rounded-2xl p-6 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div className="space-y-3">
-                  <div className="h-9 w-9 rounded-xl bg-[#8C6D37]/10 flex items-center justify-center text-[#8C6D37]">
-                    <Palette className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <span className="text-[10.5px] font-bold text-[#8C6D37] uppercase tracking-wider block">
-                      Accessories & Palette
-                    </span>
-                    <h3 className="font-serif text-base font-bold text-[#221811] mt-0.5">
-                      Jewellery & Colours
-                    </h3>
-                  </div>
-                  <div className="space-y-2 text-xs sm:text-sm text-[#4A3E31]">
-                    <p>
-                      <strong className="text-[#221811]">Jewellery:</strong> {recommendation.jewelleryAndAccessories}
-                    </p>
-                    <p>
-                      <strong className="text-[#221811]">Colours:</strong> {recommendation.colourGuidance}
-                    </p>
-                  </div>
-
-                  {personalizedAdvice?.jewelleryNote && (
-                    <div className="bg-[#8C6D37]/10 border border-[#8C6D37]/25 p-2.5 rounded-lg text-xs text-[#694208] flex items-start gap-1.5 mt-2">
-                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#8C6D37]" />
-                      <span>{personalizedAdvice.jewelleryNote}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="pt-4 border-t border-[#E5DAC6]/60 text-[11px] text-[#6B5A4A] mt-4">
-                  Harmonized with your undertone
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* In-Stock Matching Sarees Showcase */}
-          <div className="space-y-6 pt-4">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#E5DAC6] pb-4">
+          {/* SECTION 2: In-Stock Matching Sarees Showcase (IMMEDIATELY BELOW HERO FOR HIGH CONVERSION) */}
+          <div className="space-y-6 pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#D5CCBB] pb-4">
               <div>
                 <span className="text-xs font-bold text-[#8C6D37] uppercase tracking-widest block mb-1">
                   Ready to Wear
                 </span>
-                <GoldText>Matching In-Stock Sarees</GoldText>
+                <GoldText>Curated Handcrafted Sarees</GoldText>
                 <p className="text-xs sm:text-sm text-[#6B5A4A] mt-1">
-                  Handcrafted sarees in stock, matching your recommended weave, occasion, and style profile.
+                  In-stock masterweaves matching your {recommendation.fabric} recommendation and occasion profile.
                 </p>
               </div>
 
@@ -428,7 +315,7 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16 px-4 bg-[#FFFCF7] border border-[#E5DAC6] rounded-2xl space-y-3">
+              <div className="text-center py-16 px-4 bg-[#FFFCF7] border border-[#D5CCBB] rounded-3xl space-y-3">
                 <p className="font-serif text-lg font-semibold text-[#221811]">
                   Currently crafting more sarees in this weave
                 </p>
@@ -443,6 +330,172 @@ export default async function QuizResultsPage({ searchParams }: QuizResultsPageP
                 </Link>
               </div>
             )}
+          </div>
+
+          {/* SECTION 3: The Couture Atelier Lookbook (2-Column Magazine Spread) */}
+          <div className="space-y-6 pt-6">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <span className="text-xs font-bold text-[#8C6D37] uppercase tracking-[0.2em] block">
+                Atelier Styling Consultation
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#221811]">
+                Complete Styling &amp; Drape Guide
+              </h2>
+              <p className="text-xs sm:text-sm text-[#6B5A4A]">
+                Comprehensive artisan advice on draping, blouse tailoring, and accent pairings tailored specifically for your profile.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
+              {/* WING 1: The Saree Silhouette & Draping Technique */}
+              <div className="bg-gradient-to-b from-[#FFFDF8] to-[#FAF3E5] border border-[#D5CCBB] rounded-3xl p-7 sm:p-9 shadow-[0_8px_30px_rgba(60,35,5,0.05)] space-y-6 flex flex-col justify-between">
+                <div className="space-y-6">
+                  {/* Subhead */}
+                  <div className="flex items-center justify-between border-b border-[#E5DAC6] pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-2xl bg-[#C9A45C]/15 border border-[#D4B26F]/60 flex items-center justify-center text-[#8C6D37]">
+                        <Feather className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-[#8C6D37] uppercase tracking-wider block">
+                          Lookbook Part I
+                        </span>
+                        <h3 className="font-serif text-xl font-bold text-[#221811]">
+                          The Saree &amp; Silhouette
+                        </h3>
+                      </div>
+                    </div>
+                    <span className="font-serif text-3xl font-bold text-[#C9A45C]/25">01</span>
+                  </div>
+
+                  {/* Saree Style Suggestion */}
+                  <div className="space-y-2">
+                    <h4 className="font-serif text-base font-semibold text-[#221811] flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#C9A45C]" />
+                      Style Suggestion
+                    </h4>
+                    <p className="text-sm text-[#4A3D34] leading-relaxed pl-3.5 border-l-2 border-[#E5DAC6]">
+                      {recommendation.styleSuggestion}
+                    </p>
+                  </div>
+
+                  {/* Draping Tip */}
+                  <div className="space-y-2">
+                    <h4 className="font-serif text-base font-semibold text-[#221811] flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#C9A45C]" />
+                      Master Draping Technique
+                    </h4>
+                    <p className="text-sm text-[#4A3D34] leading-relaxed pl-3.5 border-l-2 border-[#E5DAC6]">
+                      {recommendation.drapingTip}
+                    </p>
+                  </div>
+
+                  {/* Personalized Silhouette & Drape Notes */}
+                  {(personalizedAdvice?.drapingNote || personalizedAdvice?.bodyShapeNote || personalizedAdvice?.heightNote) && (
+                    <div className="bg-[#FAF0DC]/80 border border-[#D4B26F]/50 rounded-2xl p-4 sm:p-5 space-y-2 text-xs text-[#5C3A06]">
+                      <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-[11px] text-[#694208]">
+                        <Sparkles className="h-4 w-4 text-[#8C6D37]" />
+                        <span>Tailored Silhouette Advice</span>
+                      </div>
+                      {personalizedAdvice.bodyShapeNote && (
+                        <p className="leading-relaxed">
+                          <strong>Frame ({answers.bodyShape}):</strong> {personalizedAdvice.bodyShapeNote}
+                        </p>
+                      )}
+                      {personalizedAdvice.heightNote && (
+                        <p className="leading-relaxed">
+                          <strong>Height ({answers.height}):</strong> {personalizedAdvice.heightNote}
+                        </p>
+                      )}
+                      {personalizedAdvice.drapingNote && (
+                        <p className="leading-relaxed">
+                          <strong>Drape Note:</strong> {personalizedAdvice.drapingNote}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-4 border-t border-[#E5DAC6]/70 flex items-center justify-between text-xs text-[#6B5A4A]">
+                  <span>Fabric Focus: <strong className="text-[#221811]">{recommendation.fabric}</strong></span>
+                  <span>Occasion: <strong className="text-[#221811]">{answers.occasion || "Versatile"}</strong></span>
+                </div>
+              </div>
+
+              {/* WING 2: The Ensemble, Blouse & Accent Harmony */}
+              <div className="bg-gradient-to-b from-[#FFFDF8] to-[#FAF3E5] border border-[#D5CCBB] rounded-3xl p-7 sm:p-9 shadow-[0_8px_30px_rgba(60,35,5,0.05)] space-y-6 flex flex-col justify-between">
+                <div className="space-y-6">
+                  {/* Subhead */}
+                  <div className="flex items-center justify-between border-b border-[#E5DAC6] pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-2xl bg-[#C9A45C]/15 border border-[#D4B26F]/60 flex items-center justify-center text-[#8C6D37]">
+                        <Scissors className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-[#8C6D37] uppercase tracking-wider block">
+                          Lookbook Part II
+                        </span>
+                        <h3 className="font-serif text-xl font-bold text-[#221811]">
+                          Blouse &amp; Accent Harmony
+                        </h3>
+                      </div>
+                    </div>
+                    <span className="font-serif text-3xl font-bold text-[#C9A45C]/25">02</span>
+                  </div>
+
+                  {/* Blouse Recommendation */}
+                  <div className="space-y-2">
+                    <h4 className="font-serif text-base font-semibold text-[#221811] flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#C9A45C]" />
+                      Blouse Cut &amp; Silhouette
+                    </h4>
+                    <p className="text-sm text-[#4A3D34] leading-relaxed pl-3.5 border-l-2 border-[#E5DAC6]">
+                      {recommendation.blouseRecommendation}
+                    </p>
+                  </div>
+
+                  {/* Jewellery & Accessories */}
+                  <div className="space-y-2">
+                    <h4 className="font-serif text-base font-semibold text-[#221811] flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#C9A45C]" />
+                      Jewellery &amp; Accessories
+                    </h4>
+                    <p className="text-sm text-[#4A3D34] leading-relaxed pl-3.5 border-l-2 border-[#E5DAC6]">
+                      {recommendation.jewelleryAndAccessories}
+                    </p>
+                  </div>
+
+                  {/* Colour Guidance */}
+                  <div className="space-y-2">
+                    <h4 className="font-serif text-base font-semibold text-[#221811] flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#C9A45C]" />
+                      Colour Alchemy
+                    </h4>
+                    <p className="text-sm text-[#4A3D34] leading-relaxed pl-3.5 border-l-2 border-[#E5DAC6]">
+                      {recommendation.colourGuidance}
+                    </p>
+                  </div>
+
+                  {/* Personalized Undertone Notes */}
+                  {personalizedAdvice?.undertoneNote && (
+                    <div className="bg-[#FAF0DC]/80 border border-[#D4B26F]/50 rounded-2xl p-4 sm:p-5 space-y-1.5 text-xs text-[#5C3A06]">
+                      <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-[11px] text-[#694208]">
+                        <Sparkles className="h-4 w-4 text-[#8C6D37]" />
+                        <span>Complexion &amp; Metal Harmony</span>
+                      </div>
+                      <p className="leading-relaxed">
+                        {personalizedAdvice.undertoneNote}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-4 border-t border-[#E5DAC6]/70 flex items-center justify-between text-xs text-[#6B5A4A]">
+                  <span>Palette: <strong className="text-[#221811]">{answers.colourPalette?.split("—")[0] || "Curated"}</strong></span>
+                  <span>Border: <strong className="text-[#221811]">{answers.border || "Harmonized"}</strong></span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Bottom Retake Matchmaker CTA Card */}
