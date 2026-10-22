@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
     (isLocalhost && hostname.startsWith("admin.localhost"));
 
   // ---------------------------------------------------------------------------
-  // 1. ADMIN DOMAIN TRAFFIC (e.g., admin.nivi.in or admin.localhost:3000)
+  // 1. ADMIN DOMAIN TRAFFIC (e.g., admin.brandnivi.com or admin.localhost:3000)
   // ---------------------------------------------------------------------------
   if (isAdminSubdomain) {
     // If accessing root of admin subdomain, redirect directly to /admin
@@ -38,30 +38,26 @@ export function proxy(request: NextRequest) {
   }
 
   // ---------------------------------------------------------------------------
-  // 2. STOREFRONT DOMAIN TRAFFIC (e.g., nivi.in or www.nivi.in)
+  // 2. PUBLIC STOREFRONT DOMAIN TRAFFIC (brandnivi.com, www.brandnivi.com, etc.)
   // ---------------------------------------------------------------------------
-  const isCustomDomainStorefront =
-    hostname === "nivi.in" || hostname === "www.nivi.in";
-
-  // In production storefront, redirect any /admin attempt to the dedicated admin subdomain
-  if (isCustomDomainStorefront && pathname.startsWith("/admin")) {
-    return NextResponse.redirect(
-      new URL(`https://admin.nivi.in${pathname}`, request.url)
-    );
-  }
-
-  // Fallback for preview deployments / localhost without custom subdomain:
-  // Still protect /admin routes
-  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
-    if (!sessionCookie) {
-      const loginUrl = new URL("/admin/login", request.url);
-      loginUrl.searchParams.set("from", pathname);
-      return NextResponse.redirect(loginUrl);
+  // Strict isolation: The admin portal MUST NOT be accessible from the public website.
+  // Anyone requesting /admin on the public storefront receives a 404 Not Found.
+  if (pathname.startsWith("/admin")) {
+    // Allow local development on localhost:3000/admin for developer convenience
+    if (isLocalhost) {
+      if (!pathname.startsWith("/admin/login") && !sessionCookie) {
+        const loginUrl = new URL("/admin/login", request.url);
+        loginUrl.searchParams.set("from", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+      if (pathname === "/admin/login" && sessionCookie) {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+      return NextResponse.next();
     }
-  }
 
-  if (pathname === "/admin/login" && sessionCookie) {
-    return NextResponse.redirect(new URL("/admin", request.url));
+    // In production, block all /admin access on the public domain completely (404 Not Found)
+    return new NextResponse(null, { status: 404 });
   }
 
   return NextResponse.next();
