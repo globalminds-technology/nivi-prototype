@@ -1,12 +1,2 @@
-{
-  "crons": [
-    {
-      "path": "/api/cron/revalidate",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/expire-offers",
-      "schedule": "35 18 * * *"
-    }
-  ]
-}
+{}
+
