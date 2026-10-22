@@ -126,7 +126,25 @@ export function SareeQuizFlow() {
   const selectedAnswer = answers[currentStep.id];
   const progressPercent = Math.round(((currentStepIndex + 1) / QUIZ_STEPS.length) * 100);
 
+  const handleSubmit = (finalAnswers: SareeQuizAnswers) => {
+    setIsSubmitting(true);
+    // Encode answers into URL search parameters for a refresh-safe, shareable results page
+    const params = new URLSearchParams();
+    if (finalAnswers.bodyShape) params.set("bodyShape", finalAnswers.bodyShape);
+    if (finalAnswers.height) params.set("height", finalAnswers.height);
+    if (finalAnswers.undertone) params.set("undertone", finalAnswers.undertone);
+    if (finalAnswers.occasion) params.set("occasion", finalAnswers.occasion);
+    if (finalAnswers.style) params.set("style", finalAnswers.style);
+    if (finalAnswers.comfort) params.set("comfort", finalAnswers.comfort);
+    if (finalAnswers.border) params.set("border", finalAnswers.border);
+    if (finalAnswers.colourPalette) params.set("colourPalette", finalAnswers.colourPalette);
+
+    router.push(`/quiz/results?${params.toString()}`);
+  };
+
   const handleSelectOption = (optionLabel: string) => {
+    if (isSubmitting) return;
+
     setAnswers((prev) => ({
       ...prev,
       [currentStep.id]: optionLabel,
@@ -134,80 +152,65 @@ export function SareeQuizFlow() {
   };
 
   const handleNext = () => {
-    if (!selectedAnswer) return;
+    if (!selectedAnswer || isSubmitting) return;
 
     if (currentStepIndex < QUIZ_STEPS.length - 1) {
       setCurrentStepIndex((prev) => prev + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      // Final submission
-      handleSubmit();
+      handleSubmit(answers);
     }
   };
 
   const handleBack = () => {
-    if (currentStepIndex > 0) {
+    if (currentStepIndex > 0 && !isSubmitting) {
       setCurrentStepIndex((prev) => prev - 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  const handleSubmit = () => {
-    setIsSubmitting(true);
-    // Encode answers into URL search parameters for a refresh-safe, shareable results page
-    const params = new URLSearchParams();
-    if (answers.bodyShape) params.set("bodyShape", answers.bodyShape);
-    if (answers.height) params.set("height", answers.height);
-    if (answers.undertone) params.set("undertone", answers.undertone);
-    if (answers.occasion) params.set("occasion", answers.occasion);
-    if (answers.style) params.set("style", answers.style);
-    if (answers.comfort) params.set("comfort", answers.comfort);
-    if (answers.border) params.set("border", answers.border);
-    if (answers.colourPalette) params.set("colourPalette", answers.colourPalette);
-
-    router.push(`/quiz/results?${params.toString()}`);
-  };
-
   return (
-    <div className="w-full max-w-2xl mx-auto py-4 sm:py-8 px-4">
-      {/* Header & Progress Indicator */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between text-xs font-medium text-[#694208] mb-2 tracking-wider uppercase">
-          <span className="font-serif font-bold">
-            Find Your Perfect Saree
-          </span>
-          <span className="font-sans font-semibold">
-            Question {currentStep.number} of {QUIZ_STEPS.length}
-          </span>
+    <div className="w-full max-w-2xl mx-auto px-2 sm:px-4">
+      {/* Question Card (Compact, Fits Entirely in Viewport) */}
+      <div className="bg-[#FFFCF7] border border-[#D5CCBB] rounded-2xl p-4 sm:p-7 shadow-[0_8px_30px_rgba(78,52,24,0.04)]">
+        {/* Card Header & Progress Bar */}
+        <div className="space-y-3 mb-4 sm:mb-5">
+          <div className="flex items-center justify-between text-xs font-medium text-[#694208]">
+            <span className="font-serif font-bold text-xs uppercase tracking-wider text-[#8C6D37]">
+              Step {currentStep.number} of {QUIZ_STEPS.length}
+            </span>
+            <span className="text-[11px] font-mono font-semibold text-[#6B5A4A]">
+              {progressPercent}% Complete
+            </span>
+          </div>
+
+          {/* Progress Bar with NiVi Brand Colors */}
+          <div className="w-full h-1.5 bg-[#E9E1D2] rounded-full overflow-hidden shadow-inner">
+            <div
+              className="h-full bg-linear-to-r from-[#073C35] to-[#8C6D37] transition-all duration-300 rounded-full"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+
+          {/* Question Title & Subtitle */}
+          <div className="pt-1">
+            <h2 className="font-serif text-lg sm:text-2xl font-bold text-[#221811] leading-snug">
+              {currentStep.question}
+            </h2>
+            {currentStep.subtitle && (
+              <p className="text-xs sm:text-xs text-[#5C4D3C] mt-1 leading-relaxed">
+                {currentStep.subtitle}
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Progress Bar with NiVi Brand Colors */}
-        <div className="w-full h-2 bg-[#E9E1D2] rounded-full overflow-hidden shadow-inner">
-          <div
-            className="h-full bg-linear-to-r from-[#073C35] to-[#8C6D37] transition-all duration-300 rounded-full"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Question Card */}
-      <div className="bg-[#FFFCF7] border border-[#E5DAC6] rounded-2xl p-6 sm:p-9 shadow-sm">
-        <div className="mb-6">
-          <span className="inline-block text-[11px] font-bold text-[#8C6D37] uppercase tracking-widest mb-1.5">
-            Step {currentStep.number}
-          </span>
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#221811] leading-snug">
-            {currentStep.question}
-          </h2>
-          {currentStep.subtitle && (
-            <p className="text-xs sm:text-sm text-[#5C4D3C] mt-1.5 leading-relaxed">
-              {currentStep.subtitle}
-            </p>
-          )}
-        </div>
-
-        {/* Option Selection List */}
-        <div className="space-y-3">
+        {/* Option Selection Grid (2-Column Responsive Layout - Zero Scroll) */}
+        <div
+          className={`grid gap-2.5 sm:gap-3 ${
+            currentStep.options.length === 3
+              ? "grid-cols-1 sm:grid-cols-3"
+              : "grid-cols-1 sm:grid-cols-2"
+          }`}
+        >
           {currentStep.options.map((opt) => {
             const isSelected = selectedAnswer === opt.label;
             return (
@@ -215,54 +218,60 @@ export function SareeQuizFlow() {
                 key={opt.label}
                 type="button"
                 onClick={() => handleSelectOption(opt.label)}
-                className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-start justify-between gap-3 cursor-pointer ${
+                className={`w-full text-left p-3 sm:p-3.5 rounded-xl border transition-all duration-150 flex items-start justify-between gap-2.5 cursor-pointer shadow-2xs ${
                   isSelected
-                    ? "bg-[#073C35]/5 border-[#073C35] ring-1 ring-[#073C35] shadow-xs"
-                    : "bg-white border-[#E5DAC6]/80 hover:border-[#8C6D37]/70 hover:bg-[#FFFAF0]"
+                    ? "bg-[#073C35]/8 border-[#073C35] ring-1 ring-[#073C35] text-[#073C35]"
+                    : "bg-white border-[#E5DAC6] hover:border-[#8C6D37]/70 hover:bg-[#FAF4EA]"
                 }`}
               >
-                <div className="space-y-0.5">
+                <div className="space-y-0.5 min-w-0 flex-1">
                   <div
-                    className={`text-sm sm:text-base font-medium ${
-                      isSelected ? "text-[#073C35] font-semibold" : "text-[#221811]"
+                    className={`text-xs sm:text-sm font-semibold leading-snug ${
+                      isSelected ? "text-[#073C35]" : "text-[#221811]"
                     }`}
                   >
                     {opt.label}
                   </div>
                   {opt.description && (
-                    <div className="text-xs text-[#6B5A4A]">{opt.description}</div>
+                    <div className="text-[11px] text-[#6B5A4A] leading-tight line-clamp-2">
+                      {opt.description}
+                    </div>
                   )}
                 </div>
 
                 <div
-                  className={`h-5 w-5 rounded-full shrink-0 mt-0.5 flex items-center justify-center border transition-all ${
+                  className={`h-4.5 w-4.5 rounded-full shrink-0 mt-0.5 flex items-center justify-center border transition-all ${
                     isSelected
                       ? "bg-[#073C35] border-[#073C35] text-white"
                       : "border-[#C8BCAB] bg-white"
                   }`}
                 >
-                  {isSelected && <Check className="h-3.5 w-3.5" />}
+                  {isSelected && <Check className="h-3 w-3" />}
                 </div>
               </button>
             );
           })}
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center justify-between pt-8 mt-6 border-t border-[#E5DAC6]/60">
+        {/* Action Controls & Navigation (Explicit Next Navigation) */}
+        <div className="flex items-center justify-between pt-4 sm:pt-5 mt-4 sm:mt-5 border-t border-[#E5DAC6]/60">
           <button
             type="button"
             onClick={handleBack}
             disabled={currentStepIndex === 0 || isSubmitting}
-            className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg border transition-all ${
+            className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium px-4 py-2 rounded-xl border transition-all ${
               currentStepIndex === 0
                 ? "invisible"
-                : "border-[#D5CCBB] text-[#5C4D3C] hover:bg-[#F5EFE6] cursor-pointer"
+                : "border-[#D5CCBB] text-[#5C4D3C] hover:bg-[#FAF4EA] cursor-pointer"
             }`}
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Previous</span>
           </button>
+
+          <span className="text-[11px] text-[#8C6D37] hidden xs:inline font-medium">
+            {!selectedAnswer ? "Select an option to continue" : "Choice recorded"}
+          </span>
 
           <button
             type="button"
@@ -270,16 +279,16 @@ export function SareeQuizFlow() {
             disabled={!selectedAnswer || isSubmitting}
             className={`inline-flex items-center gap-2 text-xs sm:text-sm font-semibold px-6 py-2.5 rounded-full shadow-md transition-all cursor-pointer ${
               !selectedAnswer || isSubmitting
-                ? "bg-[#C8BCAB] text-white cursor-not-allowed opacity-60"
+                ? "bg-[#C8BCAB] text-white cursor-not-allowed opacity-50"
                 : "bg-[#073C35] text-[#FAF7F0] hover:bg-[#073C35]/90 hover:shadow-lg active:scale-95"
             }`}
           >
             {isSubmitting ? (
-              <span>Curating your match...</span>
+              <span>Curating match...</span>
             ) : currentStepIndex === QUIZ_STEPS.length - 1 ? (
               <>
-                <span>Find My Saree Match</span>
-                <ArrowRight className="h-4 w-4" />
+                <span>View My Saree Match</span>
+                <ArrowRight className="h-4 w-4 text-[#C9A45C]" />
               </>
             ) : (
               <>

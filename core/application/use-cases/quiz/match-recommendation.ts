@@ -36,6 +36,9 @@ export interface MatchResult {
   personalizedAdvice?: {
     drapingNote?: string;
     jewelleryNote?: string;
+    bodyShapeNote?: string;
+    heightNote?: string;
+    undertoneNote?: string;
   };
 }
 
@@ -122,25 +125,42 @@ export function matchRecommendation(answers: SareeQuizAnswers): MatchResult {
 function generatePersonalizedAdvice(answers: SareeQuizAnswers) {
   let drapingNote: string | undefined;
   let jewelleryNote: string | undefined;
+  let bodyShapeNote: string | undefined;
+  let heightNote: string | undefined;
+  let undertoneNote: string | undefined;
+
+  if (answers.bodyShape === "Hourglass-shaped") {
+    bodyShapeNote = "Flowing fabrics like soft silk and georgette drape naturally along your curves, creating an effortless, balanced silhouette.";
+  } else if (answers.bodyShape === "Pear-shaped") {
+    bodyShapeNote = "Highlighting the pallu and shoulder drape creates a graceful, proportional balance with gentle front pleats.";
+  } else if (answers.bodyShape === "Apple-shaped") {
+    bodyShapeNote = "Longer pallu drapes and structured weaves offer comfortable movement and elegant length.";
+  } else if (answers.bodyShape === "Rectangle-shaped") {
+    bodyShapeNote = "Textured pleats and defined border accents add dimension and graceful contour.";
+  } else if (answers.bodyShape === "Oval or fuller-figured") {
+    bodyShapeNote = "Comfortable, breathable weaves with medium borders drape smoothly and feel wonderfully light.";
+  }
 
   if (answers.height === "Petite") {
-    drapingNote =
-      "For a streamlined look, keep your pleats neat and moderately spaced, letting the pallu flow naturally.";
+    heightNote = "Medium or sleek borders and a neatly pinned pallu celebrate your frame with balanced proportions.";
+    drapingNote = "For a streamlined look, keep your pleats neat and moderately spaced, letting the pallu flow naturally.";
   } else if (answers.height === "Tall") {
-    drapingNote =
-      "Vertical pattern alignment and a slightly broader shoulder drape highlight tall proportions gracefully.";
+    heightNote = "Broader grand zari borders and sweeping pallus look majestic on your statuesque frame.";
+    drapingNote = "Vertical pattern alignment and a slightly broader shoulder drape highlight tall proportions gracefully.";
+  } else if (answers.height === "Average") {
+    heightNote = "Classic border proportions and traditional pleats pair versatilely with almost any drape.";
   }
 
   if (answers.undertone?.includes("Warm")) {
-    jewelleryNote =
-      "Warm golden, antique bronze, and temple jewellery beautifully accentuate warm golden skin tones.";
+    undertoneNote = "Warm golden, antique bronze, and temple jewellery beautifully accentuate warm golden skin tones.";
+    jewelleryNote = undertoneNote;
   } else if (answers.undertone?.includes("Cool")) {
-    jewelleryNote =
-      "Silver, white-gold finishes, and soft pearl ornaments add luminous radiance to cool undertones.";
+    undertoneNote = "Silver, white-gold finishes, and soft pearl ornaments add luminous radiance to cool undertones.";
+    jewelleryNote = undertoneNote;
   } else if (answers.undertone?.includes("Neutral")) {
-    jewelleryNote =
-      "Both yellow gold and oxidised silver accessories blend effortlessly with neutral undertones.";
+    undertoneNote = "Both yellow gold and oxidised silver accessories blend effortlessly with neutral undertones.";
+    jewelleryNote = undertoneNote;
   }
 
-  return { drapingNote, jewelleryNote };
+  return { drapingNote, jewelleryNote, bodyShapeNote, heightNote, undertoneNote };
 }

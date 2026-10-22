@@ -14,21 +14,21 @@ export default function SareeQuizPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#E4DDCD]">
       <Header />
-      <main className="grow py-8 sm:py-12 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto text-center mb-6 sm:mb-8 space-y-2 flex flex-col items-center">
-          <div className="flex items-center justify-center gap-3">
-            <span className="h-px w-6 sm:w-10 bg-[#8C6D37]/50" />
-            <span className="text-[11px] font-bold text-[#8C6D37] tracking-[0.2em] uppercase">
+      <main className="grow py-4 sm:py-6 px-3 sm:px-6 flex flex-col justify-center">
+        {/* Compact, elegant luxury masthead */}
+        <div className="max-w-2xl mx-auto text-center mb-3 sm:mb-5 space-y-1 flex flex-col items-center">
+          <div className="flex items-center justify-center gap-2.5">
+            <span className="h-px w-5 sm:w-8 bg-[#8C6D37]/50" />
+            <span className="text-[10px] sm:text-[11px] font-bold text-[#8C6D37] tracking-[0.2em] uppercase">
               Personalized Saree Matchmaker
             </span>
-            <span className="h-px w-6 sm:w-10 bg-[#8C6D37]/50" />
+            <span className="h-px w-5 sm:w-8 bg-[#8C6D37]/50" />
           </div>
-          <div className="block">
+          <div className="block leading-tight">
             <GoldText>Find Your Perfect Saree</GoldText>
           </div>
-          <p className="max-w-xl mx-auto text-xs sm:text-sm text-[#5C4D3C] pt-1 leading-relaxed">
-            Take our 2-minute Saree Matchmaker. We will recommend the ideal weave, blouse silhouette, draping advice,
-            and in-stock sarees crafted just for your occasion.
+          <p className="max-w-lg mx-auto text-xs sm:text-xs text-[#5C4D3C] leading-snug">
+            Answer 8 quick questions to discover your signature weave, blouse styling, and in-stock sarees.
           </p>
         </div>
 
