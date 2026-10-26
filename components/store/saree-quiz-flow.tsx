@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import type { SareeQuizAnswers } from "@/core/domain/entities/saree-quiz";
 
@@ -18,22 +18,8 @@ interface QuizStep {
 
 const QUIZ_STEPS: QuizStep[] = [
   {
-    id: "bodyShape",
-    number: 1,
-    question: "Which body shape best describes you?",
-    subtitle: "We celebrate every shape to suggest the most flattering, natural drape for you.",
-    options: [
-      { label: "Pear-shaped", description: "Hips wider than shoulders with a defined waist" },
-      { label: "Apple-shaped", description: "Fuller midsection with slender arms and legs" },
-      { label: "Hourglass-shaped", description: "Balanced bust and hips with a narrower waist" },
-      { label: "Rectangle-shaped", description: "Bust, waist, and hips of relatively uniform width" },
-      { label: "Oval or fuller-figured", description: "Generous curves with softer contours throughout" },
-      { label: "Not sure", description: "Skip or choose later" },
-    ],
-  },
-  {
     id: "height",
-    number: 2,
+    number: 1,
     question: "What is your height?",
     subtitle: "Helps us recommend border proportions and drape styles tailored to your frame.",
     options: [
@@ -44,7 +30,7 @@ const QUIZ_STEPS: QuizStep[] = [
   },
   {
     id: "undertone",
-    number: 3,
+    number: 2,
     question: "What is your skin undertone?",
     subtitle: "Choose your best estimate to find colours and metallic accents that illuminate you.",
     options: [
@@ -56,7 +42,7 @@ const QUIZ_STEPS: QuizStep[] = [
   },
   {
     id: "occasion",
-    number: 4,
+    number: 3,
     question: "What is the occasion?",
     subtitle: "Where will you be wearing your saree?",
     options: [
@@ -68,7 +54,7 @@ const QUIZ_STEPS: QuizStep[] = [
   },
   {
     id: "style",
-    number: 5,
+    number: 4,
     question: "Which style do you prefer?",
     subtitle: "Your personal aesthetic signature.",
     options: [
@@ -80,7 +66,7 @@ const QUIZ_STEPS: QuizStep[] = [
   },
   {
     id: "comfort",
-    number: 6,
+    number: 5,
     question: "What matters most when choosing a saree?",
     subtitle: "How you want to feel while wrapped in nine yards of grace.",
     options: [
@@ -92,7 +78,7 @@ const QUIZ_STEPS: QuizStep[] = [
   },
   {
     id: "border",
-    number: 7,
+    number: 6,
     question: "Which border do you love?",
     subtitle: "The border frames the entire drape.",
     options: [
@@ -104,7 +90,7 @@ const QUIZ_STEPS: QuizStep[] = [
   },
   {
     id: "colourPalette",
-    number: 8,
+    number: 7,
     question: "Which colour palette attracts you?",
     subtitle: "The mood and shades you feel most magnetic in.",
     options: [
@@ -114,12 +100,51 @@ const QUIZ_STEPS: QuizStep[] = [
       { label: "Classic and timeless — black, cream, maroon", description: "Eternal, regal contrast and enduring dignity" },
     ],
   },
+  {
+    id: "bodyShape",
+    number: 8,
+    question: "Which body shape best describes you?",
+    subtitle: "We celebrate every shape to suggest the most flattering, natural drape for you.",
+    options: [
+      { label: "Pear-shaped", description: "Hips wider than shoulders with a defined waist" },
+      { label: "Apple-shaped", description: "Fuller midsection with slender arms and legs" },
+      { label: "Hourglass-shaped", description: "Balanced bust and hips with a narrower waist" },
+      { label: "Rectangle-shaped", description: "Bust, waist, and hips of relatively uniform width" },
+      { label: "Oval or fuller-figured", description: "Generous curves with softer contours throughout" },
+      { label: "Not sure", description: "Skip or choose later" },
+    ],
+  },
 ];
 
 export function SareeQuizFlow() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [answers, setAnswers] = useState<SareeQuizAnswers>({});
+  const [answers, setAnswers] = useState<SareeQuizAnswers>(() => {
+    const initial: SareeQuizAnswers = {};
+    if (!searchParams) return initial;
+
+    const bodyShape = searchParams.get("bodyShape");
+    const height = searchParams.get("height");
+    const undertone = searchParams.get("undertone");
+    const occasion = searchParams.get("occasion");
+    const style = searchParams.get("style");
+    const comfort = searchParams.get("comfort");
+    const border = searchParams.get("border");
+    const colourPalette = searchParams.get("colourPalette");
+
+    if (bodyShape) initial.bodyShape = bodyShape as any;
+    if (height) initial.height = height as any;
+    if (undertone) initial.undertone = undertone as any;
+    if (occasion) initial.occasion = occasion as any;
+    if (style) initial.style = style as any;
+    if (comfort) initial.comfort = comfort as any;
+    if (border) initial.border = border as any;
+    if (colourPalette) initial.colourPalette = colourPalette as any;
+
+    return initial;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const currentStep = QUIZ_STEPS[currentStepIndex];

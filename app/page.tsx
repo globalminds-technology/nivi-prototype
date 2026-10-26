@@ -18,7 +18,7 @@ import { offerCampaignRepository } from "@/infrastructure/offers/offer-campaign-
 export const instant = false;
 
 export const metadata = {
-  title: "NiVi — Weaving Elegance, Celebrating Tradition.",
+  title: "NiVi — Women with tradition, styled for today.",
   description:
     "Curated collection of handcrafted Indian sarees, bespoke festive ensembles and heritage textiles. Delivered across India.",
 };

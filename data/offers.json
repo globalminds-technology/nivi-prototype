@@ -1,27 +1,25 @@
 [
   {
     "id": "offer_1791544958921",
-    "name": "Diwali Offer",
+    "name": "pongal Offer",
     "type": "percent",
     "value": 10,
-    "label": "10% OFF",
-    "expiry": "2026-10-28",
+    "label": "20%off",
+    "expiry": "2026-10-30",
     "active": true,
     "productIds": [
-      "4251796000000059001",
       "4251796000000034184",
-      "4251796000000054001",
-      "4251796000000170001"
+      "4251796000000253001"
     ],
-    "bannerImageUrl": "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/banners/offer_1791544958921_1791807628449.png",
+    "bannerImageUrl": "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/banners/offer_1791544958921_1792741796376.jpg",
     "bannerTitle": null,
     "bannerSubtitle": null,
-    "bannerCtaText": null,
+    "bannerCtaText": "test",
     "createdAt": "2026-10-09T11:22:38.921Z",
-    "updatedAt": "2026-10-21T07:06:00.011Z",
-    "displayOrder": 0,
-    "imagePosition": "50% 50%",
-    "imagePositionX": 50,
-    "imagePositionY": 50
+    "updatedAt": "2026-10-23T11:09:26.451Z",
+    "displayOrder": 1,
+    "imagePosition": "83% 92%",
+    "imagePositionX": 83,
+    "imagePositionY": 92
   }
 ]

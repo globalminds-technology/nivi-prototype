@@ -122,6 +122,13 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
           if (slide.type === "hero") {
             const banner = slide.banner;
             const heroImgSrc = banner.imageUrl || "/nivi-hero-banner-v2.jpg";
+            const heroObjectPos =
+              banner.objectPosition ||
+              (banner.imagePositionX !== undefined && banner.imagePositionY !== undefined
+                ? `${banner.imagePositionX}% ${banner.imagePositionY}%`
+                : "85% 15%");
+            const textPos = banner.textPosition || "left";
+            const showOverlay = banner.showOverlay !== false;
 
             return (
               <div
@@ -130,20 +137,87 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                   isActive ? "block opacity-100" : "hidden opacity-0"
                 }`}
               >
-                {/* Full-bleed banner maintaining true 3:1 aspect ratio so full text and imagery fit comfortably without cropping */}
-                <div className="relative w-full overflow-hidden aspect-[3/1]">
+                {/* Full-bleed banner maintaining true 3:1 aspect ratio */}
+                <div className="relative w-full overflow-hidden aspect-[3/1] group">
                   <Link
                     href={banner.primaryCtaLink || "/collections"}
-                    className="block w-full h-full cursor-pointer overflow-hidden group"
+                    className="block w-full h-full cursor-pointer overflow-hidden"
                     aria-label={banner.title || "NiVi Saree Collection"}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={heroImgSrc}
                       alt={banner.title || "NiVi Saree Collection"}
-                      className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.008]"
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.008]"
+                      style={{ objectPosition: heroObjectPos }}
                     />
                   </Link>
+
+                  {/* Contrast Gradient & Text Overlay */}
+                  {showOverlay && (
+                    <>
+                      <div
+                        className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
+                          textPos === "right"
+                            ? "bg-gradient-to-l from-black/85 via-black/45 to-transparent right-0 left-auto w-[85%] sm:w-[65%] md:w-[50%]"
+                            : textPos === "center"
+                            ? "bg-black/45"
+                            : "bg-gradient-to-r from-black/85 via-black/45 to-transparent w-[85%] sm:w-[65%] md:w-[50%]"
+                        }`}
+                      />
+
+                      <div
+                        className={`absolute inset-0 z-10 px-5 sm:px-10 md:px-14 lg:px-20 py-3 sm:py-6 md:py-8 flex flex-col justify-center text-white pointer-events-none ${
+                          textPos === "center"
+                            ? "items-center text-center"
+                            : textPos === "right"
+                            ? "items-end text-right"
+                            : "items-start text-left"
+                        }`}
+                      >
+                        {/* Tagline / Pill Badge */}
+                        {banner.tagline && (
+                          <span className="inline-block text-[8px] xs:text-[9.5px] sm:text-xs font-serif tracking-widest uppercase text-amber-200 border border-amber-300/40 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-black/45 backdrop-blur-xs mb-1 sm:mb-2 shadow-xs select-none">
+                            {banner.tagline}
+                          </span>
+                        )}
+
+                        {/* Headline Title */}
+                        <h2 className="font-serif text-sm xs:text-base sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-bold leading-tight max-w-xs sm:max-w-md lg:max-w-xl text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
+                          {banner.title || "Sarees for Every Story"}
+                        </h2>
+
+                        {/* Subtitle */}
+                        {banner.subtitle && (
+                          <p className="text-[9px] xs:text-[11px] sm:text-xs md:text-sm lg:text-base text-neutral-200/90 line-clamp-2 max-w-xs sm:max-w-md lg:max-w-lg mt-0.5 sm:mt-2 drop-shadow-sm font-sans">
+                            {banner.subtitle}
+                          </p>
+                        )}
+
+                        {/* CTAs */}
+                        {(banner.primaryCtaText || banner.primaryCtaLink) && (
+                          <div className="mt-2 sm:mt-3.5 md:mt-5 flex items-center gap-2 sm:gap-3 pointer-events-auto">
+                            <Link
+                              href={banner.primaryCtaLink || "/collections"}
+                              className="inline-flex items-center justify-center gap-1 sm:gap-1.5 px-3 sm:px-5 py-1 sm:py-2 rounded-md sm:rounded-xl text-[10px] sm:text-xs md:text-sm font-medium tracking-wide bg-[#C9A45C] hover:bg-[#d4ae65] text-[#30251F] font-serif shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            >
+                              <span>{banner.primaryCtaText || "Shop Collection"}</span>
+                              <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                            </Link>
+
+                            {banner.secondaryCtaText && banner.secondaryCtaLink && (
+                              <Link
+                                href={banner.secondaryCtaLink}
+                                className="hidden sm:inline-flex items-center justify-center gap-1.5 px-3 sm:px-5 py-1 sm:py-2 rounded-md sm:rounded-xl text-xs md:text-sm font-medium tracking-wide bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+                              >
+                                <span>{banner.secondaryCtaText}</span>
+                              </Link>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             );
@@ -166,10 +240,10 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                 isActive ? "block opacity-100" : "hidden opacity-0"
               }`}
             >
-              <div className="relative w-full overflow-hidden aspect-[3/1]">
+              <div className="relative w-full overflow-hidden aspect-[3/1] group">
                 <Link
                   href={ctaLink}
-                  className="block w-full h-full cursor-pointer group overflow-hidden"
+                  className="block w-full h-full cursor-pointer overflow-hidden"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -179,6 +253,35 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                     style={{ objectPosition: campObjectPos }}
                   />
                 </Link>
+
+                {/* If campaign has title, render overlay */}
+                {(camp.bannerTitle || camp.name) && (
+                  <>
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[85%] sm:w-[65%] md:w-[50%]" />
+                    <div className="absolute inset-0 z-10 px-5 sm:px-10 md:px-14 lg:px-20 py-3 sm:py-6 md:py-8 flex flex-col justify-center items-start text-left text-white pointer-events-none">
+                      <span className="inline-block text-[8px] xs:text-[9.5px] sm:text-xs font-serif tracking-widest uppercase text-amber-200 border border-amber-300/40 px-2.5 sm:px-3 py-0.5 rounded-full bg-black/45 backdrop-blur-xs mb-1 sm:mb-2 shadow-xs select-none">
+                        {camp.label || "Special Offer"}
+                      </span>
+                      <h2 className="font-serif text-sm xs:text-base sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight max-w-xs sm:max-w-md text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
+                        {camp.bannerTitle || camp.name}
+                      </h2>
+                      {camp.bannerSubtitle && (
+                        <p className="text-[9px] xs:text-[11px] sm:text-xs md:text-sm text-neutral-200/90 line-clamp-2 max-w-xs sm:max-w-md mt-0.5 sm:mt-1 drop-shadow-xs font-sans">
+                          {camp.bannerSubtitle}
+                        </p>
+                      )}
+                      <div className="mt-2 sm:mt-3.5 pointer-events-auto">
+                        <Link
+                          href={ctaLink}
+                          className="inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-5 py-1 sm:py-2 rounded-md sm:rounded-xl text-[10px] sm:text-xs md:text-sm font-medium bg-[#C9A45C] hover:bg-[#d4ae65] text-[#30251F] font-serif shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <span>{camp.bannerCtaText || "View Offers"}</span>
+                          <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           );

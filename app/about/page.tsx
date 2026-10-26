@@ -5,7 +5,7 @@ import { Footer } from "@/components/store/footer";
 import { GoldText } from "@/components/store/gold-text";
 
 export const metadata = {
-  title: "About Us · NiVi — Weaving Elegance, Celebrating Tradition.",
+  title: "About Us · NiVi — Women with tradition, styled for today. ",
   description:
     "NiVi is a celebration of timeless Indian elegance, born from a beautiful friendship between Nirmala and Vijayakala. Discover our handcrafted saree collections.",
 };

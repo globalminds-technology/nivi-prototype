@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,10 +11,10 @@ import {
   Menu,
   Package,
   PlusCircle,
-  ShieldCheck,
   Store,
   Tag,
   Truck,
+  User,
   X,
 } from "lucide-react";
 import { logoutAdminAction } from "@/app/actions/admin-auth";
@@ -28,12 +28,47 @@ interface AdminHeaderProps {
 export function AdminHeader({ adminEmail }: AdminHeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [storefrontHref, setStorefrontHref] = useState("/");
 
-  const navItems = [
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const host = window.location.host;
+      if (host.startsWith("admin.")) {
+        const rootHost = host.replace(/^admin\./, "");
+        setStorefrontHref(`${window.location.protocol}//${rootHost}/`);
+      } else {
+        setStorefrontHref("/");
+      }
+    }
+  }, []);
+
+  const handleStorefrontClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (typeof window !== "undefined") {
+      const host = window.location.host;
+      if (host.startsWith("admin.")) {
+        e.preventDefault();
+        const rootHost = host.replace(/^admin\./, "");
+        const targetUrl = `${window.location.protocol}//${rootHost}/`;
+        if (e.metaKey || e.ctrlKey) {
+          window.open(targetUrl, "_blank");
+        } else {
+          window.location.href = targetUrl;
+        }
+      }
+    }
+  };
+
+  // 4 Primary Section Navigation Tabs for the desktop header
+  const desktopNavItems = [
     { label: "Products", href: "/admin", exact: true, icon: Package },
     { label: "Categories", href: "/admin/categories", exact: false, icon: Layers },
     { label: "Offers & Banners", href: "/admin/offers", exact: false, icon: Tag },
     { label: "Shipping", href: "/admin/shipping", exact: false, icon: Truck },
+  ];
+
+  // Mobile Drawer gets all items including quick Add Product
+  const drawerNavItems = [
+    ...desktopNavItems,
     { label: "Add Product", href: "/admin/products/new", exact: true, icon: PlusCircle },
   ];
 
@@ -53,9 +88,9 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
             "linear-gradient(180deg, rgba(255, 252, 245, 0.98) 0%, rgba(249, 244, 235, 0.96) 60%, rgba(228, 221, 205, 0.94) 100%)",
         }}
       >
-        <div className="container mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3">
-          {/* MOBILE ONLY: Hamburger & Logo */}
-          <div className="flex md:hidden items-center gap-2.5">
+        <div className="w-full max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 lg:gap-4">
+          {/* MOBILE/TABLET ONLY: Hamburger & Logo (< 1024px) */}
+          <div className="flex lg:hidden items-center gap-2.5">
             <Button
               variant="ghost"
               size="icon-sm"
@@ -71,62 +106,65 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
               <img
                 src="/nivi-logo.jpeg"
                 alt="NiVi"
-                className="h-10 w-auto object-contain rounded-xl shadow-xs"
+                className="h-9 sm:h-10 w-auto object-contain rounded-xl shadow-xs"
               />
               <div className="flex flex-col text-left justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/nivi-wordmark.png"
                   alt="NiVi"
-                  className="h-6 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
+                  className="h-5 sm:h-6 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
                 />
+                <span className="hidden sm:inline-block gold-quote text-[0.76rem] leading-none select-none">
+                  Women with tradition, styled for today
+                </span>
               </div>
             </Link>
           </div>
 
-          {/* DESKTOP ONLY: Dual Logo + Tagline + Navigation */}
-          <div className="hidden md:flex items-center gap-4 lg:gap-8 min-w-0">
+          {/* DESKTOP (>= 1024px): Dual Logo + Tagline + Navigation */}
+          <div className="hidden lg:flex items-center gap-3 xl:gap-5 min-w-0">
             <Link href="/admin" className="flex items-center gap-2.5 lg:gap-3 shrink-0 group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/nivi-logo.jpeg"
                 alt="NiVi"
-                className="h-10 md:h-11 lg:h-13 w-auto object-contain rounded-xl sm:rounded-2xl shadow-xs transition-transform group-hover:scale-[1.02]"
+                className="h-10 lg:h-11 w-auto object-contain rounded-xl shadow-xs transition-transform group-hover:scale-[1.02]"
               />
               <div className="flex flex-col text-left justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/nivi-wordmark.png"
                   alt="NiVi"
-                  className="h-6 md:h-7 lg:h-8 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
+                  className="h-6 lg:h-7 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
                 />
-                <div className="hidden xl:block">
-                  <span className="gold-quote text-[0.88rem] lg:text-[0.98rem] leading-tight select-none mt-0.5">
-                    Weaving Elegance, Celebrating Tradition.
+                <div>
+                  <span className="gold-quote text-[0.84rem] xl:text-[0.92rem] leading-tight select-none mt-0.5">
+                   Women with tradition, styled for today.
                   </span>
                 </div>
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="flex items-center gap-2 md:gap-3 lg:gap-5 xl:gap-6 shrink-0">
-              {navItems.map((item) => {
+            {/* Desktop Navigation: 4 Section Tabs */}
+            <nav className="flex items-center gap-1 xl:gap-2 shrink-0">
+              {desktopNavItems.map((item) => {
                 const active = isNavActive(item.href, item.exact);
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`inline-flex items-center gap-1.5 text-[12.5px] lg:text-[13.5px] font-medium tracking-wide transition-all duration-200 relative py-1 shrink-0 whitespace-nowrap ${
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs xl:text-[13px] font-medium tracking-wide transition-all duration-200 relative shrink-0 whitespace-nowrap ${
                       active
-                        ? "text-[#073C35] font-semibold"
-                        : "text-[#30251F]/75 hover:text-[#073C35]"
+                        ? "text-[#073C35] bg-[#073C35]/8 font-semibold"
+                        : "text-[#30251F]/75 hover:text-[#073C35] hover:bg-[#073C35]/5"
                     }`}
                   >
-                    <Icon className={`h-4 w-4 ${active ? "text-[#073C35]" : "text-[#30251F]/60"}`} />
+                    <Icon className={`h-3.5 w-3.5 xl:h-4 xl:w-4 ${active ? "text-[#073C35]" : "text-[#30251F]/60"}`} />
                     <span>{item.label}</span>
                     {active && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#073C35] rounded-full" />
+                      <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-[#073C35] rounded-full" />
                     )}
                   </Link>
                 );
@@ -134,27 +172,27 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
             </nav>
           </div>
 
-          {/* RIGHT ACTIONS: Storefront Link + Zoho Books + Admin Badge + Sign Out */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* RIGHT ACTIONS */}
+          <div className="flex items-center gap-1.5 xl:gap-2.5 shrink-0">
+
             {/* View Storefront */}
             <Link
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Open Customer Storefront in new tab"
+              href={storefrontHref}
+              onClick={handleStorefrontClick}
+              title="Navigate to Customer Storefront"
               className={buttonVariants({
                 variant: "outline",
                 size: "sm",
                 className:
-                  "gap-1.5 text-xs text-[#073C35] bg-[#FFFCF5]/70 border-[#D5CCBB] hover:bg-[#073C35]/10 hover:border-[#073C35]/30 rounded-lg shadow-2xs font-medium",
+                  "gap-1.5 text-xs text-[#073C35] bg-[#FFFCF5]/70 border-[#D5CCBB] hover:bg-[#073C35]/10 hover:border-[#073C35]/30 rounded-lg shadow-2xs font-medium px-2.5 sm:px-3 cursor-pointer",
               })}
             >
               <Store className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Storefront</span>
-              <ExternalLink className="h-3 w-3 opacity-60" />
+              <span className="hidden xl:inline">Storefront</span>
+              <ExternalLink className="h-3 w-3 opacity-60 hidden xl:inline" />
             </Link>
 
-            {/* Zoho Books */}
+            {/* Zoho Books (Visible on 2xl screens) */}
             <a
               href="https://books.zoho.in"
               target="_blank"
@@ -164,17 +202,20 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
                 variant: "ghost",
                 size: "sm",
                 className:
-                  "hidden lg:inline-flex gap-1.5 text-xs text-[#30251F]/70 hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-lg",
+                  "hidden 2xl:inline-flex gap-1.5 text-xs text-[#30251F]/70 hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-lg",
               })}
             >
               <span>Zoho Books</span>
               <ExternalLink className="h-3.5 w-3.5 opacity-60" />
             </a>
 
-            {/* Admin Badge */}
-            <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#30251F]/85 font-mono bg-[#073C35]/8 border border-[#073C35]/15 px-2.5 py-1 rounded-full shadow-2xs">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#073C35]" />
-              <span className="truncate max-w-[150px] font-medium">{adminEmail}</span>
+            {/* Admin Badge: Full pill on 2xl, compact user icon on xl */}
+            <div
+              title={adminEmail}
+              className="hidden xl:flex items-center gap-1.5 text-xs text-[#30251F]/85 font-mono bg-[#073C35]/8 border border-[#073C35]/15 px-2.5 py-1 rounded-full shadow-2xs cursor-default"
+            >
+              <User className="h-3.5 w-3.5 text-[#073C35]" />
+              <span className="hidden 2xl:inline truncate max-w-[140px] font-medium">{adminEmail}</span>
             </div>
 
             {/* Sign Out */}
@@ -183,19 +224,20 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
                 type="submit"
                 variant="ghost"
                 size="sm"
-                className="text-xs text-[#30251F]/70 hover:text-red-700 hover:bg-red-50 gap-1.5 rounded-lg"
+                title="Sign Out"
+                className="text-xs text-[#30251F]/70 hover:text-red-700 hover:bg-red-50 gap-1.5 rounded-lg px-2 sm:px-2.5"
               >
                 <LogOut className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Sign Out</span>
+                <span className="hidden xl:inline">Sign Out</span>
               </Button>
             </form>
           </div>
         </div>
       </header>
 
-      {/* MOBILE DRAWER */}
+      {/* MOBILE DRAWER (< 1024px) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
+        <div className="fixed inset-0 z-50 lg:hidden flex">
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-[#073C35]/40 backdrop-blur-xs transition-opacity animate-in fade-in-50"
@@ -240,9 +282,9 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
                 </Button>
               </div>
 
-              {/* Navigation Links */}
+              {/* Navigation Links (Includes all items + Add Product) */}
               <div className="p-4 space-y-1">
-                {navItems.map((item) => {
+                {drawerNavItems.map((item) => {
                   const active = isNavActive(item.href, item.exact);
                   const Icon = item.icon;
                   return (
@@ -264,11 +306,12 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
 
                 <div className="pt-3 border-t border-[#D5CCBB] mt-3 space-y-1">
                   <Link
-                    href="/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#073C35] hover:bg-[#073C35]/8"
+                    href={storefrontHref}
+                    onClick={(e) => {
+                      setMobileMenuOpen(false);
+                      handleStorefrontClick(e);
+                    }}
+                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#073C35] hover:bg-[#073C35]/8 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <Store className="h-4 w-4" />
@@ -293,7 +336,7 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
             {/* Drawer Footer with Admin Email & Sign Out */}
             <div className="p-4 border-t border-[#D5CCBB] space-y-3 bg-[#FFFCF5]/80">
               <div className="flex items-center gap-2 text-xs text-[#30251F]/80 font-mono bg-[#073C35]/8 border border-[#073C35]/15 px-3 py-2 rounded-xl">
-                <ShieldCheck className="h-4 w-4 text-[#073C35] shrink-0" />
+                <User className="h-4 w-4 text-[#073C35] shrink-0" />
                 <span className="truncate">{adminEmail}</span>
               </div>
 

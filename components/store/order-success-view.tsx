@@ -100,7 +100,7 @@ export function OrderSuccessView() {
   const customer = orderDetails?.customer;
 
   const whatsappMessage = encodeURIComponent(
-    `Hello Nivi Concierge! I just placed an order (Invoice: ${invoiceNumber}). Could you provide delivery updates?`,
+    `Hello NiVi Concierge! I just placed an order (Invoice: ${invoiceNumber}). Could you provide delivery updates?`,
   );
   const whatsappUrl = `https://wa.me/919150992863?text=${whatsappMessage}`;
 
