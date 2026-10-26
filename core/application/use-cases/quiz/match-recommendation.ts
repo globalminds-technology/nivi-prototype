@@ -33,6 +33,9 @@ export const SAMPLE_SCENARIO_RESULT: RecommendationProfile = {
 export interface MatchResult {
   recommendation: RecommendationProfile;
   score: number;
+  allMatches: { recommendation: RecommendationProfile; score: number }[];
+  matchIndex: number;
+  totalMatches: number;
   personalizedAdvice?: {
     drapingNote?: string;
     jewelleryNote?: string;
@@ -51,9 +54,11 @@ export interface MatchResult {
  * 5. Colour Palette (10 pts)
  * 6. Height / Proportions (5 pts)
  *
- * Deterministic fallback and tie-breaking ensured.
+ * Deterministic fallback, ranked multi-match scoring, and tie-breaking ensured.
  */
-export function matchRecommendation(answers: SareeQuizAnswers): MatchResult {
+export function matchRecommendation(answers: SareeQuizAnswers, requestedIndex = 0): MatchResult {
+  const scoredProfiles: { recommendation: RecommendationProfile; score: number }[] = [];
+
   // Check exact Section 7 Sample Scenario
   if (
     answers.occasion === "Festive or family function" &&
@@ -62,17 +67,11 @@ export function matchRecommendation(answers: SareeQuizAnswers): MatchResult {
     answers.border === "Grand zari border" &&
     answers.colourPalette === "Soft and pastel — blush, lavender, mint"
   ) {
-    return {
-      recommendation: SAMPLE_SCENARIO_RESULT,
-      score: 100,
-      personalizedAdvice: generatePersonalizedAdvice(answers),
-    };
+    scoredProfiles.push({ recommendation: SAMPLE_SCENARIO_RESULT, score: 100 });
   }
 
-  let bestMatch: RecommendationProfile = SAREE_QUIZ_RECOMMENDATIONS[0];
-  let highestScore = -1;
-
   for (const profile of SAREE_QUIZ_RECOMMENDATIONS) {
+    if (profile.id === SAMPLE_SCENARIO_RESULT.id) continue;
     let score = 0;
 
     // 1. Occasion (Weight: 30)
@@ -105,15 +104,26 @@ export function matchRecommendation(answers: SareeQuizAnswers): MatchResult {
       score += 5;
     }
 
-    if (score > highestScore) {
-      highestScore = score;
-      bestMatch = profile;
-    }
+    scoredProfiles.push({ recommendation: profile, score });
   }
 
+  // Sort descending by score
+  scoredProfiles.sort((a, b) => b.score - a.score);
+
+  // Filter top matches: either score > 0 or at least top 4 matches
+  const scoredPositive = scoredProfiles.filter((sp) => sp.score > 0);
+  const eligibleMatches = scoredPositive.length > 0 ? scoredPositive : scoredProfiles.slice(0, 4);
+
+  const safeIndex =
+    ((requestedIndex % eligibleMatches.length) + eligibleMatches.length) % eligibleMatches.length;
+  const current = eligibleMatches[safeIndex];
+
   return {
-    recommendation: bestMatch,
-    score: highestScore,
+    recommendation: current.recommendation,
+    score: current.score,
+    allMatches: eligibleMatches,
+    matchIndex: safeIndex,
+    totalMatches: eligibleMatches.length,
     personalizedAdvice: generatePersonalizedAdvice(answers),
   };
 }

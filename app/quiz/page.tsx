@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Header } from "@/components/store/header";
 import { Footer } from "@/components/store/footer";
@@ -32,7 +33,9 @@ export default function SareeQuizPage() {
           </p>
         </div>
 
-        <SareeQuizFlow />
+        <Suspense fallback={<div className="text-center py-12 text-[#6B5A4A] font-serif text-sm">Loading matchmaker...</div>}>
+          <SareeQuizFlow />
+        </Suspense>
       </main>
       <Footer />
     </div>

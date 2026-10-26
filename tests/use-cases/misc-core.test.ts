@@ -11,6 +11,7 @@ import { createGallery, galleryImageKey, isImageContentType, type ImageContentTy
 import { hasTag, normalizeTags } from "../../core/domain/value-objects/display-tag";
 import { toSku, type Sku } from "../../core/domain/value-objects/sku";
 import type { ImageStorage } from "../../core/application/ports/image-storage";
+import { matchRecommendation } from "../../core/application/use-cases/quiz/match-recommendation";
 import { FakeCacheInvalidator, FakeTokenSigner, InMemoryProductRepository } from "../fakes/in-memory-repositories";
 
 describe("Domain & Miscellaneous Use Cases", () => {
@@ -120,4 +121,27 @@ describe("Domain & Miscellaneous Use Cases", () => {
     const token = await issueReviewLink.execute("inv_123", "SKU_456", 14);
     expect(typeof token).toBe("string");
   });
+
+  it("scores and cycles through multiple matching recommendations without re-filling the form", () => {
+    const answers = {
+      occasion: "Wedding or grand occasion" as const,
+      comfort: "Rich texture and luxurious feel" as const,
+      style: "Rich and royal" as const,
+      border: "Grand zari border" as const,
+      colourPalette: "Rich and vibrant — red, green, royal blue" as const,
+    };
+
+    const match1 = matchRecommendation(answers, 0);
+    expect(match1.recommendation).toBeDefined();
+    expect(match1.matchIndex).toBe(0);
+    expect(match1.totalMatches).toBeGreaterThan(1);
+
+    const match2 = matchRecommendation(answers, 1);
+    expect(match2.recommendation).toBeDefined();
+    expect(match2.matchIndex).toBe(1);
+    expect(match2.totalMatches).toBe(match1.totalMatches);
+    // Verified that match 2 is an alternative matching profile
+    expect(match2.recommendation.id).not.toBe(match1.recommendation.id);
+  });
 });
+

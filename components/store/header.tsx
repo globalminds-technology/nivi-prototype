@@ -114,7 +114,7 @@ export function Header({ products = [], categories }: HeaderProps) {
                   className="h-7 sm:h-8 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
                 />
                 <span className="hidden sm:inline-block gold-quote text-[0.88rem] leading-tight select-none mt-0.5">
-                  Weaving Elegance, Celebrating Tradition.
+                  Women with tradition, styled for today.
                 </span>
               </div>
             </Link>
@@ -138,7 +138,7 @@ export function Header({ products = [], categories }: HeaderProps) {
                 />
                 <div className="hidden xl:block">
                   <span className="gold-quote text-[0.92rem] lg:text-[1.05rem] leading-tight select-none mt-0.5">
-                    Weaving Elegance, Celebrating Tradition.
+                    Women with tradition, styled for today.
                   </span>
                 </div>
               </div>

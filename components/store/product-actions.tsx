@@ -39,7 +39,7 @@ export function ProductActions({ sku, name, stock }: ProductActionsProps) {
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hello Nivi, I would like to inquire about "${name}" (SKU: ${sku}).`,
+    `Hello NiVi, I would like to inquire about "${name}" (SKU: ${sku}).`,
   );
   const whatsappUrl = `https://wa.me/919150992863?text=${whatsappMessage}`;
 

@@ -39,7 +39,7 @@ export function LoginForm() {
             className="h-8 w-auto object-contain select-none pointer-events-none drop-shadow-xs"
           />
           <span className="gold-quote text-[1.05rem] leading-tight select-none pt-0.5">
-            Weaving Elegance, Celebrating Tradition.
+            Women with tradition, styled for today.
           </span>
         </div>
 

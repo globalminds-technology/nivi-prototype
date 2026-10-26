@@ -47,6 +47,22 @@ function YouTubeIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
   );
 }
 
+function WhatsAppIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+  );
+}
+
+function PhoneIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
+}
+
 /* ── Antique Gold Filigree Divider between columns ── */
 function GoldFiligreeDivider({ className = "" }: { className?: string }) {
   return (
@@ -146,7 +162,7 @@ export function Footer() {
                     <span
                       className="gold-quote text-center whitespace-nowrap text-[0.72rem] md:text-[0.82rem] lg:text-[1rem] xl:text-[1.18rem] mt-1 md:mt-1.5 lg:mt-2.5 select-none"
                     >
-                      Weaving Elegance, Celebrating Tradition.
+                      Women with tradition, styled for today.
                     </span>
 
                     {/* Circular Outline Social Icons (Instagram, Facebook, YouTube) starting under NiVi */}
@@ -274,10 +290,28 @@ export function Footer() {
                         connect@brandnivi.com
                       </a>
                     </li>
-                    <li>
-                      <a href="https://wa.me/919150992863" target="_blank" rel="noopener noreferrer" className="hover:text-[#073C35] transition-colors inline-block">
-                        +91 91509 92863
-                      </a>
+                    <li className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[#221811]">+91 91509 92863</span>
+                      <div className="inline-flex items-center gap-1">
+                        <a
+                          href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="h-5 w-5 xl:h-5.5 xl:w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                          title="Chat on WhatsApp"
+                          aria-label="Chat on WhatsApp"
+                        >
+                          <WhatsAppIcon className="h-2.5 w-2.5 xl:h-3 xl:w-3" />
+                        </a>
+                        <a
+                          href="tel:+919150992863"
+                          className="h-5 w-5 xl:h-5.5 xl:w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                          title="Call +91 91509 92863"
+                          aria-label="Call Customer Care"
+                        >
+                          <PhoneIcon className="h-2.5 w-2.5 xl:h-3 xl:w-3" />
+                        </a>
+                      </div>
                     </li>
                     <li>
                       <button
@@ -400,7 +434,7 @@ export function Footer() {
                     className="h-6 w-auto object-contain mt-1 drop-shadow-sm"
                   />
                   <span className="gold-quote text-center text-[0.88rem] mt-0.5">
-                    Weaving Elegance, Celebrating Tradition.
+                    Women with tradition, styled for today.
                   </span>
 
                   {/* Social Icons */}
@@ -466,7 +500,29 @@ export function Footer() {
                     </h4>
                     <ul className="space-y-0.5 text-[9.5px] text-[#221811] font-medium">
                       <li><a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] break-all">connect@brandnivi.com</a></li>
-                      <li><a href="tel:9150992863" className="hover:text-[#073C35]">+91 91509 92863</a></li>
+                      <li className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[#221811]">+91 91509 92863</span>
+                        <div className="inline-flex items-center gap-1">
+                          <a
+                            href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                            title="Chat on WhatsApp"
+                            aria-label="Chat on WhatsApp"
+                          >
+                            <WhatsAppIcon className="h-2.5 w-2.5" />
+                          </a>
+                          <a
+                            href="tel:+919150992863"
+                            className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                            title="Call Customer Care"
+                            aria-label="Call Customer Care"
+                          >
+                            <PhoneIcon className="h-2.5 w-2.5" />
+                          </a>
+                        </div>
+                      </li>
                       <li><button type="button" onClick={() => handleOpenPolicy("shipping")} className="hover:text-[#073C35]">Shipping</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("returns")} className="hover:text-[#073C35]">Returns</button></li>
                     </ul>
@@ -495,7 +551,7 @@ export function Footer() {
                     className="h-6 md:h-7.5 w-auto object-contain mt-1 drop-shadow-sm"
                   />
                   <span className="gold-quote text-[0.88rem] md:text-[0.98rem] mt-0.5 select-none">
-                    Weaving Elegance, Celebrating Tradition.
+                    Women with tradition, styled for today.
                   </span>
 
                   {/* Social Icons */}
@@ -562,7 +618,29 @@ export function Footer() {
                     </h4>
                     <ul className="space-y-1 text-[10.5px] md:text-[11.5px] text-[#221811] font-medium leading-tight">
                       <li><a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35]">connect@brandnivi.com</a></li>
-                      <li><a href="tel:9150992863" className="hover:text-[#073C35]">+91 91509 92863</a></li>
+                      <li className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[#221811]">+91 91509 92863</span>
+                        <div className="inline-flex items-center gap-1">
+                          <a
+                            href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="h-5 w-5 md:h-5.5 md:w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                            title="Chat on WhatsApp"
+                            aria-label="Chat on WhatsApp"
+                          >
+                            <WhatsAppIcon className="h-2.5 w-2.5 md:h-3 md:w-3" />
+                          </a>
+                          <a
+                            href="tel:+919150992863"
+                            className="h-5 w-5 md:h-5.5 md:w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                            title="Call Customer Care"
+                            aria-label="Call Customer Care"
+                          >
+                            <PhoneIcon className="h-2.5 w-2.5 md:h-3 md:w-3" />
+                          </a>
+                        </div>
+                      </li>
                       <li><button type="button" onClick={() => handleOpenPolicy("shipping")} className="hover:text-[#073C35]">Shipping</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("returns")} className="hover:text-[#073C35]">Returns</button></li>
                       <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">FAQs</button></li>

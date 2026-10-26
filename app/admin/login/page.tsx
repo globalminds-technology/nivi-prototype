@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { connection } from "next/server";
-import { ArrowLeft, Shield, Store } from "lucide-react";
+import { Shield } from "lucide-react";
 import { LoginForm } from "./login-form";
+import { ReturnToStoreLink } from "./return-to-store-link";
 
 export const instant = false;
 
@@ -35,14 +35,7 @@ export default async function AdminLoginPage() {
 
       {/* Top Header Navigation */}
       <div className="w-full max-w-md flex items-center justify-between mb-6 relative z-10">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#073C35] bg-[#FFFCF5]/80 hover:bg-[#FFFCF5] border border-[#D5CCBB] px-3 py-1.5 rounded-full shadow-2xs transition-all group"
-        >
-          <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
-          <Store className="h-3.5 w-3.5 opacity-80" />
-          <span>Return to Store</span>
-        </Link>
+        <ReturnToStoreLink />
 
         <div className="flex items-center gap-1.5 text-xs text-[#30251F]/80 font-mono bg-[#073C35]/8 px-3 py-1.5 rounded-full border border-[#073C35]/20 shadow-2xs">
           <Shield className="h-3.5 w-3.5 text-[#073C35]" />

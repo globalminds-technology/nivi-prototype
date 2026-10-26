@@ -132,7 +132,7 @@ export const STORE_POLICIES: Record<string, PolicySection> = {
         paragraphs: [
           "At NiVi, every saree is carefully checked and packed before dispatch.",
           "We request our customers to review the product details, photographs, colour, measurements, and other information carefully before confirming the order.",
-          "Thank you for choosing NiVi - Woven with Tradition, Styled for Today",
+          "Thank you for choosing NiVi - Women with Tradition, Styled for Today",
         ],
       },
     ],
@@ -193,7 +193,7 @@ export const STORE_POLICIES: Record<string, PolicySection> = {
           {
             type: "info",
             title: "Artisan Craftsmanship",
-            text: "Every handloom saree is unique. Thank you for appreciating and supporting our traditional weavers through NiVi - Woven with Tradition, Styled for Today.",
+            text: "Every handloom saree is unique. Thank you for appreciating and supporting our traditional weavers through NiVi - Women with Tradition, Styled for Today.",
           },
         ],
       },
