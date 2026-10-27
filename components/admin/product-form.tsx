@@ -402,6 +402,10 @@ export function ProductForm({
 
       const finalGallery = [...existingGallery, ...newlyUploadedUrls];
 
+      const payloadPrimaryImage = imageFile
+        ? (initialData?.primaryImageUrl ?? null)
+        : (imagePreview && !imagePreview.startsWith("blob:") ? imagePreview : null);
+
       const payload: ProductInputDto = {
         sku: cleanSku,
         name: name.trim(),
@@ -413,7 +417,7 @@ export function ProductForm({
         stock: parsedStock,
         taxId: null,
         taxPercentage: 0,
-        primaryImageUrl: imagePreview,
+        primaryImageUrl: payloadPrimaryImage,
         gallery: finalGallery,
         tags,
         offer: offerPayload,
@@ -454,9 +458,14 @@ export function ProductForm({
           const uploadRes = await uploadProductImageAction(targetProductId, form);
           if (!uploadRes.success) {
             toast.error(`Product saved, but primary photo upload failed: ${uploadRes.error}`);
+            return;
           }
         } else if (!imagePreview && isEditing) {
-          await deleteProductImageAction(targetProductId);
+          const delRes = await deleteProductImageAction(targetProductId);
+          if (!delRes.success) {
+            toast.error(`Failed to remove primary photo: ${delRes.error}`);
+            return;
+          }
         }
       }
 

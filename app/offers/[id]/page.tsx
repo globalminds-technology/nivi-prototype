@@ -20,6 +20,7 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps) {
+  await connection();
   const { id } = await params;
   const campaign = await offerCampaignRepository.getById(id).catch(() => null);
 

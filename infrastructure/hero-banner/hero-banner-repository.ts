@@ -39,7 +39,21 @@ export class HeroBannerRepository {
     return { client: this.r2Client, bucketName };
   }
 
+  private memoryCache: { data: HeroBannerConfig; timestamp: number } | null = null;
+  private readonly CACHE_TTL_MS = 10_000;
+
   async get(): Promise<HeroBannerConfig> {
+    if (this.memoryCache && Date.now() - this.memoryCache.timestamp < this.CACHE_TTL_MS) {
+      return this.memoryCache.data;
+    }
+
+    try {
+      const { connection } = await import("next/server");
+      await connection();
+    } catch {
+      // Safely ignore when called outside a Next.js request context
+    }
+
     const r2 = this.getR2();
     if (r2) {
       try {
@@ -52,6 +66,7 @@ export class HeroBannerRepository {
         if (text) {
           const parsed = JSON.parse(text) as Partial<HeroBannerConfig>;
           const config = this.mergeWithDefault(parsed);
+          this.memoryCache = { data: config, timestamp: Date.now() };
           // Mirror to local disk cache asynchronously
           fs.writeFile(HERO_FILE, JSON.stringify(config, null, 2), "utf-8").catch(() => {});
           return config;
@@ -68,6 +83,7 @@ export class HeroBannerRepository {
       const content = await fs.readFile(HERO_FILE, "utf-8");
       const parsed = JSON.parse(content) as Partial<HeroBannerConfig>;
       const config = this.mergeWithDefault(parsed);
+      this.memoryCache = { data: config, timestamp: Date.now() };
       if (r2) {
         this.writeToR2(config, r2).catch(() => {});
       }
@@ -84,6 +100,8 @@ export class HeroBannerRepository {
       ...updates,
       updatedAt: new Date().toISOString(),
     };
+
+    this.memoryCache = { data: updated, timestamp: Date.now() };
 
     // Ensure objectPosition aligns with imagePositionX / imagePositionY if present
     if (updates.imagePositionX !== undefined || updates.imagePositionY !== undefined) {

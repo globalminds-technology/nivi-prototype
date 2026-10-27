@@ -15,6 +15,7 @@ export const instant = false;
 export async function generateMetadata({
   params,
 }: EditProductPageProps): Promise<Metadata> {
+  await connection();
   const { id } = await params;
   try {
     const product = await container.getProductById().execute(id);

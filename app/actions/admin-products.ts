@@ -133,9 +133,9 @@ export async function uploadProductImageAction(
     const buffer = Buffer.from(await file.arrayBuffer());
     const imageUrl = await container.uploadProductImage(productId, buffer, file.name);
 
-    revalidatePath("/admin");
-    revalidatePath(`/admin/products/${productId}`);
-    revalidatePath("/");
+    revalidatePath("/admin", "layout");
+    revalidatePath(`/admin/products/${productId}`, "layout");
+    revalidatePath("/", "layout");
 
     return {
       success: true,
@@ -158,9 +158,9 @@ export async function deleteProductImageAction(
 
     await container.deleteProductImage(productId);
 
-    revalidatePath("/admin");
-    revalidatePath(`/admin/products/${productId}`);
-    revalidatePath("/");
+    revalidatePath("/admin", "layout");
+    revalidatePath(`/admin/products/${productId}`, "layout");
+    revalidatePath("/", "layout");
 
     return {
       success: true,

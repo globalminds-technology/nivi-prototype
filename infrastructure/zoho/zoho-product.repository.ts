@@ -353,7 +353,7 @@ export class ZohoProductRepository implements ProductRepository {
     const blob =
       imageBlob instanceof Blob
         ? imageBlob
-        : new Blob([imageBlob.buffer as ArrayBuffer], { type: contentType });
+        : new Blob([imageBlob as unknown as BlobPart], { type: contentType });
 
     const formData = new FormData();
     formData.append("image", blob, filename);
@@ -361,7 +361,7 @@ export class ZohoProductRepository implements ProductRepository {
     await this.http.post(`items/${id}/image`, formData);
     this.clearMemoryCache();
 
-    return `/api/images/zoho/${id}`;
+    return `/api/images/zoho/${id}?v=${Date.now()}`;
   }
 
   async getItemImage(id: string): Promise<{ data: Uint8Array; contentType: string } | null> {

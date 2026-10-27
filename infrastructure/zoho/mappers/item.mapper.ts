@@ -76,8 +76,14 @@ export class ZohoItemMapper {
   static toDomain(raw: ZohoItemRaw, apiDomain: string, orgId: string): Product {
     const sku = this.extractSku(raw);
 
-    // Primary image: route through secure internal proxy which streams Zoho photo or serves brand placeholder
-    const primaryImageUrl = raw.item_id ? `/api/images/zoho/${raw.item_id}` : null;
+    // Primary image: route through secure internal proxy which streams Zoho photo or serves brand placeholder.
+    // Include last_modified_time timestamp as cache-busting query parameter so browser refreshes immediately on photo updates.
+    const v = raw.last_modified_time
+      ? new Date(String(raw.last_modified_time)).getTime()
+      : undefined;
+    const primaryImageUrl = raw.item_id
+      ? `/api/images/zoho/${raw.item_id}${v && !isNaN(v) ? `?v=${v}` : ""}`
+      : null;
 
     // 1. Gallery images
     const galleryRaw = this.getCustomFieldValue(raw, "gallery_images");

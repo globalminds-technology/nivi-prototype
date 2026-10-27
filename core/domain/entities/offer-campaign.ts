@@ -15,6 +15,7 @@ export interface OfferCampaign {
   imagePosition?: string | null;
   imagePositionX?: number | null;
   imagePositionY?: number | null;
+  showOverlay?: boolean;
   createdAt: string;
   updatedAt: string;
 }

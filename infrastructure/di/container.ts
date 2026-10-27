@@ -182,12 +182,14 @@ export const container = {
     if (!productRepository().uploadPrimaryImage) throw new Error("Image upload not supported");
     const url = await productRepository().uploadPrimaryImage!(itemId, imageBlob, filename);
     await cacheInvalidator().revalidateTag("products");
+    await cacheInvalidator().revalidateTag(`product:id:${itemId}`);
     return url;
   },
   deleteProductImage: async (itemId: string) => {
     if (productRepository().deletePrimaryImage) {
       await productRepository().deletePrimaryImage!(itemId);
       await cacheInvalidator().revalidateTag("products");
+      await cacheInvalidator().revalidateTag(`product:id:${itemId}`);
     }
   },
   createCategoryUploadUrl: async (slug: string, contentType: "image/jpeg" | "image/png" | "image/webp") => {
