@@ -254,8 +254,8 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                   />
                 </Link>
 
-                {/* If campaign has title, render overlay */}
-                {(camp.bannerTitle || camp.name) && (
+                {/* If campaign has title AND showOverlay is enabled, render overlay */}
+                {camp.showOverlay !== false && (camp.bannerTitle || camp.name) && (
                   <>
                     <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[85%] sm:w-[65%] md:w-[50%]" />
                     <div className="absolute inset-0 z-10 px-5 sm:px-10 md:px-14 lg:px-20 py-3 sm:py-6 md:py-8 flex flex-col justify-center items-start text-left text-white pointer-events-none">

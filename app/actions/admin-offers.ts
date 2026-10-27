@@ -32,6 +32,7 @@ const CreateCampaignSchema = z.object({
   imagePosition: z.string().trim().nullable().optional(),
   imagePositionX: z.number().min(0).max(100).nullable().optional(),
   imagePositionY: z.number().min(0).max(100).nullable().optional(),
+  showOverlay: z.boolean().optional(),
 });
 
 const UpdateCampaignSchema = z.object({
@@ -56,6 +57,7 @@ const UpdateCampaignSchema = z.object({
   imagePosition: z.string().trim().nullable().optional(),
   imagePositionX: z.number().min(0).max(100).nullable().optional(),
   imagePositionY: z.number().min(0).max(100).nullable().optional(),
+  showOverlay: z.boolean().optional(),
 });
 
 function revalidateAllOfferPaths() {

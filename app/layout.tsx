@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     "Explore NiVi's curated collection of exquisite sarees that blend tradition, elegance, and modern grace. Delivered across India.",
   openGraph: { type: "website", siteName: "NiVi", locale: "en_IN" },
   robots: { index: true, follow: true },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 export const viewport: Viewport = {

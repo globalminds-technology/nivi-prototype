@@ -78,13 +78,18 @@ export async function GET(
       });
     }
 
-    // Stream binary image with high-performance caching headers
+    const hasVersion = request.nextUrl.searchParams.has("v");
+    const cacheControl = hasVersion
+      ? "public, max-age=31536000, immutable"
+      : "no-cache, no-store, must-revalidate";
+
+    // Stream binary image with dynamic caching headers
     return new Response(Buffer.from(image.data), {
       status: 200,
       headers: {
         "Content-Type": image.contentType || "image/jpeg",
         "Content-Length": image.data.byteLength.toString(),
-        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+        "Cache-Control": cacheControl,
       },
     });
   } catch (error) {

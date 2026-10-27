@@ -36,7 +36,21 @@ export class OfferCampaignRepository {
     return { client: this.r2Client, bucketName };
   }
 
+  private memoryCache: { data: OfferCampaign[]; timestamp: number } | null = null;
+  private readonly CACHE_TTL_MS = 10_000;
+
   private async readAll(): Promise<OfferCampaign[]> {
+    if (this.memoryCache && Date.now() - this.memoryCache.timestamp < this.CACHE_TTL_MS) {
+      return [...this.memoryCache.data];
+    }
+
+    try {
+      const { connection } = await import("next/server");
+      await connection();
+    } catch {
+      // Safely ignore when called outside a Next.js request context (e.g. scripts)
+    }
+
     const r2 = this.getR2();
     if (r2) {
       try {
@@ -48,6 +62,7 @@ export class OfferCampaignRepository {
         const text = await res.Body?.transformToString();
         if (text) {
           const parsed = JSON.parse(text) as OfferCampaign[];
+          this.memoryCache = { data: parsed, timestamp: Date.now() };
           // Mirror to local disk cache for fast fallback
           fs.writeFile(OFFERS_FILE, text, "utf-8").catch(() => {});
           return parsed;
@@ -64,6 +79,7 @@ export class OfferCampaignRepository {
     try {
       const content = await fs.readFile(OFFERS_FILE, "utf-8");
       const list = JSON.parse(content) as OfferCampaign[];
+      this.memoryCache = { data: list, timestamp: Date.now() };
       // If R2 is available but empty, seed it with local data
       if (r2 && list.length > 0) {
         this.writeToR2(list, r2).catch(() => {});
@@ -86,6 +102,7 @@ export class OfferCampaignRepository {
   }
 
   private async writeAll(campaigns: OfferCampaign[]): Promise<void> {
+    this.memoryCache = { data: campaigns, timestamp: Date.now() };
     const r2 = this.getR2();
     if (r2) {
       try {
@@ -143,6 +160,7 @@ export class OfferCampaignRepository {
       imagePosition: data.imagePosition ?? null,
       imagePositionX: data.imagePositionX ?? null,
       imagePositionY: data.imagePositionY ?? null,
+      showOverlay: data.showOverlay ?? false,
       createdAt: now,
       updatedAt: now,
     };

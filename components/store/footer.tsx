@@ -393,8 +393,8 @@ export function Footer() {
           - Compact aspect ratio to eliminate excessive empty green space
          ======================================================== */}
       <div className="block md:hidden relative w-full overflow-hidden bg-[#03332a]">
-        <div className="relative w-full aspect-[1024/1050] sm:aspect-[16/11]">
-          {/* Base Mobile Illustration - Object cover with top alignment */}
+        <div className="relative w-full aspect-[1024/1536] sm:aspect-[16/11]">
+          {/* Base Mobile Illustration - Full 1024x1536 portrait artwork */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/footer mobile.png"
@@ -407,7 +407,7 @@ export function Footer() {
             className="absolute inset-0 w-full h-full pointer-events-none select-none z-[5]"
             style={{
               background:
-                "linear-gradient(180deg, rgba(234, 224, 208, 0.96) 0%, rgba(246, 238, 226, 0.92) 26%, rgba(246, 238, 226, 0.55) 38%, rgba(246, 238, 226, 0) 52%)",
+                "linear-gradient(180deg, rgba(234, 224, 208, 0.98) 0%, rgba(246, 238, 226, 0.94) 22%, rgba(246, 238, 226, 0.82) 35%, rgba(246, 238, 226, 0.35) 46%, rgba(246, 238, 226, 0) 56%)",
             }}
           />
 
@@ -415,11 +415,11 @@ export function Footer() {
           <div className="relative z-10 w-full h-full flex flex-col justify-between pt-4 px-3 sm:pt-6 sm:px-6 md:pt-7 md:px-8 pointer-events-auto">
             {/* Top Area: Mobile Stack vs Tablet Horizontal Spread */}
             <div className="w-full">
-              {/* MOBILE LAYOUT (< 640px) */}
+              {/* MOBILE LAYOUT (< 640px) - Elegant, Balanced, Matching Laptop View */}
               <div className="flex sm:hidden flex-col items-center text-center">
-                {/* Brand Logo & Wordmark */}
-                <div className="flex flex-col items-center">
-                  <Link href="/" className="inline-block">
+                {/* 1. Brand Header (Horizontal Lockup like Laptop) */}
+                <div className="flex items-center justify-center gap-2.5 pt-1">
+                  <Link href="/" className="shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/nivi-logo.jpeg"
@@ -427,109 +427,131 @@ export function Footer() {
                       className="h-11 w-auto object-contain rounded-xl shadow-xs"
                     />
                   </Link>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/nivi-wordmark.png"
-                    alt="NiVi"
-                    className="h-6 w-auto object-contain mt-1 drop-shadow-sm"
-                  />
-                  <span className="gold-quote text-center text-[0.88rem] mt-0.5">
-                    Women with tradition, styled for today.
-                  </span>
 
-                  {/* Social Icons */}
-                  <div className="flex items-center justify-center gap-2 pt-1.5">
-                    <a
-                      href="https://instagram.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Instagram"
-                      className="h-6 w-6 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                    >
-                      <InstagramIcon className="h-2.5 w-2.5" />
-                    </a>
-                    <a
-                      href="https://facebook.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Facebook"
-                      className="h-6 w-6 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                    >
-                      <FacebookIcon className="h-2.5 w-2.5" />
-                    </a>
-                    <a
-                      href="https://youtube.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="YouTube"
-                      className="h-6 w-6 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                    >
-                      <YouTubeIcon className="h-2.5 w-2.5" />
-                    </a>
+                  <div className="flex flex-col items-center">
+                    <Link href="/" className="inline-block select-none">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/nivi-wordmark.png"
+                        alt="NiVi"
+                        className="h-6 w-auto object-contain drop-shadow-sm select-none pointer-events-none"
+                      />
+                    </Link>
+                    <span className="gold-quote text-center whitespace-nowrap text-[0.76rem] mt-0.5 select-none">
+                      Women with tradition, styled for today.
+                    </span>
+
+                    {/* Circular Outline Social Icons right under tagline */}
+                    <div className="flex items-center justify-center gap-2 pt-1">
+                      <a
+                        href="https://instagram.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Instagram"
+                        className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
+                      >
+                        <InstagramIcon className="h-2.5 w-2.5" />
+                      </a>
+                      <a
+                        href="https://facebook.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Facebook"
+                        className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
+                      >
+                        <FacebookIcon className="h-2.5 w-2.5" />
+                      </a>
+                      <a
+                        href="https://youtube.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="YouTube"
+                        className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
+                      >
+                        <YouTubeIcon className="h-2.5 w-2.5" />
+                      </a>
+                    </div>
                   </div>
                 </div>
 
-                {/* Navigation Grid (Shop, About, Customer Care) */}
-                <div className="grid grid-cols-3 gap-2 w-full max-w-xs mt-2.5 text-center">
-                  <div>
-                    <h4 className="font-serif text-[10.5px] font-bold tracking-wider text-[#694208] uppercase mb-0.5">
-                      Shop
-                    </h4>
-                    <ul className="space-y-0.5 text-[9.5px] text-[#221811] font-medium">
-                      <li><Link href="/collections" className="hover:text-[#073C35]">Collections</Link></li>
-                      <li><Link href="/collections" className="hover:text-[#073C35]">Sarees</Link></li>
-                      <li><Link href="/collections?tag=new_arrival" className="hover:text-[#073C35]">New</Link></li>
-                      <li><Link href="/offers" className="hover:text-[#073C35]">Offers</Link></li>
-                    </ul>
-                  </div>
+                {/* Subtle Antique Gold Divider */}
+                <div className="w-28 h-[1px] bg-gradient-to-r from-transparent via-[#8A5A12]/35 to-transparent my-2" />
 
-                  <div>
-                    <h4 className="font-serif text-[10.5px] font-bold tracking-wider text-[#694208] uppercase mb-0.5">
-                      About
-                    </h4>
-                    <ul className="space-y-0.5 text-[9.5px] text-[#221811] font-medium">
-                      <li><Link href="/about" className="hover:text-[#073C35]">Our Story</Link></li>
-                      <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">Craft</button></li>
-                      <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">Ethics</button></li>
-                    </ul>
-                  </div>
+                {/* 2. Navigation Structure (Shop & About side-by-side, Customer Care with full width) */}
+                <div className="w-full max-w-[340px] px-2 text-left">
+                  <div className="grid grid-cols-2 gap-x-5 gap-y-2">
+                    {/* SHOP */}
+                    <div>
+                      <h4 className="font-serif text-[11px] font-bold tracking-wider text-[#694208] uppercase mb-1">
+                        Shop
+                      </h4>
+                      <ul className="space-y-0.5 text-[10px] text-[#221811] font-medium">
+                        <li><Link href="/collections" className="hover:text-[#073C35] transition-colors inline-block">Collections</Link></li>
+                        <li><Link href="/collections" className="hover:text-[#073C35] transition-colors inline-block">Sarees</Link></li>
+                        <li><Link href="/collections?tag=new_arrival" className="hover:text-[#073C35] transition-colors inline-block">New Arrivals</Link></li>
+                        <li><Link href="/offers" className="hover:text-[#073C35] transition-colors inline-block">Special Offers</Link></li>
+                      </ul>
+                    </div>
 
-                  <div>
-                    <h4 className="font-serif text-[10.5px] font-bold tracking-wider text-[#694208] uppercase mb-0.5">
-                      Care
-                    </h4>
-                    <ul className="space-y-0.5 text-[9.5px] text-[#221811] font-medium">
-                      <li><a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] break-all">connect@brandnivi.com</a></li>
-                      <li className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[#221811]">+91 91509 92863</span>
-                        <div className="inline-flex items-center gap-1">
-                          <a
-                            href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
-                            title="Chat on WhatsApp"
-                            aria-label="Chat on WhatsApp"
-                          >
-                            <WhatsAppIcon className="h-2.5 w-2.5" />
-                          </a>
-                          <a
-                            href="tel:+919150992863"
-                            className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
-                            title="Call Customer Care"
-                            aria-label="Call Customer Care"
-                          >
-                            <PhoneIcon className="h-2.5 w-2.5" />
-                          </a>
+                    {/* ABOUT */}
+                    <div>
+                      <h4 className="font-serif text-[11px] font-bold tracking-wider text-[#694208] uppercase mb-1">
+                        About
+                      </h4>
+                      <ul className="space-y-0.5 text-[10px] text-[#221811] font-medium">
+                        <li><Link href="/about" className="hover:text-[#073C35] transition-colors inline-block">Our Story</Link></li>
+                        <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35] transition-colors text-left inline-block">Craftsmanship</button></li>
+                        <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35] transition-colors text-left inline-block">Sustainability</button></li>
+                        <li><button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35] transition-colors text-left inline-block">Blog</button></li>
+                      </ul>
+                    </div>
+
+                    {/* CUSTOMER CARE (Spans both columns, perfectly laid out with no wrapping) */}
+                    <div className="col-span-2 pt-1.5 border-t border-[#8A5A12]/20">
+                      <div className="flex items-center justify-between mb-1">
+                        <h4 className="font-serif text-[11px] font-bold tracking-wider text-[#694208] uppercase">
+                          Customer Care
+                        </h4>
+                        <div className="flex items-center gap-1.5 text-[9.5px] text-[#221811]/80 font-medium">
+                          <button type="button" onClick={() => handleOpenPolicy("shipping")} className="hover:text-[#073C35]">Shipping</button>
+                          <span>•</span>
+                          <button type="button" onClick={() => handleOpenPolicy("returns")} className="hover:text-[#073C35]">Returns</button>
+                          <span>•</span>
+                          <button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">FAQs</button>
                         </div>
-                      </li>
-                      <li><button type="button" onClick={() => handleOpenPolicy("shipping")} className="hover:text-[#073C35]">Shipping</button></li>
-                      <li><button type="button" onClick={() => handleOpenPolicy("returns")} className="hover:text-[#073C35]">Returns</button></li>
-                    </ul>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-1 text-[10px] text-[#221811] font-medium flex-wrap">
+                        <a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] transition-colors">
+                          connect@brandnivi.com
+                        </a>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span>+91 91509 92863</span>
+                          <div className="inline-flex items-center gap-1">
+                            <a
+                              href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                              title="Chat on WhatsApp"
+                              aria-label="Chat on WhatsApp"
+                            >
+                              <WhatsAppIcon className="h-2.5 w-2.5" />
+                            </a>
+                            <a
+                              href="tel:+919150992863"
+                              className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                              title="Call Customer Care"
+                              aria-label="Call Customer Care"
+                            >
+                              <PhoneIcon className="h-2.5 w-2.5" />
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-
               </div>
 
               {/* TABLET LAYOUT (>= 640px and < 1024px) - Elegant 3-Column Spread */}
@@ -653,8 +675,8 @@ export function Footer() {
             </div>
 
             {/* ── BOTTOM ROW: Directly inside the Emerald Green Wave ── */}
-            <div className="w-full pb-18 sm:pb-14 md:pb-4 text-center pointer-events-auto">
-              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-[#EAE0D0]/95 text-[9.5px] sm:text-[10.5px] md:text-[11px] mb-1">
+            <div className="w-full pb-24 sm:pb-14 md:pb-4 text-center pointer-events-auto">
+              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-[#FAF7F0]/95 text-[10px] sm:text-[10.5px] md:text-[11px] mb-1 font-medium">
                 <button
                   type="button"
                   onClick={() => handleOpenPolicy("disclaimers")}
@@ -662,7 +684,7 @@ export function Footer() {
                 >
                   Privacy Policy
                 </button>
-                <span className="text-[#EAE0D0]/40">|</span>
+                <span className="text-[#FAF7F0]/40">|</span>
                 <button
                   type="button"
                   onClick={() => handleOpenPolicy("shipping")}
@@ -670,7 +692,7 @@ export function Footer() {
                 >
                   Terms of Service
                 </button>
-                <span className="text-[#EAE0D0]/40">|</span>
+                <span className="text-[#FAF7F0]/40">|</span>
                 <button
                   type="button"
                   onClick={() => handleOpenPolicy("disclaimers")}
@@ -679,7 +701,7 @@ export function Footer() {
                   Sitemap
                 </button>
               </div>
-              <p className="text-[#EAE0D0]/80 text-[9px] sm:text-[10px] md:text-[10.5px]">
+              <p className="text-[#FAF7F0]/80 text-[9.5px] sm:text-[10px] md:text-[10.5px] tracking-wide">
                 © {currentYear} NiVi. All rights reserved.
               </p>
             </div>

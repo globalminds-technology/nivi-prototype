@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { cn } from "cn";
 import {
   ArrowLeft,
   ArrowRight,
@@ -97,6 +98,16 @@ interface OfferManagerProps {
   initialHeroBanner?: HeroBannerConfig | null;
 }
 
+const STORE_PAGES = [
+  { label: "Collections (All Sarees)", url: "/collections" },
+  { label: "Special Offers", url: "/offers" },
+  { label: "Home Page", url: "/" },
+  { label: "Saree Finder Quiz", url: "/quiz" },
+  { label: "About Us", url: "/about" },
+  { label: "Store Policies", url: "/policies" },
+  { label: "Wishlist", url: "/wishlist" },
+];
+
 export function OfferManager({
   campaigns: initialCampaigns,
   products: initialProducts,
@@ -122,9 +133,48 @@ export function OfferManager({
   const [heroTitle, setHeroTitle] = useState(heroBanner.title || "");
   const [heroSubtitle, setHeroSubtitle] = useState(heroBanner.subtitle || "");
   const [heroPrimaryCtaText, setHeroPrimaryCtaText] = useState(heroBanner.primaryCtaText || "");
-  const [heroPrimaryCtaLink, setHeroPrimaryCtaLink] = useState(heroBanner.primaryCtaLink || "");
-  const [heroSecondaryCtaText, setHeroSecondaryCtaText] = useState(heroBanner.secondaryCtaText || "");
-  const [heroSecondaryCtaLink, setHeroSecondaryCtaLink] = useState(heroBanner.secondaryCtaLink || "");
+  const [heroPrimaryCtaLink, setHeroPrimaryCtaLink] = useState(heroBanner.primaryCtaLink || "/collections");
+  const isPredefinedHeroUrl = (url: string) => {
+    if (!url) return true;
+    if (STORE_PAGES.some((p) => p.url === url)) return true;
+    if (categories?.some((c) => `/categories/${c.slug}` === url)) return true;
+    return false;
+  };
+  const [heroIsCustomUrl, setHeroIsCustomUrl] = useState(() => {
+    const link = heroBanner.primaryCtaLink || "";
+    if (!link) return false;
+    return !STORE_PAGES.some((p) => p.url === link) && !categories?.some((c) => `/categories/${c.slug}` === link);
+  });
+  const [urlDropdownOpen, setUrlDropdownOpen] = useState(false);
+  const urlDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (urlDropdownRef.current && !urlDropdownRef.current.contains(event.target as Node)) {
+        setUrlDropdownOpen(false);
+      }
+    }
+    if (urlDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [urlDropdownOpen]);
+
+  const getSelectedUrlLabel = () => {
+    if (heroIsCustomUrl) {
+      return "Custom URL / External Link...";
+    }
+    const pageMatch = STORE_PAGES.find((p) => p.url === heroPrimaryCtaLink);
+    if (pageMatch) {
+      return `${pageMatch.label} (${pageMatch.url})`;
+    }
+    const catMatch = categories?.find((c) => `/categories/${c.slug}` === heroPrimaryCtaLink);
+    if (catMatch) {
+      return `${catMatch.name} (/categories/${catMatch.slug})`;
+    }
+    return heroPrimaryCtaLink || "Collections (All Sarees) (/collections)";
+  };
+
   const [heroShowOverlay, setHeroShowOverlay] = useState(heroBanner.showOverlay !== false);
   const [heroTextPosition, setHeroTextPosition] = useState<"left" | "center" | "right">(
     heroBanner.textPosition || "left",
@@ -156,6 +206,7 @@ export function OfferManager({
   const [bannerCtaText, setBannerCtaText] = useState("");
   const [bannerPositionX, setBannerPositionX] = useState<number>(50);
   const [bannerPositionY, setBannerPositionY] = useState<number>(50);
+  const [bannerShowOverlay, setBannerShowOverlay] = useState(false);
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
 
   // Manage Products Modal State
@@ -450,9 +501,10 @@ export function OfferManager({
     setHeroTitle(heroBanner.title || "");
     setHeroSubtitle(heroBanner.subtitle || "");
     setHeroPrimaryCtaText(heroBanner.primaryCtaText || "");
-    setHeroPrimaryCtaLink(heroBanner.primaryCtaLink || "");
-    setHeroSecondaryCtaText(heroBanner.secondaryCtaText || "");
-    setHeroSecondaryCtaLink(heroBanner.secondaryCtaLink || "");
+    const initialLink = heroBanner.primaryCtaLink || "/collections";
+    setHeroPrimaryCtaLink(initialLink);
+    setHeroIsCustomUrl(!isPredefinedHeroUrl(initialLink) && Boolean(heroBanner.primaryCtaLink));
+    setUrlDropdownOpen(false);
     setHeroShowOverlay(heroBanner.showOverlay !== false);
     setHeroTextPosition(heroBanner.textPosition || "left");
     setHeroPositionX(heroBanner.imagePositionX ?? 85);
@@ -541,8 +593,8 @@ export function OfferManager({
         subtitle: heroSubtitle.trim() || null,
         primaryCtaText: heroPrimaryCtaText.trim() || null,
         primaryCtaLink: heroPrimaryCtaLink.trim() || null,
-        secondaryCtaText: heroSecondaryCtaText.trim() || null,
-        secondaryCtaLink: heroSecondaryCtaLink.trim() || null,
+        secondaryCtaText: null,
+        secondaryCtaLink: null,
         showOverlay: heroShowOverlay,
         textPosition: heroTextPosition,
         imagePositionX: heroPositionX,
@@ -612,6 +664,7 @@ export function OfferManager({
     setBannerCtaText("");
     setBannerPositionX(50);
     setBannerPositionY(50);
+    setBannerShowOverlay(false);
     setCampaignDialogOpen(true);
   };
 
@@ -629,6 +682,7 @@ export function OfferManager({
     setBannerCtaText(campaign.bannerCtaText || "");
     setBannerPositionX(campaign.imagePositionX ?? 50);
     setBannerPositionY(campaign.imagePositionY ?? 50);
+    setBannerShowOverlay(campaign.showOverlay ?? Boolean(campaign.bannerTitle));
     setCampaignDialogOpen(true);
   };
 
@@ -749,12 +803,13 @@ export function OfferManager({
           label: computedLabel,
           expiry: offerExpiry ? offerExpiry.trim() : null,
           bannerImageUrl: bannerImageUrl.trim() || null,
-          bannerTitle: bannerTitle.trim() || null,
-          bannerSubtitle: bannerSubtitle.trim() || null,
-          bannerCtaText: bannerCtaText.trim() || null,
+          bannerTitle: bannerShowOverlay ? (bannerTitle.trim() || null) : null,
+          bannerSubtitle: bannerShowOverlay ? (bannerSubtitle.trim() || null) : null,
+          bannerCtaText: bannerShowOverlay ? (bannerCtaText.trim() || null) : null,
           imagePosition: bannerImageUrl.trim() ? imagePos : null,
           imagePositionX: bannerImageUrl.trim() ? bannerPositionX : null,
           imagePositionY: bannerImageUrl.trim() ? bannerPositionY : null,
+          showOverlay: bannerShowOverlay,
         });
 
         if (res.success) {
@@ -776,12 +831,13 @@ export function OfferManager({
           expiry: offerExpiry ? offerExpiry.trim() : null,
           productIds: [],
           bannerImageUrl: bannerImageUrl.trim() || null,
-          bannerTitle: bannerTitle.trim() || null,
-          bannerSubtitle: bannerSubtitle.trim() || null,
-          bannerCtaText: bannerCtaText.trim() || null,
+          bannerTitle: bannerShowOverlay ? (bannerTitle.trim() || null) : null,
+          bannerSubtitle: bannerShowOverlay ? (bannerSubtitle.trim() || null) : null,
+          bannerCtaText: bannerShowOverlay ? (bannerCtaText.trim() || null) : null,
           imagePosition: bannerImageUrl.trim() ? imagePos : null,
           imagePositionX: bannerImageUrl.trim() ? bannerPositionX : null,
           imagePositionY: bannerImageUrl.trim() ? bannerPositionY : null,
+          showOverlay: bannerShowOverlay,
         });
 
         if (res.success) {
@@ -1847,7 +1903,7 @@ export function OfferManager({
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
               {/* Image Upload Box */}
               <div className="space-y-2">
-                <FieldLabel className="text-xs font-semibold">Banner Image (Uploaded to R2) *</FieldLabel>
+                <FieldLabel className="text-xs font-semibold">Banner Image *</FieldLabel>
                 {heroImageUrl ? (
                   <div className="relative rounded-xl overflow-hidden border border-border bg-neutral-950 h-36 sm:h-44 w-full group">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1915,6 +1971,9 @@ export function OfferManager({
                     </label>
                   </div>
                 )}
+                <p className="text-[11px] text-muted-foreground">
+                  Standard 3:1 banner format detected (1200×400 / 2400×800)
+                </p>
               </div>
 
               {/* INTERACTIVE FOCAL POSITION CONTROLLER */}
@@ -2101,36 +2160,116 @@ export function OfferManager({
                       </Field>
                       <Field>
                         <FieldLabel htmlFor="heroPrimaryCtaLink" className="text-[11px]">Primary Button URL</FieldLabel>
-                        <Input
-                          id="heroPrimaryCtaLink"
-                          placeholder="e.g. /collections"
-                          value={heroPrimaryCtaLink}
-                          onChange={(e) => setHeroPrimaryCtaLink(e.target.value)}
-                          className="text-xs h-8"
-                        />
-                      </Field>
-                    </div>
+                        <div ref={urlDropdownRef} className="relative">
+                          <button
+                            type="button"
+                            id="heroPrimaryCtaLink"
+                            onClick={() => setUrlDropdownOpen((prev) => !prev)}
+                            className="flex h-8 w-full items-center justify-between rounded-md border border-[#D5CCBB] bg-[#FFFCF5] px-2.5 py-1 text-xs text-[#221811] shadow-2xs transition-colors hover:border-[#073C35]/60 focus:outline-hidden focus:ring-1 focus:ring-[#073C35]"
+                          >
+                            <span className="truncate">{getSelectedUrlLabel()}</span>
+                            <ChevronDown className={cn("size-3.5 text-[#8B7E66] transition-transform duration-150 shrink-0 ml-1.5", urlDropdownOpen && "rotate-180")} />
+                          </button>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <Field>
-                        <FieldLabel htmlFor="heroSecondaryCtaText" className="text-[11px]">Secondary Button Text</FieldLabel>
-                        <Input
-                          id="heroSecondaryCtaText"
-                          placeholder="e.g. Offers"
-                          value={heroSecondaryCtaText}
-                          onChange={(e) => setHeroSecondaryCtaText(e.target.value)}
-                          className="text-xs h-8"
-                        />
-                      </Field>
-                      <Field>
-                        <FieldLabel htmlFor="heroSecondaryCtaLink" className="text-[11px]">Secondary Button URL</FieldLabel>
-                        <Input
-                          id="heroSecondaryCtaLink"
-                          placeholder="e.g. /offers"
-                          value={heroSecondaryCtaLink}
-                          onChange={(e) => setHeroSecondaryCtaLink(e.target.value)}
-                          className="text-xs h-8"
-                        />
+                          {urlDropdownOpen && (
+                            <div className="absolute left-0 right-0 bottom-full z-50 mb-1 max-h-60 overflow-y-auto rounded-lg border border-[#D5CCBB] bg-[#FFFCF5] py-1 text-xs text-[#221811] shadow-xl">
+                              {/* Store Pages */}
+                              <div className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#8B7E66] bg-[#F5EFE3]">
+                                Store Pages
+                              </div>
+                              {STORE_PAGES.map((page) => {
+                                const isSelected = !heroIsCustomUrl && heroPrimaryCtaLink === page.url;
+                                return (
+                                  <button
+                                    key={page.url}
+                                    type="button"
+                                    onClick={() => {
+                                      setHeroIsCustomUrl(false);
+                                      setHeroPrimaryCtaLink(page.url);
+                                      setUrlDropdownOpen(false);
+                                    }}
+                                    className={cn(
+                                      "group flex w-full items-center justify-between px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-[#073C35] hover:text-[#FFFCF5]",
+                                      isSelected
+                                        ? "bg-[#073C35]/10 text-[#073C35] font-semibold hover:bg-[#073C35] hover:text-[#FFFCF5]"
+                                        : "text-[#221811]"
+                                    )}
+                                  >
+                                    <span>
+                                      {page.label} <span className="opacity-60 text-[10px]">({page.url})</span>
+                                    </span>
+                                    {isSelected && <Check className="size-3.5 text-[#073C35] group-hover:text-[#FFFCF5] shrink-0 ml-2" />}
+                                  </button>
+                                );
+                              })}
+
+                              {/* Categories */}
+                              {categories && categories.length > 0 && (
+                                <>
+                                  <div className="mt-1 border-t border-[#E4DDCD] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#8B7E66] bg-[#F5EFE3]">
+                                    Categories
+                                  </div>
+                                  {categories.map((cat) => {
+                                    const catUrl = `/categories/${cat.slug}`;
+                                    const isSelected = !heroIsCustomUrl && heroPrimaryCtaLink === catUrl;
+                                    return (
+                                      <button
+                                        key={cat.slug}
+                                        type="button"
+                                        onClick={() => {
+                                          setHeroIsCustomUrl(false);
+                                          setHeroPrimaryCtaLink(catUrl);
+                                          setUrlDropdownOpen(false);
+                                        }}
+                                        className={cn(
+                                          "group flex w-full items-center justify-between px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-[#073C35] hover:text-[#FFFCF5]",
+                                          isSelected
+                                            ? "bg-[#073C35]/10 text-[#073C35] font-semibold hover:bg-[#073C35] hover:text-[#FFFCF5]"
+                                            : "text-[#221811]"
+                                        )}
+                                      >
+                                        <span>
+                                          {cat.name} <span className="opacity-60 text-[10px]">({catUrl})</span>
+                                        </span>
+                                        {isSelected && <Check className="size-3.5 text-[#073C35] group-hover:text-[#FFFCF5] shrink-0 ml-2" />}
+                                      </button>
+                                    );
+                                  })}
+                                </>
+                              )}
+
+                              {/* Custom */}
+                              <div className="mt-1 border-t border-[#E4DDCD] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#8B7E66] bg-[#F5EFE3]">
+                                Custom
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setHeroIsCustomUrl(true);
+                                  setUrlDropdownOpen(false);
+                                }}
+                                className={cn(
+                                  "group flex w-full items-center justify-between px-2.5 py-1.5 text-left text-xs transition-colors hover:bg-[#073C35] hover:text-[#FFFCF5]",
+                                  heroIsCustomUrl
+                                    ? "bg-[#073C35]/10 text-[#073C35] font-semibold hover:bg-[#073C35] hover:text-[#FFFCF5]"
+                                    : "text-[#221811]"
+                                )}
+                              >
+                                <span>Custom URL / External Link...</span>
+                                {heroIsCustomUrl && <Check className="size-3.5 text-[#073C35] group-hover:text-[#FFFCF5] shrink-0 ml-2" />}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {heroIsCustomUrl && (
+                          <Input
+                            placeholder="e.g. /products/silk-saree or https://..."
+                            value={heroPrimaryCtaLink}
+                            onChange={(e) => setHeroPrimaryCtaLink(e.target.value)}
+                            className="mt-1.5 h-8 border-[#D5CCBB] bg-[#FFFCF5] text-xs text-[#221811] focus:ring-[#073C35]"
+                          />
+                        )}
                       </Field>
                     </div>
                   </div>
@@ -2171,107 +2310,13 @@ export function OfferManager({
             </DialogHeader>
 
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
-              <Field>
-                <FieldLabel htmlFor="campaignName">Campaign Name *</FieldLabel>
-                <Input
-                  id="campaignName"
-                  placeholder="e.g. Diwali Dhamaka, Pongal Special, Summer Clearance"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
-              </Field>
-
-              <div className="grid grid-cols-2 gap-3">
-                <Field>
-                  <FieldLabel>Discount Type</FieldLabel>
-                  <div className="flex items-center gap-1.5 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => setOfferType("percent")}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                        offerType === "percent"
-                          ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                          : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
-                    >
-                      Percentage (%)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setOfferType("flat")}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                        offerType === "flat"
-                          ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                          : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
-                    >
-                      Flat (₹)
-                    </button>
-                  </div>
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="dialogOfferValue">
-                    Discount Value {offerType === "percent" ? "(%)" : "(₹)"} *
-                  </FieldLabel>
-                  <Input
-                    id="dialogOfferValue"
-                    type="number"
-                    step="any"
-                    min="1"
-                    placeholder={offerType === "percent" ? "15" : "500"}
-                    value={offerValue}
-                    onChange={(e) => setOfferValue(e.target.value)}
-                    required
-                    disabled={isPending}
-                    className="font-mono text-sm"
-                  />
-                </Field>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <Field>
-                  <FieldLabel htmlFor="dialogOfferLabel">Badge Text (Optional)</FieldLabel>
-                  <Input
-                    id="dialogOfferLabel"
-                    placeholder={offerType === "percent" ? "15% OFF" : "₹500 OFF"}
-                    value={offerLabel}
-                    onChange={(e) => setOfferLabel(e.target.value)}
-                    disabled={isPending}
-                  />
-                  <FieldDescription className="text-[10px]">
-                    Shown on product image cards
-                  </FieldDescription>
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="dialogOfferExpiry">Expiry Date (Optional)</FieldLabel>
-                  <Input
-                    id="dialogOfferExpiry"
-                    type="date"
-                    value={offerExpiry}
-                    onChange={(e) => setOfferExpiry(e.target.value)}
-                    disabled={isPending}
-                    className="text-xs"
-                  />
-                  <FieldDescription className="text-[10px]">
-                    Discount ends on this date
-                  </FieldDescription>
-                </Field>
-              </div>
-
-              {/* Campaign Banner Settings */}
-              <div className="pt-3 border-t border-border/60 space-y-3">
+              {/* 1. HERO CAROUSEL BANNER IMAGE (AT THE TOP) */}
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                      <ImageIcon className="h-4 w-4 text-primary" />
-                      <span>Hero Carousel Banner (Optional)</span>
-                    </h3>
+                    <FieldLabel className="text-xs font-semibold">Hero Carousel Banner (Optional)</FieldLabel>
                     <p className="text-[11px] text-muted-foreground">
-                      Upload a banner to display this campaign in the storefront hero carousel (max 5 active).
+                      Upload a 3:1 banner to display this campaign in the storefront hero carousel.
                     </p>
                   </div>
                   {bannerImageUrl && (
@@ -2290,7 +2335,7 @@ export function OfferManager({
 
                 {bannerImageUrl ? (
                   <div className="space-y-3">
-                    <div className="relative rounded-xl overflow-hidden border border-border bg-black/5 aspect-[3/1] max-h-36 group">
+                    <div className="relative rounded-xl overflow-hidden border border-border bg-black/5 aspect-[3/1] max-h-40 group">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={bannerImageUrl}
@@ -2298,6 +2343,12 @@ export function OfferManager({
                         className="w-full h-full object-cover"
                         style={{ objectPosition: `${bannerPositionX}% ${bannerPositionY}%` }}
                       />
+
+                      {/* Gradient overlay preview when Text Overlay is enabled */}
+                      {bannerShowOverlay && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[65%]" />
+                      )}
+
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                         <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background text-foreground text-xs font-medium shadow-sm hover:bg-muted transition-colors">
                           <UploadCloud className="h-3.5 w-3.5" />
@@ -2311,7 +2362,17 @@ export function OfferManager({
                           />
                         </label>
                       </div>
+
+                      <div className="absolute top-2 right-2 flex items-center gap-1">
+                        <Badge variant="secondary" className="text-[10px] bg-black/70 text-white border-white/20 font-mono">
+                          {bannerPositionX}% X, {bannerPositionY}% Y
+                        </Badge>
+                      </div>
                     </div>
+
+                    <p className="text-[11px] text-muted-foreground">
+                      Standard 3:1 banner format detected (1200×400 / 2400×800)
+                    </p>
 
                     {/* Position Sliders for Offer Banner */}
                     <div className="rounded-lg border border-border/70 bg-muted/30 p-2.5 space-y-2">
@@ -2374,32 +2435,165 @@ export function OfferManager({
                     </label>
                   </div>
                 )}
+              </div>
 
-                {/* Optional Custom Banner Text */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {/* 2. TEXT OVERLAY & BUTTONS TOGGLE CARD */}
+              <div className="rounded-xl border border-border/80 bg-muted/20 p-3.5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-xs font-semibold text-foreground">Text Overlay & Buttons</h4>
+                    <p className="text-[10px] text-muted-foreground">
+                      Enable text overlay or choose Pure Graphic Mode if your banner already has text.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setBannerShowOverlay(true)}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${
+                        bannerShowOverlay
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      Text Overlay
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBannerShowOverlay(false)}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${
+                        !bannerShowOverlay
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      Pure Graphic
+                    </button>
+                  </div>
+                </div>
+
+                {/* VISIBLE ONLY WHEN TEXT OVERLAY IS CLICKED / ACTIVE */}
+                {bannerShowOverlay && (
+                  <div className="space-y-3 pt-2 border-t border-border/50">
+                    <Field>
+                      <FieldLabel htmlFor="dialogOfferLabel" className="text-xs">Badge Text (Optional)</FieldLabel>
+                      <Input
+                        id="dialogOfferLabel"
+                        placeholder={offerType === "percent" ? `${offerValue || 15}% OFF` : `₹${offerValue || 500} OFF`}
+                        value={offerLabel}
+                        onChange={(e) => setOfferLabel(e.target.value)}
+                        disabled={isPending}
+                        className="text-xs"
+                      />
+                      <FieldDescription className="text-[10px]">
+                        Shown as the pill badge on the banner and product cards
+                      </FieldDescription>
+                    </Field>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Field>
+                        <FieldLabel htmlFor="dialogBannerTitle" className="text-xs">Custom Headline (Optional)</FieldLabel>
+                        <Input
+                          id="dialogBannerTitle"
+                          placeholder={name || "e.g. Royal Festive Collection"}
+                          value={bannerTitle}
+                          onChange={(e) => setBannerTitle(e.target.value)}
+                          disabled={isPending}
+                          className="text-xs"
+                        />
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="dialogBannerCtaText" className="text-xs">CTA Button Text (Optional)</FieldLabel>
+                        <Input
+                          id="dialogBannerCtaText"
+                          placeholder="e.g. Explore Offers"
+                          value={bannerCtaText}
+                          onChange={(e) => setBannerCtaText(e.target.value)}
+                          disabled={isPending}
+                          className="text-xs"
+                        />
+                      </Field>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 3. CAMPAIGN DETAILS & DISCOUNT RULES */}
+              <div className="pt-3 border-t border-border/60 space-y-3">
+                <Field>
+                  <FieldLabel htmlFor="campaignName">Campaign Name *</FieldLabel>
+                  <Input
+                    id="campaignName"
+                    placeholder="e.g. Diwali Dhamaka, Pongal Special, Summer Clearance"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    disabled={isPending}
+                  />
+                </Field>
+
+                <div className="grid grid-cols-2 gap-3">
                   <Field>
-                    <FieldLabel htmlFor="dialogBannerTitle" className="text-xs">Custom Headline (Optional)</FieldLabel>
-                    <Input
-                      id="dialogBannerTitle"
-                      placeholder={name || "e.g. Royal Festive Collection"}
-                      value={bannerTitle}
-                      onChange={(e) => setBannerTitle(e.target.value)}
-                      disabled={isPending}
-                      className="text-xs"
-                    />
+                    <FieldLabel>Discount Type</FieldLabel>
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setOfferType("percent")}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                          offerType === "percent"
+                            ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                            : "border-border text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        Percentage (%)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOfferType("flat")}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                          offerType === "flat"
+                            ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                            : "border-border text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        Flat (₹)
+                      </button>
+                    </div>
                   </Field>
+
                   <Field>
-                    <FieldLabel htmlFor="dialogBannerCtaText" className="text-xs">CTA Button Text (Optional)</FieldLabel>
+                    <FieldLabel htmlFor="dialogOfferValue">
+                      Discount Value {offerType === "percent" ? "(%)" : "(₹)"} *
+                    </FieldLabel>
                     <Input
-                      id="dialogBannerCtaText"
-                      placeholder="e.g. Explore Offers"
-                      value={bannerCtaText}
-                      onChange={(e) => setBannerCtaText(e.target.value)}
+                      id="dialogOfferValue"
+                      type="number"
+                      step="any"
+                      min="1"
+                      placeholder={offerType === "percent" ? "15" : "500"}
+                      value={offerValue}
+                      onChange={(e) => setOfferValue(e.target.value)}
+                      required
                       disabled={isPending}
-                      className="text-xs"
+                      className="font-mono text-sm"
                     />
                   </Field>
                 </div>
+
+                <Field>
+                  <FieldLabel htmlFor="dialogOfferExpiry">Expiry Date (Optional)</FieldLabel>
+                  <Input
+                    id="dialogOfferExpiry"
+                    type="date"
+                    value={offerExpiry}
+                    onChange={(e) => setOfferExpiry(e.target.value)}
+                    disabled={isPending}
+                    className="text-xs"
+                  />
+                  <FieldDescription className="text-[10px]">
+                    Discount ends on this date
+                  </FieldDescription>
+                </Field>
               </div>
 
               <div className="rounded-lg bg-muted/40 p-3 text-[11px] text-muted-foreground">

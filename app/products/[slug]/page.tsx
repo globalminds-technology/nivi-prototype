@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ShieldCheck, Truck } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/store/footer";
 import { Header } from "@/components/store/header";
@@ -25,6 +25,7 @@ export const instant = false;
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
+  await connection();
   const { slug } = await params;
   try {
     const product = await container.getProduct().execute(slug);
@@ -332,17 +333,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             )}
 
-            {/* Genuine Store Policies & Authenticity Guarantees */}
-            <div className="pt-4 border-t border-[#D5CCBB]/70 grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-[#4A3D33]">
-              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#FAF7F0]/60 border border-[#D5CCBB]/50">
-                <Truck className="h-4 w-4 text-[#073C35] shrink-0" />
-                <span>Complimentary Express Shipping in 2–5 days</span>
-              </div>
-              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#FAF7F0]/60 border border-[#D5CCBB]/50">
-                <ShieldCheck className="h-4 w-4 text-[#073C35] shrink-0" />
-                <span>100% Genuine Handcrafted Guarantee</span>
-              </div>
-            </div>
 
             {/* Saree Matchmaker Discovery Banner */}
             <div className="p-3.5 rounded-xl bg-[#073C35] text-[#FAF7F0] flex items-center justify-between gap-3 shadow-xs">

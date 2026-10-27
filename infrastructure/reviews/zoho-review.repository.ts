@@ -45,6 +45,13 @@ export class ZohoReviewRepository implements ReviewRepository {
 
   async listBySku(sku: Sku): Promise<readonly Review[]> {
     // 1. First attempt: Read from R2 if configured (no character limits)
+    try {
+      const { connection } = await import("next/server");
+      await connection();
+    } catch {
+      // Safely ignore when called outside a Next.js request context
+    }
+
     const r2 = this.getR2();
     const config = env();
     if (r2 && config.R2_BUCKET_NAME) {

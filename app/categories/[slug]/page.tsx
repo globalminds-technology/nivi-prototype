@@ -41,6 +41,7 @@ function matchesCategory(
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {
+  await connection();
   const { slug } = await params;
   const categoryRepo = new CategoryRepository();
   const category = await categoryRepo.getBySlug(slug);
