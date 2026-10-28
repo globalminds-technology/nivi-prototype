@@ -31,7 +31,7 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
         setIsOpen(false);
         inputRef.current?.blur();
       }
-      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || e.key === "/") {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         const target = e.target as HTMLElement;
         if (
           target.isContentEditable ||
@@ -88,8 +88,16 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
             <Search className="h-3.5 w-3.5 text-[#056677] shrink-0" />
             <input
               ref={inputRef}
-              type="text"
-              autoFocus
+              type="search"
+              name="search_query"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck="false"
+              data-lpignore="true"
+              data-1p-ignore="true"
+              data-form-type="other"
+              aria-autocomplete="none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search..."
@@ -132,11 +140,22 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
         <Search className={`h-3.5 w-3.5 shrink-0 ${isOpen ? "text-[#056677]" : "text-[#056677]/80"}`} />
         <input
           ref={inputRef}
-          type="text"
+          type="search"
+          name="search_query"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          data-lpignore="true"
+          data-1p-ignore="true"
+          data-form-type="other"
+          aria-autocomplete="none"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
-            if (!isOpen) setIsOpen(true);
+            if (document.activeElement === inputRef.current) {
+              setIsOpen(true);
+            }
           }}
           onFocus={() => setIsOpen(true)}
           placeholder="Search..."

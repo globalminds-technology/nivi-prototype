@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -12,6 +11,7 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
+  CreditCard,
   Edit2,
   Info,
   Loader2,
@@ -83,8 +83,8 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   const [isQuoting, setIsQuoting] = useState(false);
   const [quoteError, setQuoteError] = useState<string | null>(null);
 
-  // Shipping Method State
-  const [shippingMethod, setShippingMethod] = useState<"standard" | "express">("standard");
+  // Shipping Method State (null initially until selected by customer in Step 2)
+  const [shippingMethod, setShippingMethod] = useState<"standard" | "express" | null>(null);
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
 
   // Form Fields - Contact
@@ -382,7 +382,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
 
     quoteCartAction(
       items.map((i) => ({ sku: i.sku, quantity: i.qty })),
-      shippingMethod,
+      shippingMethod || "standard",
     )
       .then((res) => {
         if (!isMounted) return;
@@ -498,6 +498,11 @@ export function CheckoutView({ products }: CheckoutViewProps) {
       toast.error(
         "Please confirm that you have read and agreed to NiVi's Store Policies (including mandatory continuous unboxing video requirement).",
       );
+      return;
+    }
+
+    if (!shippingMethod) {
+      toast.error("Please select a delivery option (Standard Shipping or Express Delivery).");
       return;
     }
 
@@ -764,8 +769,17 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   const expressOption = shippingOptions.find((o) => o.type === "express");
   const totalItemCount = items.reduce((s, i) => s + i.qty, 0);
 
+  // Shipping charge is active once customer selects an option (Standard or Express)
+  const isShippingActive = shippingMethod !== null;
+  const netSubtotalMinor = quote
+    ? Math.max(0, quote.subtotal.minor - quote.discount.minor)
+    : 0;
+  const displayedTotalMinor = isShippingActive && quote
+    ? quote.total.minor
+    : netSubtotalMinor;
+
   return (
-    <div className="container max-w-6xl mx-auto py-4 sm:py-8 px-4 sm:px-6">
+    <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-4 sm:px-6">
       {/* Top Navigation Bar & Stepper */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#E7DFD5]">
         <div className="flex items-center justify-between w-full sm:w-auto">
@@ -829,7 +843,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
             >
               2
             </span>
-            <span>2. Delivery &amp; Payment</span>
+            <span>2. Order Summary &amp; Payment</span>
           </button>
         </div>
 
@@ -839,8 +853,9 @@ export function CheckoutView({ products }: CheckoutViewProps) {
         </div>
       </div>
 
-      {/* Mobile Collapsible Order Summary Banner */}
-      <div className="lg:hidden mb-6">
+      {/* Mobile Collapsible Order Summary Banner (Step 1 Only) */}
+      {currentStep === 1 && (
+        <div className="lg:hidden mb-6">
         <button
           type="button"
           onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
@@ -858,7 +873,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
             )}
           </div>
           <span className="font-mono font-bold text-sm text-[#073C35]">
-            {quote ? formatInr(quote.total.minor) : "—"}
+            {quote ? formatInr(displayedTotalMinor) : "—"}
           </span>
         </button>
 
@@ -872,18 +887,27 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                 const quoteLine = quote?.lines.find(
                   (ql) => ql.sku.toLowerCase() === item.sku.toLowerCase(),
                 );
+                const imageUrl = product?.primaryImageUrl || (product?.id ? `/api/images/zoho/${product.id}` : null);
 
                 return (
                   <div key={item.sku} className="flex items-center gap-3 text-xs py-2 border-b border-border/40 last:border-b-0">
-                    <div className="relative w-12 h-14 rounded-md bg-muted overflow-hidden shrink-0 border border-border/60">
-                      {product?.primaryImageUrl ? (
-                        <Image src={product.primaryImageUrl} alt={product.name} fill className="object-cover" sizes="48px" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                          <Package className="w-4 h-4 opacity-40" />
-                        </div>
+                    <div className="relative w-12 h-14 rounded-md bg-[#FAF4EA] overflow-hidden shrink-0 border border-[#E7DFD5]">
+                      <div className="w-full h-full absolute inset-0 flex items-center justify-center bg-[#FAF4EA] text-[#B0A292]">
+                        <Package className="w-4 h-4 opacity-50 text-[#7AA79D]" />
+                      </div>
+                      {imageUrl && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={imageUrl}
+                          alt=""
+                          className="relative z-1 w-full h-full object-cover object-top"
+                          loading="eager"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
                       )}
-                      <span className="absolute bottom-0 right-0 bg-[#073C35] text-white text-[9px] font-mono px-1 rounded-tl-sm">
+                      <span className="absolute bottom-0 right-0 bg-[#073C35] text-white text-[9px] font-mono px-1 rounded-tl-sm z-10">
                         ×{item.qty}
                       </span>
                     </div>
@@ -903,6 +927,32 @@ export function CheckoutView({ products }: CheckoutViewProps) {
 
             <Separator />
 
+            {/* Delivery Option Indicator */}
+            <div className="flex items-center justify-between text-xs py-1">
+              <span className="font-semibold text-[#073C35] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                <Truck className="w-3.5 h-3.5" />
+                <span>Delivery Method</span>
+              </span>
+              {shippingMethod ? (
+                <Badge
+                  variant="outline"
+                  className={`font-mono text-[10px] px-2 py-0.5 ${
+                    shippingMethod === "express"
+                      ? "bg-[#694208]/10 text-[#694208] border-[#694208]/30 font-semibold"
+                      : "bg-[#073C35]/10 text-[#073C35] border-[#073C35]/30 font-semibold"
+                  }`}
+                >
+                  {shippingMethod === "express" ? "Express Priority" : "Within India"}
+                </Badge>
+              ) : (
+                <span className="text-[11px] text-[#786960] italic">
+                  Select in Step 2
+                </span>
+              )}
+            </div>
+
+            <Separator />
+
             <div className="space-y-2 text-xs">
               <div className="flex items-center justify-between text-muted-foreground">
                 <span>Subtotal</span>
@@ -914,33 +964,63 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                   <span className="font-mono">-{formatInr(quote.discount.minor)}</span>
                 </div>
               )}
-              <div className="flex items-center justify-between text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <Truck className="w-3.5 h-3.5 text-[#073C35]" />
-                  <span>{quote?.shippingLabel || (shippingMethod === "express" ? "Express Delivery" : "Standard Shipping")}</span>
-                </span>
-                <span className="font-mono font-medium text-foreground">
-                  {quote && quote.shipping.minor === 0 ? "FREE" : quote ? formatInr(quote.shipping.minor) : "—"}
-                </span>
-              </div>
+              {isShippingActive ? (
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    {shippingMethod === "express" ? (
+                      <Zap className="w-3.5 h-3.5 text-[#694208]" />
+                    ) : (
+                      <Truck className="w-3.5 h-3.5 text-[#073C35]" />
+                    )}
+                    <span>
+                      {shippingMethod === "express"
+                        ? (expressOption?.name || "Express Delivery")
+                        : (standardOption?.name || "Standard Shipping")}
+                    </span>
+                  </span>
+                  <span className="font-mono font-medium text-foreground">
+                    {quote && quote.shipping.minor === 0
+                      ? "FREE"
+                      : quote
+                      ? formatInr(quote.shipping.minor)
+                      : "—"}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <Truck className="w-3.5 h-3.5 text-[#073C35]" />
+                    <span>Shipping</span>
+                  </span>
+                  <span className="text-[11px] text-[#786960] italic">
+                    Select delivery option above
+                  </span>
+                </div>
+              )}
               <Separator />
               <div className="flex items-baseline justify-between text-sm font-semibold pt-1">
                 <span className="font-serif text-[#30251F]">Total Amount</span>
                 <span className="font-mono text-lg font-bold text-[#073C35]">
-                  {quote ? formatInr(quote.total.minor) : "—"}
+                  {quote ? formatInr(displayedTotalMinor) : "—"}
                 </span>
               </div>
             </div>
           </Card>
         )}
-      </div>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Active Step Form */}
-        <div className="lg:col-span-7 space-y-6">
+      {/* Main Single-Column Checkout Flow */}
+      <div className="w-full space-y-6">
           {/* ================= STEP 1: CONTACT & ADDRESS ================= */}
           {currentStep === 1 && (
-            <div className="space-y-6 animate-in fade-in-50 duration-200">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleContinueToStep2();
+              }}
+              className="space-y-6 animate-in fade-in-50 duration-200"
+            >
               {/* Customer Contact */}
               <Card className="shadow-xs border border-[#E7DFD5] bg-white">
                 <CardHeader className="pb-4">
@@ -1621,7 +1701,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                     <Button
                       type="button"
                       onClick={handleContinueToStep2}
-                      className="w-full sm:w-auto px-6 h-11 text-xs sm:text-sm font-semibold tracking-wide gap-2 shadow-xs cursor-pointer bg-[#073C35] hover:bg-[#052C27] text-white"
+                      className="w-full sm:w-auto px-8 h-12 text-sm font-semibold tracking-wide gap-2.5 rounded-full shadow-md cursor-pointer bg-[#073C35] hover:bg-[#052C27] text-white transition-all"
                     >
                       <span>Continue to Delivery Option</span>
                       <ArrowRight className="w-4 h-4" />
@@ -1629,185 +1709,377 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </form>
           )}
 
-          {/* ================= STEP 2: DELIVERY & PAYMENT ================= */}
+          {/* ================= STEP 2: ORDER SUMMARY & PAYMENT ================= */}
           {currentStep === 2 && (
-            <div className="space-y-6 animate-in fade-in-50 duration-200">
-              {/* Compact Review Card of Customer Details */}
-              <Card className="border border-[#E7DFD5] bg-[#FAF8F5] shadow-xs">
-                <CardContent className="p-4 sm:p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1 text-xs">
-                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                        <span className="font-semibold text-sm text-[#30251F]">{name || "Customer Name"}</span>
-                        <span className="text-[#C8BEB5]">•</span>
-                        <span className="font-mono text-[#4A3D34]">{phone ? `+91 ${phone}` : "Phone"}</span>
-                        <span className="text-[#C8BEB5]">•</span>
-                        <span className="text-[#4A3D34] truncate max-w-[200px]">{email}</span>
+            <div className="space-y-4 sm:space-y-5 animate-in fade-in-50 duration-200">
+              {/* Card 1: Ordered Items (with Delivery Option & Payment Mode inside) */}
+              <Card className="shadow-xs border border-[#E7DFD5] bg-white rounded-xl sm:rounded-2xl overflow-hidden">
+                <CardHeader className="py-3 px-4 sm:px-5 border-b border-[#E7DFD5]/70 bg-[#FAF8F5]/60">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ShoppingBag className="w-4 h-4 text-[#073C35]" />
+                      <span className="font-serif text-sm sm:text-base font-semibold text-[#30251F]">
+                        Ordered Items
+                      </span>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] sm:text-xs font-mono text-[#073C35] border-[#073C35]/30">
+                      {totalItemCount} {totalItemCount === 1 ? "Item" : "Items"}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-4 sm:p-5 space-y-4">
+                  {/* Products list */}
+                  <div className="divide-y divide-[#E7DFD5]/60 space-y-3">
+                    {items.map((item) => {
+                      const product = products.find(
+                        (p) => p.sku.toLowerCase() === item.sku.toLowerCase(),
+                      );
+                      const quoteLine = quote?.lines.find(
+                        (ql) => ql.sku.toLowerCase() === item.sku.toLowerCase(),
+                      );
+                      const imageUrl = product?.primaryImageUrl || (product?.id ? `/api/images/zoho/${product.id}` : null);
+
+                      return (
+                        <div key={item.sku} className="pt-3 first:pt-0 flex gap-3 sm:gap-4 items-start">
+                          {/* Thumbnail */}
+                          <div className="relative w-16 h-20 sm:w-20 sm:h-24 rounded-lg bg-[#FAF4EA] overflow-hidden shrink-0 border border-[#E7DFD5]">
+                            <div className="w-full h-full absolute inset-0 flex items-center justify-center bg-[#FAF4EA] text-[#B0A292]">
+                              <Package className="w-6 h-6 opacity-40 text-[#7AA79D]" />
+                            </div>
+                            {imageUrl && (
+                              /* eslint-disable-next-line @next/next/no-img-element */
+                              <img
+                                src={imageUrl}
+                                alt={product?.name || item.sku}
+                                className="relative z-1 w-full h-full object-cover object-top"
+                                loading="eager"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
+                            )}
+                            <span className="absolute bottom-0 right-0 bg-[#073C35] text-white text-[10px] font-mono px-1.5 py-0.5 rounded-tl-sm z-10">
+                              ×{item.qty}
+                            </span>
+                          </div>
+
+                          {/* Item Details */}
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <p className="font-semibold text-xs sm:text-sm text-[#30251F] leading-snug line-clamp-2">
+                              {product?.name || item.sku}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-sm sm:text-base font-bold text-[#073C35]">
+                                {quoteLine
+                                  ? formatInr(quoteLine.lineTotal.minor)
+                                  : product
+                                  ? formatInr(product.priceMinor * item.qty)
+                                  : "—"}
+                              </span>
+                              {quoteLine && quoteLine.lineDiscount.minor > 0 && (
+                                <span className="font-mono text-xs text-[#786960] line-through">
+                                  {formatInr(quoteLine.lineSubtotal.minor)}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                              <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>Authentic Handloom</span>
+                              </span>
+                              <span className="text-[11px] font-mono text-[#786960]">
+                                SKU: {item.sku}
+                              </span>
+                              <span className="text-[11px] text-[#786960]">
+                                Qty: {item.qty}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <Separator className="my-3" />
+
+                  {/* Delivery Option & Payment Mode nested inside Ordered Items */}
+                  <div className="space-y-4 pt-1">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-[#073C35]" />
+                      <span className="font-serif text-sm sm:text-base font-semibold text-[#30251F]">
+                        Delivery Option &amp; Payment Mode
+                      </span>
+                    </div>
+
+                    {/* Delivery Selection Tabs */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[#30251F]">
+                          Choose Delivery Speed:
+                        </span>
+                        <span className="text-[11px] text-[#786960]">
+                          Click to select
+                        </span>
                       </div>
-                      <p className="text-[#786960] pt-1">
-                        <span className="font-medium text-[#30251F]">Deliver to: </span>
-                        {shippingLine1}
-                        {shippingLine2 ? `, ${shippingLine2}` : ""}, {shippingCity}, {shippingState} - {shippingPincode}
+
+                      <div
+                        role="tablist"
+                        aria-label="Shipping Options"
+                        className="bg-[#F5EFE6] p-1.5 rounded-xl sm:rounded-2xl border border-[#D5CCBB] grid grid-cols-2 gap-1.5 shadow-2xs"
+                      >
+                        {/* Tab 1: Standard Delivery */}
+                        <button
+                          type="button"
+                          role="tab"
+                          aria-selected={shippingMethod === "standard"}
+                          onClick={() => setShippingMethod("standard")}
+                          className={`p-3 sm:p-3.5 rounded-xl transition-all duration-200 cursor-pointer flex flex-col justify-between text-left ${
+                            shippingMethod === "standard"
+                              ? "bg-white text-[#073C35] shadow-sm border border-[#073C35]/40 ring-2 ring-[#073C35]/15 font-semibold"
+                              : "bg-transparent text-[#6B5A4A] hover:bg-white/60 hover:text-[#221811] border border-transparent"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between w-full mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                                  shippingMethod === "standard"
+                                    ? "bg-[#073C35]/10 text-[#073C35]"
+                                    : "bg-[#E7DFD5] text-[#8C7A6B]"
+                                }`}
+                              >
+                                <Truck className="w-4 h-4" />
+                              </div>
+                              <span className="font-semibold text-xs sm:text-sm tracking-tight block leading-tight">
+                                Standard Shipping
+                              </span>
+                            </div>
+
+                            <div
+                              className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
+                                shippingMethod === "standard"
+                                  ? "border-[#073C35] bg-[#073C35]"
+                                  : "border-[#C5B8A5]"
+                              }`}
+                            >
+                              {shippingMethod === "standard" && (
+                                <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-baseline justify-between pt-1.5 border-t border-[#D5CCBB]/40">
+                            <span className="text-[10px] sm:text-xs text-[#786960]">Within India</span>
+                            <span
+                              className={`font-mono font-bold text-xs sm:text-sm ${
+                                shippingMethod === "standard" ? "text-[#073C35]" : "text-[#30251F]"
+                              }`}
+                            >
+                              {(() => {
+                                const std = shippingOptions.find((o) => o.type === "standard");
+                                if (!std) return "FREE";
+                                return std.rate === 0 ? "FREE" : formatInr(std.rateMinor);
+                              })()}
+                            </span>
+                          </div>
+                        </button>
+
+                        {/* Tab 2: Express Delivery */}
+                        <button
+                          type="button"
+                          role="tab"
+                          aria-selected={shippingMethod === "express"}
+                          onClick={() => setShippingMethod("express")}
+                          className={`p-3 sm:p-3.5 rounded-xl transition-all duration-200 cursor-pointer flex flex-col justify-between text-left ${
+                            shippingMethod === "express"
+                              ? "bg-white text-[#694208] shadow-sm border border-[#694208]/40 ring-2 ring-[#694208]/15 font-semibold"
+                              : "bg-transparent text-[#6B5A4A] hover:bg-white/60 hover:text-[#221811] border border-transparent"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between w-full mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                                  shippingMethod === "express"
+                                    ? "bg-[#694208]/10 text-[#694208]"
+                                    : "bg-[#E7DFD5] text-[#8C7A6B]"
+                                }`}
+                              >
+                                <Zap className="w-4 h-4" />
+                              </div>
+                              <span className="font-semibold text-xs sm:text-sm tracking-tight block leading-tight">
+                                Express Delivery
+                              </span>
+                            </div>
+
+                            <div
+                              className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
+                                shippingMethod === "express"
+                                  ? "border-[#694208] bg-[#694208]"
+                                  : "border-[#C5B8A5]"
+                              }`}
+                            >
+                              {shippingMethod === "express" && (
+                                <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-baseline justify-between pt-1.5 border-t border-[#D5CCBB]/40">
+                            <span className="text-[10px] sm:text-xs text-[#786960]">Express Priority</span>
+                            <span
+                              className={`font-mono font-bold text-xs sm:text-sm ${
+                                shippingMethod === "express" ? "text-[#694208]" : "text-[#30251F]"
+                              }`}
+                            >
+                              {(() => {
+                                const exp = shippingOptions.find((o) => o.type === "express");
+                                if (!exp) return "₹350";
+                                return formatInr(exp.rateMinor);
+                              })()}
+                            </span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Payment Mode Banner */}
+                    <div className="p-3.5 rounded-xl bg-[#FAF8F5] border border-[#E7DFD5] flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                          <Lock className="w-4 h-4 text-emerald-700" />
+                        </div>
+                        <div>
+                          <p className="text-xs sm:text-sm font-semibold text-[#30251F]">
+                            Online Payment via Razorpay
+                          </p>
+                          <p className="text-[11px] text-[#786960]">
+                            UPI (GPay, PhonePe, Paytm), Cards, NetBanking
+                          </p>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-300 shrink-0 font-medium">
+                        100% Secure
+                      </Badge>
+                    </div>
+
+                    {/* Mandatory Continuous Unboxing Video Reminder */}
+                    <div className="p-3 rounded-lg bg-[#FAF8F5] border border-[#E7DFD5] text-[11px] sm:text-xs text-[#4A3D34] space-y-1">
+                      <p className="font-semibold text-[#073C35] flex items-center gap-1.5">
+                        <Info className="w-3.5 h-3.5" />
+                        <span>Mandatory Unboxing Video Policy:</span>
                       </p>
+                      <p className="text-[#5C4D42] pl-5">
+                        To protect authentic handloom products, an uncut 360° unboxing video from package receipt is mandatory for any transit claims within 12–18 hours.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Card 3: Delivery Address Card (Image 2 style) */}
+              <Card className="shadow-xs border border-[#E7DFD5] bg-white rounded-xl sm:rounded-2xl">
+                <CardHeader className="py-3 px-4 sm:px-5 border-b border-[#E7DFD5]/70 bg-[#FAF8F5]/60">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-[#073C35]" />
+                      <span className="font-serif text-sm sm:text-base font-semibold text-[#30251F]">
+                        Delivery Address
+                      </span>
                     </div>
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => setCurrentStep(1)}
-                      className="h-8 text-xs border-[#073C35]/30 text-[#073C35] hover:bg-[#073C35]/10 shrink-0 gap-1.5 cursor-pointer"
+                      className="h-7 sm:h-8 text-xs border-[#073C35]/30 text-[#073C35] hover:bg-[#073C35]/10 shrink-0 gap-1 cursor-pointer font-medium"
                     >
                       <Edit2 className="w-3 h-3" />
                       <span>Edit</span>
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Delivery Option Selection */}
-              <Card className="shadow-xs border border-[#E7DFD5] bg-white">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-[#073C35] uppercase tracking-wider">
-                    <span className="w-5 h-5 rounded-full bg-[#073C35]/10 text-[#073C35] inline-flex items-center justify-center font-bold text-[11px]">
-                      2
-                    </span>
-                    <span>Shipping Method</span>
-                  </div>
-                  <CardTitle className="font-serif text-xl font-normal text-[#30251F]">
-                    Choose Delivery Option
-                  </CardTitle>
-                  <CardDescription className="text-xs text-[#786960]">
-                    Select your preferred transit speed for insured door delivery.
-                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Standard Shipping */}
-                    <button
-                      type="button"
-                      onClick={() => setShippingMethod("standard")}
-                      className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
-                        shippingMethod === "standard"
-                          ? "border-[#073C35] bg-[#073C35]/5 shadow-xs"
-                          : "border-border/70 hover:border-border bg-card"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between w-full mb-3">
-                        <div className="flex items-center gap-2">
-                          <Truck
-                            className={`w-4 h-4 ${shippingMethod === "standard" ? "text-[#073C35]" : "text-muted-foreground"}`}
-                          />
-                          <span className="font-semibold text-sm text-foreground">
-                            {standardOption?.name || "Standard Shipping"}
-                          </span>
-                        </div>
-                        <div
-                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                            shippingMethod === "standard"
-                              ? "border-[#073C35] bg-[#073C35]"
-                              : "border-muted-foreground/40"
-                          }`}
-                        >
-                          {shippingMethod === "standard" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                        </div>
-                      </div>
-                      <div className="flex items-baseline justify-between mt-1 pt-2 border-t border-border/40">
-                        <span className="text-xs text-muted-foreground">Within India</span>
-                        <span className="font-semibold font-mono text-sm text-[#073C35]">
-                          {(() => {
-                            const std = shippingOptions.find((o) => o.type === "standard");
-                            if (!std) return "FREE";
-                            return std.rate === 0 ? "FREE" : formatInr(std.rateMinor);
-                          })()}
+                <CardContent className="p-4 sm:p-5">
+                  <div className="space-y-1 text-xs sm:text-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-bold text-[#30251F] text-sm sm:text-base">
+                        {name || "Customer Name"}
+                      </span>
+                      {phone && (
+                        <span className="font-mono text-[#4A3D34] font-medium">
+                          +91 {phone}
                         </span>
-                      </div>
-                    </button>
-
-                    {/* Express Delivery */}
-                    <button
-                      type="button"
-                      onClick={() => setShippingMethod("express")}
-                      className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between cursor-pointer ${
-                        shippingMethod === "express"
-                          ? "border-[#694208] bg-[#694208]/5 shadow-xs"
-                          : "border-border/70 hover:border-border bg-card"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between w-full mb-3">
-                        <div className="flex items-center gap-2">
-                          <Zap
-                            className={`w-4 h-4 ${shippingMethod === "express" ? "text-[#694208]" : "text-muted-foreground"}`}
-                          />
-                          <span className="font-semibold text-sm text-foreground">
-                            {expressOption?.name || "Express Delivery"}
-                          </span>
-                        </div>
-                        <div
-                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                            shippingMethod === "express"
-                              ? "border-[#694208] bg-[#694208]"
-                              : "border-muted-foreground/40"
-                          }`}
-                        >
-                          {shippingMethod === "express" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                        </div>
-                      </div>
-                      <div className="flex items-baseline justify-between mt-1 pt-2 border-t border-border/40">
-                        <span className="text-xs text-muted-foreground">Express Priority</span>
-                        <span className="font-semibold font-mono text-sm text-[#694208]">
-                          {(() => {
-                            const exp = shippingOptions.find((o) => o.type === "express");
-                            if (!exp) return "₹350";
-                            return formatInr(exp.rateMinor);
-                          })()}
-                        </span>
-                      </div>
-                    </button>
+                      )}
+                    </div>
+                    <p className="text-[#5C4D42] leading-relaxed pt-0.5">
+                      {shippingLine1}
+                      {shippingLine2 ? `, ${shippingLine2}` : ""}
+                      {shippingCity ? `, ${shippingCity}` : ""}
+                      {shippingState ? `, ${shippingState}` : ""}
+                      {shippingPincode ? ` - ${shippingPincode}` : ""}
+                    </p>
+                    <p className="text-[11px] text-[#786960] font-mono pt-1">
+                      Updates sent to: <span className="text-[#30251F] font-sans font-medium">{email}</span>
+                    </p>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Compact Collapsed Store & Handloom Policies */}
-              <Card className="shadow-xs border border-[#E7DFD5] bg-[#FAF8F5] overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setGuidelinesOpen(!guidelinesOpen)}
-                  className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-[#E7DFD5]/20 transition-colors cursor-pointer"
-                >
-                  <span className="text-xs font-semibold text-[#073C35] uppercase tracking-wider flex items-center gap-1.5">
-                    <Info className="w-3.5 h-3.5 text-[#073C35]" />
-                    <span>Store &amp; Handloom Guidelines (Quick Summary)</span>
+              {/* Card 4: Price Details Card (with Policy Agreement combined inside) */}
+              <Card className="shadow-xs border border-[#E7DFD5] bg-white rounded-xl sm:rounded-2xl overflow-hidden">
+                <CardHeader className="py-3 px-4 sm:px-5 border-b border-[#E7DFD5]/70 bg-[#FAF8F5]/60">
+                  <span className="font-serif text-sm sm:text-base font-semibold text-[#30251F]">
+                    Price Details ({totalItemCount} {totalItemCount === 1 ? "Item" : "Items"})
                   </span>
-                  <div className="flex items-center gap-1 text-[11px] text-[#786960]">
-                    <span className="hidden sm:inline">{guidelinesOpen ? "Hide" : "View"}</span>
-                    {guidelinesOpen ? (
-                      <ChevronUp className="w-3.5 h-3.5 text-[#073C35]" />
-                    ) : (
-                      <ChevronDown className="w-3.5 h-3.5 text-[#073C35]" />
-                    )}
+                </CardHeader>
+                <CardContent className="p-4 sm:p-5 space-y-2.5 text-xs sm:text-sm">
+                  <div className="flex items-center justify-between text-[#5C4D42]">
+                    <span>Total Product Price</span>
+                    <span className="font-mono text-[#30251F] font-medium">
+                      {quote ? formatInr(quote.subtotal.minor) : "Calculating..."}
+                    </span>
                   </div>
-                </button>
-                {guidelinesOpen && (
-                  <div className="px-4 pb-4 pt-2 text-xs text-[#4A3D34] space-y-2.5 border-t border-[#E7DFD5]/70 animate-in fade-in-50 duration-150">
-                    <div className="p-2.5 rounded-lg bg-[#073C35]/10 border border-[#073C35]/20 text-[#073C35] font-medium leading-relaxed">
-                      <strong>Mandatory Continuous Unboxing Video:</strong> A continuous, unedited video from sealed package to unfolded saree is mandatory for any transit damage or wrong product claims within 12–18 hours of delivery.
-                    </div>
-                    <p>
-                      • <strong>Handloom &amp; Sungudi Craft:</strong> Minor sand marks, dye irregularities, slubs, or weaving characteristics reflect authentic handcrafted traditions.
-                    </p>
-                    <p>
-                      • <strong>Strict No-Cancellation:</strong> Once orders are placed and confirmed, cancellations cannot be accepted.
-                    </p>
-                  </div>
-                )}
-              </Card>
 
-              {/* Policy Consent & Payment Action on Step 2 (Mobile & Tablet) */}
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl border border-[#E7DFD5] bg-white space-y-3">
+                  {quote && quote.discount.minor > 0 && (
+                    <div className="flex items-center justify-between text-emerald-700 font-medium">
+                      <span>Festive Discount</span>
+                      <span className="font-mono">-{formatInr(quote.discount.minor)}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between text-[#5C4D42]">
+                    <div className="flex items-center gap-1.5">
+                      <span>Delivery Fee</span>
+                      {shippingMethod && (
+                        <span className="text-[10px] text-[#786960]">
+                          ({shippingMethod === "express" ? "Express Priority" : "Standard"})
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-mono font-medium text-[#30251F]">
+                      {quote && quote.shipping.minor === 0
+                        ? "FREE"
+                        : quote
+                        ? formatInr(quote.shipping.minor)
+                        : "—"}
+                    </span>
+                  </div>
+
+                  <Separator className="my-2" />
+
+                  <div className="flex items-baseline justify-between text-base sm:text-lg font-semibold pt-1">
+                    <span className="font-serif text-[#30251F]">Order Total</span>
+                    <span className="font-mono text-xl sm:text-2xl font-bold text-[#073C35]">
+                      {quote ? formatInr(displayedTotalMinor) : "—"}
+                    </span>
+                  </div>
+                </CardContent>
+
+                {/* Combined Policy Agreement Area */}
+                <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-t border-[#E7DFD5] bg-[#FAF8F5]/60">
                   <label className="flex items-start gap-2.5 cursor-pointer select-none">
                     <Checkbox
                       id="policy-consent-step2"
@@ -1815,8 +2087,8 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                       onCheckedChange={(c) => setPoliciesAgreed(Boolean(c))}
                       className="mt-0.5 shrink-0"
                     />
-                    <span className="text-[11px] text-[#4A3D34] leading-snug">
-                      I have read and agree to NiVi&apos;s{" "}
+                    <span className="text-[11px] sm:text-xs text-[#4A3D34] leading-snug">
+                      I agree to NiVi&apos;s{" "}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -1836,20 +2108,9 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                         }}
                         className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#694208] cursor-pointer"
                       >
-                        Return &amp; Exchange (Mandatory Unboxing Video)
+                        Return &amp; Exchange (Unboxing Video)
                       </button>
-                      ,{" "}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          openPolicyDialog("cancellation");
-                        }}
-                        className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#694208] cursor-pointer"
-                      >
-                        Cancellation
-                      </button>{" "}
-                      policies and{" "}
+                      , and{" "}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -1858,208 +2119,56 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                         }}
                         className="text-[#073C35] font-semibold underline underline-offset-2 hover:text-[#694208] cursor-pointer"
                       >
-                        Craft Disclaimers
+                        Handloom Disclaimers
                       </button>
                       .
                     </span>
                   </label>
+                </div>
+              </Card>
 
-                  <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setCurrentStep(1)}
-                      className="w-full sm:w-auto h-11 text-xs font-medium border-[#E7DFD5] text-[#30251F] hover:bg-muted"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-                      <span>Back to Details</span>
-                    </Button>
+              {/* Bottom Action Area: Pay Button */}
+              <div className="space-y-3 pt-1">
 
-                    <Button
-                      onClick={handleProceedToPayment}
-                      disabled={isQuoting || isProcessingPayment || isPending || items.length === 0}
-                      className="w-full sm:flex-1 h-11 text-sm font-semibold tracking-wide gap-2 shadow-xs cursor-pointer bg-[#073C35] hover:bg-[#052C27] text-white"
-                      size="lg"
-                    >
-                      {isProcessingPayment ? (
-                        <>
-                          <span className="animate-spin mr-2">⏳</span>
-                          <span>Opening Payment...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Lock className="w-4 h-4" />
-                          <span>Pay {quote ? formatInr(quote.total.minor) : ""} Securely</span>
-                        </>
-                      )}
-                    </Button>
-                  </div>
+                {/* Buttons: Back to Address & Pay Securely */}
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setCurrentStep(1)}
+                    className="w-full sm:w-auto h-12 px-5 text-xs font-medium border-[#E7DFD5] text-[#30251F] hover:bg-muted rounded-full cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+                    <span>Back to Address</span>
+                  </Button>
 
-                  <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1 pt-1 text-center">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#073C35] shrink-0" />
-                    <span>Order receipt and dispatch confirmation sent to your email</span>
-                  </p>
+                  {/* The EXACT Pay Button from Image 3 */}
+                  <Button
+                    onClick={handleProceedToPayment}
+                    disabled={isQuoting || isProcessingPayment || isPending || items.length === 0 || !shippingMethod}
+                    className="w-full sm:flex-1 h-12 px-8 text-sm sm:text-base font-semibold tracking-wide gap-2.5 rounded-full cursor-pointer bg-[#073C35] hover:bg-[#052C27] text-white shadow-md disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+                  >
+                    {isProcessingPayment ? (
+                      <>
+                        <span className="animate-spin mr-1">⏳</span>
+                        <span>Opening Razorpay Payment...</span>
+                      </>
+                    ) : !shippingMethod ? (
+                      <>
+                        <Truck className="w-4 h-4" />
+                        <span>Select Delivery Option</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-4 h-4 shrink-0" />
+                        <span>Pay {quote ? formatInr(displayedTotalMinor) : ""} Securely</span>
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>
           )}
-        </div>
-
-        {/* Right Column: Order Summary (Sticky on Desktop) */}
-        <div className="hidden lg:block lg:col-span-5">
-          <Card className="sticky top-20 shadow-xs border border-[#E7DFD5] bg-white">
-            <CardHeader className="pb-3 border-b border-[#E7DFD5]">
-              <CardTitle className="font-serif text-lg font-normal text-[#30251F] flex items-center justify-between">
-                <span>Order Summary</span>
-                <Badge variant="outline" className="text-[11px] font-mono text-[#073C35] border-[#073C35]/30">
-                  {totalItemCount} {totalItemCount === 1 ? "Item" : "Items"}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-4">
-              {/* Product list */}
-              <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
-                {items.map((item) => {
-                  const product = products.find(
-                    (p) => p.sku.toLowerCase() === item.sku.toLowerCase(),
-                  );
-                  const quoteLine = quote?.lines.find(
-                    (ql) => ql.sku.toLowerCase() === item.sku.toLowerCase(),
-                  );
-
-                  return (
-                    <div
-                      key={item.sku}
-                      className="flex items-center gap-3 text-sm py-2 border-b border-border/40 last:border-b-0"
-                    >
-                      <div className="relative w-12 h-14 rounded-md bg-muted overflow-hidden shrink-0 border border-border/60">
-                        {product?.primaryImageUrl ? (
-                          <Image
-                            src={product.primaryImageUrl}
-                            alt={product.name}
-                            fill
-                            className="object-cover"
-                            sizes="48px"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                            <Package className="w-4 h-4 opacity-40" />
-                          </div>
-                        )}
-                        <span className="absolute bottom-0 right-0 bg-[#073C35] text-white text-[10px] font-mono px-1 rounded-tl-sm">
-                          ×{item.qty}
-                        </span>
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-xs truncate text-[#30251F]">
-                          {product?.name || item.sku}
-                        </p>
-                        <p className="text-[11px] font-mono text-muted-foreground">
-                          SKU: {item.sku}
-                        </p>
-                        {quoteLine?.offerLabel && (
-                          <Badge
-                            variant="secondary"
-                            className="text-[9px] mt-0.5 bg-amber-500/10 text-amber-700 border-none px-1.5 py-0"
-                          >
-                            {quoteLine.offerLabel}
-                          </Badge>
-                        )}
-                      </div>
-
-                      <div className="text-right shrink-0">
-                        {quoteLine && quoteLine.lineDiscount.minor > 0 && (
-                          <p className="font-mono text-[11px] text-muted-foreground line-through">
-                            {formatInr(quoteLine.lineSubtotal.minor)}
-                          </p>
-                        )}
-                        <p className="font-mono text-xs font-semibold text-[#30251F]">
-                          {quoteLine
-                            ? formatInr(quoteLine.lineTotal.minor)
-                            : product
-                            ? formatInr(product.priceMinor * item.qty)
-                            : "—"}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {quoteError && (
-                <Alert variant="destructive" className="py-2 text-xs">
-                  <AlertTitle className="text-xs font-semibold">Pricing Note</AlertTitle>
-                  <AlertDescription className="text-[11px]">{quoteError}</AlertDescription>
-                </Alert>
-              )}
-
-              <Separator />
-
-              {/* Price Breakdown */}
-              <div className="space-y-2.5 text-xs">
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span>Subtotal</span>
-                  <span className="font-mono text-[#30251F]">
-                    {quote ? formatInr(quote.subtotal.minor) : "Calculating..."}
-                  </span>
-                </div>
-
-                {quote && quote.discount.minor > 0 && (
-                  <div className="flex items-center justify-between text-emerald-700 font-medium">
-                    <span>Festive Discount</span>
-                    <span className="font-mono">-{formatInr(quote.discount.minor)}</span>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <div className="flex items-center gap-1.5">
-                    {shippingMethod === "express" ? (
-                      <Zap className="w-3.5 h-3.5 text-[#694208]" />
-                    ) : (
-                      <Truck className="w-3.5 h-3.5 text-[#073C35]" />
-                    )}
-                    <span>
-                      {quote?.shippingLabel || (shippingMethod === "express" ? "Express Delivery" : "Standard Shipping")}
-                    </span>
-                  </div>
-                  <span className="font-mono font-medium text-foreground">
-                    {quote && quote.shipping.minor === 0
-                      ? "FREE"
-                      : quote
-                      ? formatInr(quote.shipping.minor)
-                      : "—"}
-                  </span>
-                </div>
-
-                <Separator className="my-2" />
-
-                <div className="flex items-baseline justify-between text-base font-semibold pt-1">
-                  <span className="font-serif text-[#30251F]">Total Amount</span>
-                  <span className="font-mono text-xl font-bold text-[#073C35]">
-                    {quote ? formatInr(quote.total.minor) : "—"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Call to action on Step 1 vs Step 2 */}
-              {currentStep === 1 ? (
-                <Button
-                  type="button"
-                  onClick={handleContinueToStep2}
-                  className="w-full h-11 text-xs font-semibold tracking-wide gap-2 shadow-xs cursor-pointer bg-[#073C35] hover:bg-[#052C27] text-white mt-2"
-                >
-                  <span>Continue to Delivery Option</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              ) : (
-                <div className="pt-2 text-center text-[11px] text-[#786960]">
-                  <span>Complete payment using the options in Step 2.</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
       </div>
 
       {/* Interactive Policy Modal */}

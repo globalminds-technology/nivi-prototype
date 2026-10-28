@@ -37,6 +37,7 @@ interface HeaderProps {
 
 export function Header({ products = [], categories }: HeaderProps) {
   const pathname = usePathname();
+  const isCheckout = pathname === "/checkout";
   const { totalCount: cartCount } = useCart();
   const { count: wishlistCount } = useWishlist();
 
@@ -173,8 +174,8 @@ export function Header({ products = [], categories }: HeaderProps) {
 
           {/* RIGHT ACTIONS: Search Dropdown + Wishlist + Account + Cart Bag */}
           <div className="flex items-center gap-1.5 md:gap-2 sm:gap-3 shrink-0">
-            {/* Search Dropdown / Trigger */}
-            <SearchDropdown products={products} />
+            {/* Search Dropdown / Trigger (Hidden on checkout to prevent distractions & autofill collisions) */}
+            {!isCheckout && <SearchDropdown products={products} />}
 
             {/* DESKTOP ONLY: Wishlist and Cart Bag */}
             <div className="hidden md:flex items-center gap-1 md:gap-1.5 lg:gap-2.5">
