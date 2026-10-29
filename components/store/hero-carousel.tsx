@@ -108,9 +108,9 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
   };
 
   return (
-    <section className="w-full">
+    <section className="w-full px-3.5 sm:px-5 md:px-0 pt-2 sm:pt-3 md:pt-0 pb-1 sm:pb-0">
       <div
-        className="relative w-full overflow-hidden select-none"
+        className="relative w-full overflow-hidden select-none rounded-2xl md:rounded-none shadow-xs md:shadow-none"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
@@ -137,8 +137,8 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                   isActive ? "block opacity-100" : "hidden opacity-0"
                 }`}
               >
-                {/* Full-bleed banner maintaining true 3:1 aspect ratio */}
-                <div className="relative w-full overflow-hidden aspect-[3/1] group">
+                {/* 3:1 banner with rounded corners on mobile */}
+                <div className="relative w-full overflow-hidden aspect-[3/1] rounded-2xl md:rounded-none group">
                   <Link
                     href={banner.primaryCtaLink || "/collections"}
                     className="block w-full h-full cursor-pointer overflow-hidden"
@@ -240,7 +240,7 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                 isActive ? "block opacity-100" : "hidden opacity-0"
               }`}
             >
-              <div className="relative w-full overflow-hidden aspect-[3/1] group">
+              <div className="relative w-full overflow-hidden aspect-[3/1] rounded-2xl md:rounded-none group">
                 <Link
                   href={ctaLink}
                   className="block w-full h-full cursor-pointer overflow-hidden"
@@ -254,8 +254,8 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                   />
                 </Link>
 
-                {/* If campaign has title AND showOverlay is enabled, render overlay */}
-                {camp.showOverlay !== false && (camp.bannerTitle || camp.name) && (
+                {/* If campaign has title AND showOverlay is explicitly enabled, render overlay */}
+                {camp.showOverlay === true && Boolean(camp.bannerTitle?.trim()) && (
                   <>
                     <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[85%] sm:w-[65%] md:w-[50%]" />
                     <div className="absolute inset-0 z-10 px-5 sm:px-10 md:px-14 lg:px-20 py-3 sm:py-6 md:py-8 flex flex-col justify-center items-start text-left text-white pointer-events-none">
@@ -263,7 +263,7 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                         {camp.label || "Special Offer"}
                       </span>
                       <h2 className="font-serif text-sm xs:text-base sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight max-w-xs sm:max-w-md text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
-                        {camp.bannerTitle || camp.name}
+                        {camp.bannerTitle}
                       </h2>
                       {camp.bannerSubtitle && (
                         <p className="text-[9px] xs:text-[11px] sm:text-xs md:text-sm text-neutral-200/90 line-clamp-2 max-w-xs sm:max-w-md mt-0.5 sm:mt-1 drop-shadow-xs font-sans">
@@ -287,9 +287,9 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
           );
         })}
 
-        {/* Carousel Indicators */}
+        {/* Carousel Indicators (hidden on mobile for clean card aesthetic, swipeable via touch) */}
         {totalSlides > 1 && (
-          <div className="absolute bottom-3 sm:bottom-4 md:bottom-5 left-4 sm:left-8 md:left-12 z-20 flex items-center gap-2">
+          <div className="hidden sm:flex absolute bottom-3 sm:bottom-4 md:bottom-5 left-4 sm:left-8 md:left-12 z-20 items-center gap-2">
             {slides.map((slide, i) => (
               <button
                 key={slide.id}
@@ -306,13 +306,13 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
           </div>
         )}
 
-        {/* Navigation Arrows */}
-        {totalSlides > 0 && (
+        {/* Navigation Arrows (hidden on mobile, touch swipe handled on touch devices) */}
+        {totalSlides > 1 && (
           <>
             <button
               type="button"
               onClick={() => goToSlide(currentSlide - 1)}
-              className="absolute left-2.5 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full bg-white/75 hover:bg-white text-[#30251F] shadow-sm flex items-center justify-center transition-all hover:scale-105"
+              className="hidden sm:flex absolute left-2.5 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full bg-white/75 hover:bg-white text-[#30251F] shadow-sm items-center justify-center transition-all hover:scale-105"
               aria-label="Previous Slide"
             >
               <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
@@ -320,7 +320,7 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
             <button
               type="button"
               onClick={() => goToSlide(currentSlide + 1)}
-              className="absolute right-2.5 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full bg-white/75 hover:bg-white text-[#30251F] shadow-sm flex items-center justify-center transition-all hover:scale-105"
+              className="hidden sm:flex absolute right-2.5 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full bg-white/75 hover:bg-white text-[#30251F] shadow-sm items-center justify-center transition-all hover:scale-105"
               aria-label="Next Slide"
             >
               <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />

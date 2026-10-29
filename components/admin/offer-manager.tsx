@@ -276,26 +276,26 @@ export function OfferManager({
   // Unified list of all carousel slides (Hero Banner + Offer Banners) for reordering
   type UnifiedSlideItem =
     | {
-        id: string;
-        type: "hero";
-        title: string;
-        subtitle: string;
-        imageUrl: string;
-        order: number;
-        active: boolean;
-        badge: string;
-      }
+      id: string;
+      type: "hero";
+      title: string;
+      subtitle: string;
+      imageUrl: string;
+      order: number;
+      active: boolean;
+      badge: string;
+    }
     | {
-        id: string;
-        type: "campaign";
-        title: string;
-        subtitle: string;
-        imageUrl: string;
-        order: number;
-        active: boolean;
-        badge: string;
-        campaign: OfferCampaign;
-      };
+      id: string;
+      type: "campaign";
+      title: string;
+      subtitle: string;
+      imageUrl: string;
+      order: number;
+      active: boolean;
+      badge: string;
+      campaign: OfferCampaign;
+    };
 
   const carouselSlides = useMemo<UnifiedSlideItem[]>(() => {
     const items: UnifiedSlideItem[] = [];
@@ -890,8 +890,7 @@ export function OfferManager({
 
         setManageDialogOpen(false);
         toast.success(
-          `Updated offer! ${selectedProductIds.length} saree${
-            selectedProductIds.length === 1 ? "" : "s"
+          `Updated offer! ${selectedProductIds.length} saree${selectedProductIds.length === 1 ? "" : "s"
           } attached.`,
         );
       } else {
@@ -1044,19 +1043,17 @@ export function OfferManager({
         <button
           type="button"
           onClick={() => setActiveTab("banners")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
-            activeTab === "banners"
-              ? "bg-[#073C35] text-[#FFFCF5] shadow-xs border border-[#C9A45C]/40"
-              : "text-[#6B5A4A] hover:text-[#073C35] hover:bg-[#073C35]/5"
-          }`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === "banners"
+            ? "bg-[#073C35] text-[#FFFCF5] shadow-xs border border-[#C9A45C]/40"
+            : "text-[#6B5A4A] hover:text-[#073C35] hover:bg-[#073C35]/5"
+            }`}
         >
           <ImageIcon className="h-4 w-4 text-[#C9A45C]" />
           <span>Homepage Banners & Carousel</span>
           <Badge
             variant={activeTab === "banners" ? "secondary" : "outline"}
-            className={`text-[10px] px-1.5 py-0 font-mono ml-0.5 ${
-              activeTab === "banners" ? "bg-white/15 text-white" : ""
-            }`}
+            className={`text-[10px] px-1.5 py-0 font-mono ml-0.5 ${activeTab === "banners" ? "bg-white/15 text-white" : ""
+              }`}
           >
             {carouselSlides.length}
           </Badge>
@@ -1065,19 +1062,17 @@ export function OfferManager({
         <button
           type="button"
           onClick={() => setActiveTab("offers")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
-            activeTab === "offers"
-              ? "bg-[#073C35] text-[#FFFCF5] shadow-xs border border-[#C9A45C]/40"
-              : "text-[#6B5A4A] hover:text-[#073C35] hover:bg-[#073C35]/5"
-          }`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === "offers"
+            ? "bg-[#073C35] text-[#FFFCF5] shadow-xs border border-[#C9A45C]/40"
+            : "text-[#6B5A4A] hover:text-[#073C35] hover:bg-[#073C35]/5"
+            }`}
         >
           <Tag className="h-4 w-4 text-[#C9A45C]" />
           <span>Promotional Offers & Discounts</span>
           <Badge
             variant={activeTab === "offers" ? "secondary" : "outline"}
-            className={`text-[10px] px-1.5 py-0 font-mono ml-0.5 ${
-              activeTab === "offers" ? "bg-white/15 text-white" : ""
-            }`}
+            className={`text-[10px] px-1.5 py-0 font-mono ml-0.5 ${activeTab === "offers" ? "bg-white/15 text-white" : ""
+              }`}
           >
             {campaignList.length}
           </Badge>
@@ -1090,801 +1085,791 @@ export function OfferManager({
           {/* SECTION 1: INITIAL HOMEPAGE HERO BANNER CARD */}
           <Card className="border-[#D5CCBB] bg-[#FFFCF5] shadow-[0_4px_20px_rgba(7,60,53,0.05)] rounded-2xl overflow-hidden">
             <CardHeader className="p-5 pb-3 border-b border-[#D5CCBB]/60 bg-[#E4DDCD]/30">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <CardTitle className="font-serif text-xl flex items-center gap-2.5">
-                <Tag className="h-5 w-5 text-primary" />
-                <span>Flagship Homepage Hero Banner</span>
-                <Badge
-                  variant={heroBanner.active ? "default" : "outline"}
-                  className="text-[10px] px-2 py-0 ml-1"
-                >
-                  {heroBanner.active ? "Active on Homepage" : "Paused"}
-                </Badge>
-              </CardTitle>
-              <CardDescription className="text-xs">
-                This is the primary initial banner customers see at the top of your homepage. You can upload any image to Cloudflare R2 and adjust its focal position coordinates.
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={openHeroDialog}
-                className="gap-1.5 text-xs shadow-xs"
-              >
-                <Sliders className="h-3.5 w-3.5 text-primary" />
-                <span>Adjust Image & Position</span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={handleToggleHeroActive}
-                className={`h-8 w-8 ${
-                  heroBanner.active
-                    ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50"
-                    : "text-primary hover:bg-primary/10"
-                }`}
-                title={heroBanner.active ? "Pause initial banner" : "Activate initial banner"}
-                disabled={isPending}
-              >
-                <Power className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-5">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            {/* Live Visual Card */}
-            <div className="lg:col-span-7">
-              <div
-                className="relative rounded-2xl overflow-hidden border border-neutral-300 shadow-md bg-neutral-950 aspect-[21/9] sm:aspect-[24/9] group cursor-pointer"
-                onClick={openHeroDialog}
-                title="Click to edit banner image & adjust position"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={heroBanner.imageUrl || "/nivi-hero-banner-v2.jpg"}
-                  alt={heroBanner.title || "Initial Hero Banner"}
-                  className="w-full h-full object-cover brightness-[0.92] transition-transform duration-500 group-hover:scale-[1.02]"
-                  style={{
-                    objectPosition:
-                      heroBanner.objectPosition ||
-                      `${heroBanner.imagePositionX ?? 85}% ${heroBanner.imagePositionY ?? 15}%`,
-                  }}
-                />
-
-                {heroBanner.showOverlay !== false && (
-                  <>
-                    <div
-                      className={`absolute inset-0 ${
-                        heroBanner.textPosition === "right"
-                          ? "bg-gradient-to-l from-black/85 via-black/50 to-transparent right-0 left-auto w-[65%]"
-                          : heroBanner.textPosition === "center"
-                          ? "bg-black/45"
-                          : "bg-gradient-to-r from-black/85 via-black/50 to-transparent w-[65%]"
-                      }`}
-                    />
-                    <div
-                      className={`absolute inset-0 p-4 sm:p-6 flex flex-col justify-center text-white ${
-                        heroBanner.textPosition === "center"
-                          ? "items-center text-center"
-                          : heroBanner.textPosition === "right"
-                          ? "items-end text-right"
-                          : "items-start text-left"
-                      }`}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <CardTitle className="font-serif text-xl flex items-center gap-2.5">
+                    <Tag className="h-5 w-5 text-primary" />
+                    <span>Flagship Homepage Hero Banner</span>
+                    <Badge
+                      variant={heroBanner.active ? "default" : "outline"}
+                      className="text-[10px] px-2 py-0 ml-1"
                     >
-                      {heroBanner.tagline && (
-                        <span className="text-[10px] sm:text-xs font-serif tracking-wider uppercase text-amber-200 border border-brand/40 px-2 py-0.5 rounded-full bg-black/40 mb-1.5">
-                          {heroBanner.tagline}
-                        </span>
-                      )}
-                      <h3 className="font-serif text-sm sm:text-lg md:text-xl font-bold leading-tight max-w-sm drop-shadow-sm">
-                        {heroBanner.title || "Curated Elegance, Handcrafted with Soul."}
-                      </h3>
-                      {heroBanner.subtitle && (
-                        <p className="text-[10px] sm:text-xs text-neutral-200 line-clamp-1 max-w-xs mt-1">
-                          {heroBanner.subtitle}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                <div className="absolute top-2 right-2 flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
-                  <Badge variant="secondary" className="text-[10px] bg-black/70 text-white border-white/20 backdrop-blur-xs font-mono">
-                    Position: {heroBanner.imagePositionX ?? 85}% X, {heroBanner.imagePositionY ?? 15}% Y
-                  </Badge>
+                      {heroBanner.active ? "Active on Homepage" : "Paused"}
+                    </Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    This is the primary initial banner customers see at the top of your homepage. You can upload any image to Cloudflare R2 and adjust its focal position coordinates.
+                  </CardDescription>
                 </div>
-              </div>
-            </div>
-
-            {/* Banner Specs & Quick Details */}
-            <div className="lg:col-span-5 space-y-3.5 text-xs">
-              <div className="rounded-xl border border-border/70 bg-muted/20 p-4 space-y-2.5">
-                <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                  <span className="font-semibold text-foreground flex items-center gap-1.5">
-                    <Move className="h-3.5 w-3.5 text-primary" />
-                    <span>Focal Position:</span>
-                  </span>
-                  <span className="font-mono font-bold text-primary">
-                    X: {heroBanner.imagePositionX ?? 85}% | Y: {heroBanner.imagePositionY ?? 15}%
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                  <span className="font-semibold text-foreground">Overlay Mode:</span>
-                  <Badge variant="outline" className="text-[10px]">
-                    {heroBanner.showOverlay !== false
-                      ? `Text Overlay (${heroBanner.textPosition || "left"})`
-                      : "Pure Graphic Mode"}
-                  </Badge>
-                </div>
-
-                <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                  <span className="font-semibold text-foreground">Primary CTA Link:</span>
-                  <span className="font-mono text-muted-foreground truncate max-w-[180px]">
-                    {heroBanner.primaryCtaLink || "/collections"}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-foreground">Slide Order in Carousel:</span>
-                  <Badge variant="secondary" className="font-mono text-[10px]">
-                    Slide #{((heroBanner.displayOrder ?? 0) + 1)}
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={openHeroDialog}
-                  size="sm"
-                  className="flex-1 gap-1.5 text-xs shadow-xs"
-                >
-                  <Edit2 className="h-3.5 w-3.5" />
-                  <span>Upload & Adjust Banner</span>
-                </Button>
-                <Button
-                  onClick={handleResetHeroBanner}
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-                  title="Reset to default NiVi banner"
-                  disabled={isPending}
-                >
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  <span>Reset Default</span>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* SECTION 2: HOMEPAGE HERO CAROUSEL KANBAN DRAG & DROP BOARD */}
-      <Card className="border-[#d2c8b5] bg-card shadow-[0_2px_12px_rgba(70,50,20,0.05)] overflow-hidden">
-        <CardHeader className="p-5 pb-3 border-b border-border/50 bg-[#ede7d8]/40">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <CardTitle className="font-serif text-xl flex items-center gap-2">
-                <Kanban className="h-5 w-5 text-primary" />
-                <span>Homepage Hero Carousel Kanban Board</span>
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Drag and drop slide cards to rearrange their order live on the homepage. Slide #1 displays immediately on initial page load.
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2.5">
-              {/* View Switcher: Kanban vs List */}
-              <div className="flex items-center bg-background/90 rounded-lg p-0.5 border border-border/60 shadow-2xs">
-                <Button
-                  type="button"
-                  variant={carouselViewMode === "kanban" ? "default" : "ghost"}
-                  size="sm"
-                  className="h-7 px-2.5 text-xs gap-1.5"
-                  onClick={() => setCarouselViewMode("kanban")}
-                  title="Kanban Cards Board"
-                >
-                  <Kanban className="h-3.5 w-3.5" />
-                  <span>Kanban</span>
-                </Button>
-                <Button
-                  type="button"
-                  variant={carouselViewMode === "list" ? "default" : "ghost"}
-                  size="sm"
-                  className="h-7 px-2.5 text-xs gap-1.5"
-                  onClick={() => setCarouselViewMode("list")}
-                  title="Compact List View"
-                >
-                  <LayoutList className="h-3.5 w-3.5" />
-                  <span>List</span>
-                </Button>
-              </div>
-
-              <Badge
-                variant="outline"
-                className="font-mono text-xs px-2.5 py-1 border-primary/40 text-primary bg-primary/5 shrink-0"
-              >
-                {carouselSlides.length} Slide{carouselSlides.length === 1 ? "" : "s"}
-              </Badge>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-5">
-          {carouselViewMode === "kanban" ? (
-            /* ========================================================
-               KANBAN VIEW: Drag and Drop Responsive Cards Board
-               ======================================================== */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {carouselSlides.map((slide, idx) => {
-                const isHero = slide.type === "hero";
-                const isDragging = draggedSlideIndex === idx;
-                const isDragOver = dragOverSlideIndex === idx;
-
-                return (
-                  <div
-                    key={slide.id}
-                    draggable={!isPending}
-                    onDragStart={(e) => handleDragStart(e, idx)}
-                    onDragOver={(e) => handleDragOver(e, idx)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={(e) => handleDrop(e, idx)}
-                    onDragEnd={handleDragEnd}
-                    className={`group relative flex flex-col rounded-2xl border p-4 transition-all duration-200 select-none ${
-                      isDragging
-                        ? "opacity-30 scale-[0.97] border-dashed border-primary bg-primary/5 shadow-inner"
-                        : isDragOver
-                        ? "ring-2 ring-primary border-primary bg-primary/10 shadow-lg -translate-y-1"
-                        : slide.active
-                        ? "border-border/80 bg-card hover:border-brand/70 hover:shadow-md"
-                        : "border-border/40 bg-muted/20 opacity-75"
-                    }`}
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={openHeroDialog}
+                    className="gap-1.5 text-xs shadow-xs"
                   >
-                    {/* Top Bar: Drag Handle, Slide Order Badge & Power Toggle */}
-                    <div className="flex items-center justify-between pb-3 border-b border-border/40 gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div
-                          className="cursor-grab active:cursor-grabbing p-1 -ml-1 rounded-md hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors shrink-0"
-                          title="Click and drag to reorder slide in carousel"
-                        >
-                          <GripVertical className="h-4 w-4" />
-                        </div>
-                        <Badge
-                          variant={idx === 0 ? "default" : "secondary"}
-                          className="font-mono text-[10px] px-2 py-0.5 truncate"
-                        >
-                          {idx === 0 ? "#1 (Initial Load)" : `#${idx + 1}`}
-                        </Badge>
-                      </div>
+                    <Sliders className="h-3.5 w-3.5 text-primary" />
+                    <span>Adjust Image & Position</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleToggleHeroActive}
+                    className={`h-8 w-8 ${heroBanner.active
+                      ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                      : "text-primary hover:bg-primary/10"
+                      }`}
+                    title={heroBanner.active ? "Pause initial banner" : "Activate initial banner"}
+                    disabled={isPending}
+                  >
+                    <Power className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                {/* Live Visual Card */}
+                <div className="lg:col-span-7">
+                  <div
+                    className="relative rounded-2xl overflow-hidden border border-neutral-300 shadow-md bg-neutral-950 aspect-[21/9] sm:aspect-[24/9] group cursor-pointer"
+                    onClick={openHeroDialog}
+                    title="Click to edit banner image & adjust position"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={heroBanner.imageUrl || "/nivi-hero-banner-v2.jpg"}
+                      alt={heroBanner.title || "Initial Hero Banner"}
+                      className="w-full h-full object-cover brightness-[0.92] transition-transform duration-500 group-hover:scale-[1.02]"
+                      style={{
+                        objectPosition:
+                          heroBanner.objectPosition ||
+                          `${heroBanner.imagePositionX ?? 85}% ${heroBanner.imagePositionY ?? 15}%`,
+                      }}
+                    />
 
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <Badge
-                          variant={slide.active ? "default" : "outline"}
-                          className="text-[10px] px-1.5 py-0"
+                    {heroBanner.showOverlay !== false && (
+                      <>
+                        <div
+                          className={`absolute inset-0 ${heroBanner.textPosition === "right"
+                            ? "bg-gradient-to-l from-black/85 via-black/50 to-transparent right-0 left-auto w-[65%]"
+                            : heroBanner.textPosition === "center"
+                              ? "bg-black/45"
+                              : "bg-gradient-to-r from-black/85 via-black/50 to-transparent w-[65%]"
+                            }`}
+                        />
+                        <div
+                          className={`absolute inset-0 p-4 sm:p-6 flex flex-col justify-center text-white ${heroBanner.textPosition === "center"
+                            ? "items-center text-center"
+                            : heroBanner.textPosition === "right"
+                              ? "items-end text-right"
+                              : "items-start text-left"
+                            }`}
                         >
-                          {slide.active ? "Active" : "Paused"}
-                        </Badge>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => (isHero ? handleToggleHeroActive() : handleToggleCampaign(slide.id))}
-                          className={`h-7 w-7 ${
-                            slide.active
+                          {heroBanner.tagline && (
+                            <span className="text-[10px] sm:text-xs font-serif tracking-wider uppercase text-amber-200 border border-brand/40 px-2 py-0.5 rounded-full bg-black/40 mb-1.5">
+                              {heroBanner.tagline}
+                            </span>
+                          )}
+                          <h3 className="font-serif text-sm sm:text-lg md:text-xl font-bold leading-tight max-w-sm drop-shadow-sm">
+                            {heroBanner.title || "Curated Elegance, Handcrafted with Soul."}
+                          </h3>
+                          {heroBanner.subtitle && (
+                            <p className="text-[10px] sm:text-xs text-neutral-200 line-clamp-1 max-w-xs mt-1">
+                              {heroBanner.subtitle}
+                            </p>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    <div className="absolute top-2 right-2 flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                      <Badge variant="secondary" className="text-[10px] bg-black/70 text-white border-white/20 backdrop-blur-xs font-mono">
+                        Position: {heroBanner.imagePositionX ?? 85}% X, {heroBanner.imagePositionY ?? 15}% Y
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Banner Specs & Quick Details */}
+                <div className="lg:col-span-5 space-y-3.5 text-xs">
+                  <div className="rounded-xl border border-border/70 bg-muted/20 p-4 space-y-2.5">
+                    <div className="flex items-center justify-between pb-2 border-b border-border/50">
+                      <span className="font-semibold text-foreground flex items-center gap-1.5">
+                        <Move className="h-3.5 w-3.5 text-primary" />
+                        <span>Focal Position:</span>
+                      </span>
+                      <span className="font-mono font-bold text-primary">
+                        X: {heroBanner.imagePositionX ?? 85}% | Y: {heroBanner.imagePositionY ?? 15}%
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between pb-2 border-b border-border/50">
+                      <span className="font-semibold text-foreground">Overlay Mode:</span>
+                      <Badge variant="outline" className="text-[10px]">
+                        {heroBanner.showOverlay !== false
+                          ? `Text Overlay (${heroBanner.textPosition || "left"})`
+                          : "Pure Graphic Mode"}
+                      </Badge>
+                    </div>
+
+                    <div className="flex items-center justify-between pb-2 border-b border-border/50">
+                      <span className="font-semibold text-foreground">Primary CTA Link:</span>
+                      <span className="font-mono text-muted-foreground truncate max-w-[180px]">
+                        {heroBanner.primaryCtaLink || "/collections"}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-foreground">Slide Order in Carousel:</span>
+                      <Badge variant="secondary" className="font-mono text-[10px]">
+                        Slide #{((heroBanner.displayOrder ?? 0) + 1)}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={openHeroDialog}
+                      size="sm"
+                      className="flex-1 gap-1.5 text-xs shadow-xs"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                      <span>Upload & Adjust Banner</span>
+                    </Button>
+                    <Button
+                      onClick={handleResetHeroBanner}
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                      title="Reset to default NiVi banner"
+                      disabled={isPending}
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                      <span>Reset Default</span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* SECTION 2: HOMEPAGE HERO CAROUSEL KANBAN DRAG & DROP BOARD */}
+          <Card className="border-[#d2c8b5] bg-card shadow-[0_2px_12px_rgba(70,50,20,0.05)] overflow-hidden">
+            <CardHeader className="p-5 pb-3 border-b border-border/50 bg-[#ede7d8]/40">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <CardTitle className="font-serif text-xl flex items-center gap-2">
+                    <Kanban className="h-5 w-5 text-primary" />
+                    <span>Homepage Hero Carousel Kanban Board</span>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Drag and drop slide cards to rearrange their order live on the homepage. Slide #1 displays immediately on initial page load.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  {/* View Switcher: Kanban vs List */}
+                  <div className="flex items-center bg-background/90 rounded-lg p-0.5 border border-border/60 shadow-2xs">
+                    <Button
+                      type="button"
+                      variant={carouselViewMode === "kanban" ? "default" : "ghost"}
+                      size="sm"
+                      className="h-7 px-2.5 text-xs gap-1.5"
+                      onClick={() => setCarouselViewMode("kanban")}
+                      title="Kanban Cards Board"
+                    >
+                      <Kanban className="h-3.5 w-3.5" />
+                      <span>Kanban</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={carouselViewMode === "list" ? "default" : "ghost"}
+                      size="sm"
+                      className="h-7 px-2.5 text-xs gap-1.5"
+                      onClick={() => setCarouselViewMode("list")}
+                      title="Compact List View"
+                    >
+                      <LayoutList className="h-3.5 w-3.5" />
+                      <span>List</span>
+                    </Button>
+                  </div>
+
+                  <Badge
+                    variant="outline"
+                    className="font-mono text-xs px-2.5 py-1 border-primary/40 text-primary bg-primary/5 shrink-0"
+                  >
+                    {carouselSlides.length} Slide{carouselSlides.length === 1 ? "" : "s"}
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-5">
+              {carouselViewMode === "kanban" ? (
+                /* ========================================================
+                   KANBAN VIEW: Drag and Drop Responsive Cards Board
+                   ======================================================== */
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {carouselSlides.map((slide, idx) => {
+                    const isHero = slide.type === "hero";
+                    const isDragging = draggedSlideIndex === idx;
+                    const isDragOver = dragOverSlideIndex === idx;
+
+                    return (
+                      <div
+                        key={slide.id}
+                        draggable={!isPending}
+                        onDragStart={(e) => handleDragStart(e, idx)}
+                        onDragOver={(e) => handleDragOver(e, idx)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, idx)}
+                        onDragEnd={handleDragEnd}
+                        className={`group relative flex flex-col rounded-2xl border p-4 transition-all duration-200 select-none ${isDragging
+                          ? "opacity-30 scale-[0.97] border-dashed border-primary bg-primary/5 shadow-inner"
+                          : isDragOver
+                            ? "ring-2 ring-primary border-primary bg-primary/10 shadow-lg -translate-y-1"
+                            : slide.active
+                              ? "border-border/80 bg-card hover:border-brand/70 hover:shadow-md"
+                              : "border-border/40 bg-muted/20 opacity-75"
+                          }`}
+                      >
+                        {/* Top Bar: Drag Handle, Slide Order Badge & Power Toggle */}
+                        <div className="flex items-center justify-between pb-3 border-b border-border/40 gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div
+                              className="cursor-grab active:cursor-grabbing p-1 -ml-1 rounded-md hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                              title="Click and drag to reorder slide in carousel"
+                            >
+                              <GripVertical className="h-4 w-4" />
+                            </div>
+                            <Badge
+                              variant={idx === 0 ? "default" : "secondary"}
+                              className="font-mono text-[10px] px-2 py-0.5 truncate"
+                            >
+                              {idx === 0 ? "#1 (Initial Load)" : `#${idx + 1}`}
+                            </Badge>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <Badge
+                              variant={slide.active ? "default" : "outline"}
+                              className="text-[10px] px-1.5 py-0"
+                            >
+                              {slide.active ? "Active" : "Paused"}
+                            </Badge>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => (isHero ? handleToggleHeroActive() : handleToggleCampaign(slide.id))}
+                              className={`h-7 w-7 ${slide.active
+                                ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                                : "text-primary hover:bg-primary/10"
+                                }`}
+                              title={slide.active ? "Pause slide" : "Activate slide"}
+                              disabled={isPending}
+                            >
+                              <Power className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Image Preview with Focal Point Overlay */}
+                        <div
+                          className="relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-border/80 bg-neutral-950 my-3 group/thumb cursor-pointer shadow-2xs"
+                          onClick={() => (isHero ? openHeroDialog() : openEditDialog(slide.campaign))}
+                          title="Click to edit banner image & focal position"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={slide.imageUrl}
+                            alt={slide.title}
+                            draggable={false}
+                            className="h-full w-full object-cover group-hover/thumb:scale-105 transition-transform duration-300 pointer-events-none select-none"
+                            style={{
+                              objectPosition: isHero
+                                ? heroBanner.objectPosition ||
+                                `${heroBanner.imagePositionX ?? 85}% ${heroBanner.imagePositionY ?? 15}%`
+                                : slide.campaign.imagePosition || "center",
+                            }}
+                          />
+                          <div className="absolute bottom-2 left-2 flex items-center gap-1">
+                            <Badge
+                              variant="secondary"
+                              className="text-[9px] bg-black/75 text-white border-white/20 backdrop-blur-xs font-mono"
+                            >
+                              {isHero
+                                ? `${heroBanner.imagePositionX ?? 85}% X, ${heroBanner.imagePositionY ?? 15}% Y`
+                                : slide.campaign.imagePosition || "50% 50%"}
+                            </Badge>
+                          </div>
+                          <div className="absolute top-2 right-2">
+                            <Badge
+                              variant={isHero ? "default" : "outline"}
+                              className="text-[9px] bg-background/90 text-foreground border-border/60 shadow-2xs backdrop-blur-xs"
+                            >
+                              {slide.badge}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Slide Title & Subtitle */}
+                        <div className="flex-1 min-w-0 space-y-1 mb-3">
+                          <h4 className="font-serif font-bold text-sm text-foreground truncate" title={slide.title}>
+                            {slide.title}
+                          </h4>
+                          <p className="text-[11px] text-muted-foreground line-clamp-1">
+                            {slide.subtitle || (isHero ? "Initial Brand Banner" : "Promotional Discount Banner")}
+                          </p>
+                        </div>
+
+                        {/* Footer: Edit Button & Fallback Reorder Arrows */}
+                        <div className="flex items-center justify-between pt-2.5 border-t border-border/40 gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => (isHero ? openHeroDialog() : openEditDialog(slide.campaign))}
+                            className="text-xs h-7 px-2.5 gap-1.5 shadow-2xs flex-1"
+                          >
+                            <Sliders className="h-3 w-3 text-primary" />
+                            <span>Edit & Position</span>
+                          </Button>
+
+                          <div className="flex items-center gap-0.5">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-foreground disabled:opacity-30"
+                              disabled={idx === 0 || isPending}
+                              onClick={() => handleMoveCarouselSlide(idx, "up")}
+                              title="Move Earlier in Carousel"
+                            >
+                              <ArrowLeft className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-foreground disabled:opacity-30"
+                              disabled={idx === carouselSlides.length - 1 || isPending}
+                              onClick={() => handleMoveCarouselSlide(idx, "down")}
+                              title="Move Later in Carousel"
+                            >
+                              <ArrowRight className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* ========================================================
+                   LIST VIEW: Drag and Drop Rows
+                   ======================================================== */
+                <div className="space-y-2.5">
+                  {carouselSlides.map((slide, idx) => {
+                    const isHero = slide.type === "hero";
+                    const isDragging = draggedSlideIndex === idx;
+                    const isDragOver = dragOverSlideIndex === idx;
+
+                    return (
+                      <div
+                        key={slide.id}
+                        draggable={!isPending}
+                        onDragStart={(e) => handleDragStart(e, idx)}
+                        onDragOver={(e) => handleDragOver(e, idx)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, idx)}
+                        onDragEnd={handleDragEnd}
+                        className={`flex flex-col md:flex-row md:items-center justify-between p-3 rounded-xl border transition-all gap-3 select-none ${isDragging
+                          ? "opacity-30 scale-[0.99] border-dashed border-primary bg-primary/5"
+                          : isDragOver
+                            ? "ring-2 ring-primary border-primary bg-primary/10 shadow-md"
+                            : slide.active
+                              ? "border-border/70 bg-background/90 hover:bg-background hover:shadow-xs"
+                              : "border-border/40 bg-muted/30 opacity-75"
+                          }`}
+                      >
+                        {/* Left: Drag Handle, Reorder position, Thumbnail, and Slide info */}
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          {/* Drag Handle & Up/Down Arrows */}
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <div
+                              className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
+                              title="Click and drag to reorder"
+                            >
+                              <GripVertical className="h-4 w-4" />
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-0.5">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-5 w-5 text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                disabled={idx === 0 || isPending}
+                                onClick={() => handleMoveCarouselSlide(idx, "up")}
+                                title="Move Up in Carousel"
+                              >
+                                <ChevronUp className="h-3.5 w-3.5" />
+                              </Button>
+                              <span className="font-mono text-[11px] font-bold text-muted-foreground px-1.5 py-0.5 rounded bg-muted/60">
+                                #{idx + 1}
+                              </span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-5 w-5 text-muted-foreground hover:text-foreground disabled:opacity-30"
+                                disabled={idx === carouselSlides.length - 1 || isPending}
+                                onClick={() => handleMoveCarouselSlide(idx, "down")}
+                                title="Move Down in Carousel"
+                              >
+                                <ChevronDown className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Banner Thumbnail */}
+                          <div
+                            className="relative h-14 w-28 rounded-lg overflow-hidden border border-border bg-muted/30 shrink-0 cursor-pointer group"
+                            onClick={() => (isHero ? openHeroDialog() : openEditDialog(slide.campaign))}
+                            title="Click to edit banner & position"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={slide.imageUrl}
+                              alt={slide.title}
+                              draggable={false}
+                              className="h-full w-full object-cover group-hover:scale-105 transition-transform pointer-events-none select-none"
+                              style={{
+                                objectPosition: isHero
+                                  ? heroBanner.objectPosition ||
+                                  `${heroBanner.imagePositionX ?? 85}% ${heroBanner.imagePositionY ?? 15}%`
+                                  : slide.campaign.imagePosition || "center",
+                              }}
+                            />
+                          </div>
+
+                          {/* Slide Info */}
+                          <div className="min-w-0 space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-serif font-bold text-sm text-foreground truncate">
+                                {slide.title}
+                              </span>
+                              <Badge
+                                variant={isHero ? "default" : "secondary"}
+                                className="text-[10px] px-2 py-0 font-mono"
+                              >
+                                {slide.badge}
+                              </Badge>
+                              <Badge
+                                variant={slide.active ? "default" : "outline"}
+                                className="text-[10px] px-1.5 py-0"
+                              >
+                                {slide.active ? "Active" : "Paused"}
+                              </Badge>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                              <span>{slide.subtitle}</span>
+                              {isHero && (
+                                <>
+                                  <span>•</span>
+                                  <span className="font-mono text-primary">
+                                    Focal: {heroBanner.imagePositionX ?? 85}% X, {heroBanner.imagePositionY ?? 15}% Y
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Actions */}
+                        <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => (isHero ? openHeroDialog() : openEditDialog(slide.campaign))}
+                            className="text-xs h-8 px-3 gap-1.5"
+                          >
+                            <Sliders className="h-3.5 w-3.5 text-primary" />
+                            <span>Edit & Position</span>
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => (isHero ? handleToggleHeroActive() : handleToggleCampaign(slide.id))}
+                            className={`h-8 w-8 ${slide.active
                               ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50"
                               : "text-primary hover:bg-primary/10"
-                          }`}
-                          title={slide.active ? "Pause slide" : "Activate slide"}
-                          disabled={isPending}
-                        >
-                          <Power className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Image Preview with Focal Point Overlay */}
-                    <div
-                      className="relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-border/80 bg-neutral-950 my-3 group/thumb cursor-pointer shadow-2xs"
-                      onClick={() => (isHero ? openHeroDialog() : openEditDialog(slide.campaign))}
-                      title="Click to edit banner image & focal position"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={slide.imageUrl}
-                        alt={slide.title}
-                        draggable={false}
-                        className="h-full w-full object-cover group-hover/thumb:scale-105 transition-transform duration-300 pointer-events-none select-none"
-                        style={{
-                          objectPosition: isHero
-                            ? heroBanner.objectPosition ||
-                              `${heroBanner.imagePositionX ?? 85}% ${heroBanner.imagePositionY ?? 15}%`
-                            : slide.campaign.imagePosition || "center",
-                        }}
-                      />
-                      <div className="absolute bottom-2 left-2 flex items-center gap-1">
-                        <Badge
-                          variant="secondary"
-                          className="text-[9px] bg-black/75 text-white border-white/20 backdrop-blur-xs font-mono"
-                        >
-                          {isHero
-                            ? `${heroBanner.imagePositionX ?? 85}% X, ${heroBanner.imagePositionY ?? 15}% Y`
-                            : slide.campaign.imagePosition || "50% 50%"}
-                        </Badge>
-                      </div>
-                      <div className="absolute top-2 right-2">
-                        <Badge
-                          variant={isHero ? "default" : "outline"}
-                          className="text-[9px] bg-background/90 text-foreground border-border/60 shadow-2xs backdrop-blur-xs"
-                        >
-                          {slide.badge}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* Slide Title & Subtitle */}
-                    <div className="flex-1 min-w-0 space-y-1 mb-3">
-                      <h4 className="font-serif font-bold text-sm text-foreground truncate" title={slide.title}>
-                        {slide.title}
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground line-clamp-1">
-                        {slide.subtitle || (isHero ? "Initial Brand Banner" : "Promotional Discount Banner")}
-                      </p>
-                    </div>
-
-                    {/* Footer: Edit Button & Fallback Reorder Arrows */}
-                    <div className="flex items-center justify-between pt-2.5 border-t border-border/40 gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => (isHero ? openHeroDialog() : openEditDialog(slide.campaign))}
-                        className="text-xs h-7 px-2.5 gap-1.5 shadow-2xs flex-1"
-                      >
-                        <Sliders className="h-3 w-3 text-primary" />
-                        <span>Edit & Position</span>
-                      </Button>
-
-                      <div className="flex items-center gap-0.5">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground disabled:opacity-30"
-                          disabled={idx === 0 || isPending}
-                          onClick={() => handleMoveCarouselSlide(idx, "up")}
-                          title="Move Earlier in Carousel"
-                        >
-                          <ArrowLeft className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground disabled:opacity-30"
-                          disabled={idx === carouselSlides.length - 1 || isPending}
-                          onClick={() => handleMoveCarouselSlide(idx, "down")}
-                          title="Move Later in Carousel"
-                        >
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            /* ========================================================
-               LIST VIEW: Drag and Drop Rows
-               ======================================================== */
-            <div className="space-y-2.5">
-              {carouselSlides.map((slide, idx) => {
-                const isHero = slide.type === "hero";
-                const isDragging = draggedSlideIndex === idx;
-                const isDragOver = dragOverSlideIndex === idx;
-
-                return (
-                  <div
-                    key={slide.id}
-                    draggable={!isPending}
-                    onDragStart={(e) => handleDragStart(e, idx)}
-                    onDragOver={(e) => handleDragOver(e, idx)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={(e) => handleDrop(e, idx)}
-                    onDragEnd={handleDragEnd}
-                    className={`flex flex-col md:flex-row md:items-center justify-between p-3 rounded-xl border transition-all gap-3 select-none ${
-                      isDragging
-                        ? "opacity-30 scale-[0.99] border-dashed border-primary bg-primary/5"
-                        : isDragOver
-                        ? "ring-2 ring-primary border-primary bg-primary/10 shadow-md"
-                        : slide.active
-                        ? "border-border/70 bg-background/90 hover:bg-background hover:shadow-xs"
-                        : "border-border/40 bg-muted/30 opacity-75"
-                    }`}
-                  >
-                    {/* Left: Drag Handle, Reorder position, Thumbnail, and Slide info */}
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      {/* Drag Handle & Up/Down Arrows */}
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <div
-                          className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
-                          title="Click and drag to reorder"
-                        >
-                          <GripVertical className="h-4 w-4" />
-                        </div>
-                        <div className="flex flex-col items-center justify-center gap-0.5">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-5 w-5 text-muted-foreground hover:text-foreground disabled:opacity-30"
-                            disabled={idx === 0 || isPending}
-                            onClick={() => handleMoveCarouselSlide(idx, "up")}
-                            title="Move Up in Carousel"
+                              }`}
+                            title={slide.active ? "Pause slide" : "Activate slide"}
+                            disabled={isPending}
                           >
-                            <ChevronUp className="h-3.5 w-3.5" />
-                          </Button>
-                          <span className="font-mono text-[11px] font-bold text-muted-foreground px-1.5 py-0.5 rounded bg-muted/60">
-                            #{idx + 1}
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-5 w-5 text-muted-foreground hover:text-foreground disabled:opacity-30"
-                            disabled={idx === carouselSlides.length - 1 || isPending}
-                            onClick={() => handleMoveCarouselSlide(idx, "down")}
-                            title="Move Down in Carousel"
-                          >
-                            <ChevronDown className="h-3.5 w-3.5" />
+                            <Power className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-                      {/* Banner Thumbnail */}
-                      <div
-                        className="relative h-14 w-28 rounded-lg overflow-hidden border border-border bg-muted/30 shrink-0 cursor-pointer group"
-                        onClick={() => (isHero ? openHeroDialog() : openEditDialog(slide.campaign))}
-                        title="Click to edit banner & position"
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={slide.imageUrl}
-                          alt={slide.title}
-                          draggable={false}
-                          className="h-full w-full object-cover group-hover:scale-105 transition-transform pointer-events-none select-none"
-                          style={{
-                            objectPosition: isHero
-                              ? heroBanner.objectPosition ||
-                                `${heroBanner.imagePositionX ?? 85}% ${heroBanner.imagePositionY ?? 15}%`
-                              : slide.campaign.imagePosition || "center",
-                          }}
-                        />
-                      </div>
+        </div>
+      )}
 
-                      {/* Slide Info */}
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-serif font-bold text-sm text-foreground truncate">
-                            {slide.title}
-                          </span>
-                          <Badge
-                            variant={isHero ? "default" : "secondary"}
-                            className="text-[10px] px-2 py-0 font-mono"
-                          >
-                            {slide.badge}
-                          </Badge>
-                          <Badge
-                            variant={slide.active ? "default" : "outline"}
-                            className="text-[10px] px-1.5 py-0"
-                          >
-                            {slide.active ? "Active" : "Paused"}
-                          </Badge>
-                        </div>
+      {/* TAB 2: PROMOTIONAL OFFERS & DISCOUNTS */}
+      {activeTab === "offers" && (
+        <div className="space-y-6 animate-in fade-in-50 duration-200">
+          {/* Simplified Overview Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Stat 1: Total Active Offers */}
+            <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
+              <CardHeader className="p-4 pb-2">
+                <CardDescription className="text-xs">Active Promotions</CardDescription>
+                <CardTitle className="text-2xl font-bold font-serif text-foreground">
+                  {activeCampaigns.length}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-[11px] text-muted-foreground">
+                  {activeCampaigns.length === 1
+                    ? "1 active offer running"
+                    : `${activeCampaigns.length} active offers running`}
+                </p>
+              </CardContent>
+            </Card>
 
-                        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                          <span>{slide.subtitle}</span>
-                          {isHero && (
-                            <>
-                              <span>•</span>
-                              <span className="font-mono text-primary">
-                                Focal: {heroBanner.imagePositionX ?? 85}% X, {heroBanner.imagePositionY ?? 15}% Y
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+            {/* Stat 2: Total Sarees on Discount */}
+            <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
+              <CardHeader className="p-4 pb-2">
+                <CardDescription className="text-xs">Discounted Sarees</CardDescription>
+                <CardTitle className="text-2xl font-bold font-serif text-foreground">
+                  {activeOfferProducts.length}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-[11px] text-muted-foreground">
+                  {activeOfferProducts.length === 1
+                    ? "1 saree on discount"
+                    : `${activeOfferProducts.length} sarees on discount`}
+                </p>
+              </CardContent>
+            </Card>
 
-                    {/* Right: Actions */}
-                    <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => (isHero ? openHeroDialog() : openEditDialog(slide.campaign))}
-                        className="text-xs h-8 px-3 gap-1.5"
-                      >
-                        <Sliders className="h-3.5 w-3.5 text-primary" />
-                        <span>Edit & Position</span>
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => (isHero ? handleToggleHeroActive() : handleToggleCampaign(slide.id))}
-                        className={`h-8 w-8 ${
-                          slide.active
-                            ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50"
-                            : "text-primary hover:bg-primary/10"
-                        }`}
-                        title={slide.active ? "Pause slide" : "Activate slide"}
-                        disabled={isPending}
-                      >
-                        <Power className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-    </div>
-  )}
-
-  {/* TAB 2: PROMOTIONAL OFFERS & DISCOUNTS */}
-  {activeTab === "offers" && (
-    <div className="space-y-6 animate-in fade-in-50 duration-200">
-      {/* Simplified Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Stat 1: Total Active Offers */}
-        <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs">Active Promotions</CardDescription>
-            <CardTitle className="text-2xl font-bold font-serif text-foreground">
-              {activeCampaigns.length}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <p className="text-[11px] text-muted-foreground">
-              {activeCampaigns.length === 1
-                ? "1 active offer running"
-                : `${activeCampaigns.length} active offers running`}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Stat 2: Total Sarees on Discount */}
-        <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs">Discounted Sarees</CardDescription>
-            <CardTitle className="text-2xl font-bold font-serif text-foreground">
-              {activeOfferProducts.length}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <p className="text-[11px] text-muted-foreground">
-              {activeOfferProducts.length === 1
-                ? "1 saree on discount"
-                : `${activeOfferProducts.length} sarees on discount`}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Stat 3: Highest Discount Value */}
-        <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs">Top Discount</CardDescription>
-            <CardTitle className="text-2xl font-bold font-serif text-foreground">
-              {topDiscountText}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <p className="text-[11px] text-muted-foreground">Highest live discount</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* SECTION 3: ALL PROMOTIONAL OFFERS TABLE */}
-      <Card className="border-[#d2c8b5] bg-card shadow-[0_2px_12px_rgba(70,50,20,0.05)] overflow-hidden">
-        <CardHeader className="p-5 pb-3 border-b border-border/50 bg-[#ede7d8]/40">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <CardTitle className="font-serif text-xl flex items-center gap-2">
-                <Tag className="h-5 w-5 text-primary" />
-                <span>All Promotional Offers</span>
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Manage promotional offers and attached sarees. Active offers with banners automatically appear in the storefront hero carousel (maximum 5 active).
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <Badge
-                variant="outline"
-                className={`font-mono text-xs px-2.5 py-1 ${
-                  activeCarouselOffers.length >= 5
-                    ? "border-amber-500/60 text-amber-700 bg-amber-50"
-                    : "border-primary/40 text-primary bg-primary/5"
-                }`}
-              >
-                {activeCarouselOffers.length} / 5 Offers in Carousel
-              </Badge>
-              <Button
-                onClick={openCreateDialog}
-                size="sm"
-                className="gap-1.5 text-xs shadow-xs"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                <span>Create Offer</span>
-              </Button>
-            </div>
+            {/* Stat 3: Highest Discount Value */}
+            <Card className="shadow-[0_2px_12px_rgba(70,50,20,0.05)] border-[#d2c8b5] bg-card hover:border-brand/50 transition-colors">
+              <CardHeader className="p-4 pb-2">
+                <CardDescription className="text-xs">Top Discount</CardDescription>
+                <CardTitle className="text-2xl font-bold font-serif text-foreground">
+                  {topDiscountText}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-[11px] text-muted-foreground">Highest live discount</p>
+              </CardContent>
+            </Card>
           </div>
-        </CardHeader>
-        <CardContent className="p-5 space-y-3">
-          {orderedCampaigns.length === 0 ? (
-            <div className="text-center py-10 px-4 border border-dashed border-border/60 rounded-xl bg-muted/20">
-              <Tag className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-foreground">No Offers Created Yet</p>
-              <p className="text-xs text-muted-foreground max-w-md mx-auto mt-1 mb-4">
-                Create your first promotional offer. You can attach sarees immediately and upload an optional banner to display it on the homepage hero carousel.
-              </p>
-              <Button onClick={openCreateDialog} size="sm" className="gap-1.5 text-xs">
-                <Plus className="h-3.5 w-3.5" />
-                <span>Create Your First Offer</span>
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-2.5">
-              {orderedCampaigns.map((camp) => {
-                const attachedCount = camp.productIds.length;
-                const hasBanner = Boolean(camp.bannerImageUrl && camp.bannerImageUrl.trim());
 
-                return (
-                  <div
-                    key={camp.id}
-                    className={`flex flex-col md:flex-row md:items-center justify-between p-3.5 rounded-xl border transition-all gap-3 ${
-                      camp.active
-                        ? "border-border/70 bg-background/90 hover:bg-background hover:shadow-xs"
-                        : "border-border/40 bg-muted/30 opacity-75"
-                    }`}
+          {/* SECTION 3: ALL PROMOTIONAL OFFERS TABLE */}
+          <Card className="border-[#d2c8b5] bg-card shadow-[0_2px_12px_rgba(70,50,20,0.05)] overflow-hidden">
+            <CardHeader className="p-5 pb-3 border-b border-border/50 bg-[#ede7d8]/40">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <CardTitle className="font-serif text-xl flex items-center gap-2">
+                    <Tag className="h-5 w-5 text-primary" />
+                    <span>All Promotional Offers</span>
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Manage promotional offers and attached sarees. Active offers with banners automatically appear in the storefront hero carousel (maximum 5 active).
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Badge
+                    variant="outline"
+                    className={`font-mono text-xs px-2.5 py-1 ${activeCarouselOffers.length >= 5
+                      ? "border-amber-500/60 text-amber-700 bg-amber-50"
+                      : "border-primary/40 text-primary bg-primary/5"
+                      }`}
                   >
-                    {/* Left: Banner preview, and Offer info */}
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      {/* Banner Thumbnail */}
+                    {activeCarouselOffers.length} / 5 Offers in Carousel
+                  </Badge>
+                  <Button
+                    onClick={openCreateDialog}
+                    size="sm"
+                    className="gap-1.5 text-xs shadow-xs"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Create Offer</span>
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-5 space-y-3">
+              {orderedCampaigns.length === 0 ? (
+                <div className="text-center py-10 px-4 border border-dashed border-border/60 rounded-xl bg-muted/20">
+                  <Tag className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                  <p className="text-sm font-semibold text-foreground">No Offers Created Yet</p>
+                  <p className="text-xs text-muted-foreground max-w-md mx-auto mt-1 mb-4">
+                    Create your first promotional offer. You can attach sarees immediately and upload an optional banner to display it on the homepage hero carousel.
+                  </p>
+                  <Button onClick={openCreateDialog} size="sm" className="gap-1.5 text-xs">
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Create Your First Offer</span>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {orderedCampaigns.map((camp) => {
+                    const attachedCount = camp.productIds.length;
+                    const hasBanner = Boolean(camp.bannerImageUrl && camp.bannerImageUrl.trim());
+
+                    return (
                       <div
-                        className="relative h-14 w-28 rounded-lg overflow-hidden border border-border bg-muted/30 shrink-0 cursor-pointer group"
-                        onClick={() => openEditDialog(camp)}
-                        title="Click to edit banner & position"
+                        key={camp.id}
+                        className={`flex flex-col md:flex-row md:items-center justify-between p-3.5 rounded-xl border transition-all gap-3 ${camp.active
+                          ? "border-border/70 bg-background/90 hover:bg-background hover:shadow-xs"
+                          : "border-border/40 bg-muted/30 opacity-75"
+                          }`}
                       >
-                        {hasBanner ? (
-                          /* eslint-disable-next-line @next/next/no-img-element */
-                          <img
-                            src={camp.bannerImageUrl!}
-                            alt={camp.name}
-                            className="h-full w-full object-cover group-hover:scale-105 transition-transform"
-                            style={{ objectPosition: camp.imagePosition || "center" }}
-                          />
-                        ) : (
-                          <div className="h-full w-full flex flex-col items-center justify-center text-muted-foreground/50 text-[10px] gap-0.5 bg-muted/20">
-                            <ImageIcon className="h-4 w-4" />
-                            <span>No banner</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Offer Info */}
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-serif font-bold text-sm text-foreground truncate">
-                            {camp.name}
-                          </span>
-                          <Badge variant="secondary" className="text-[10px] px-2 py-0 font-mono font-semibold">
-                            {camp.label || (camp.type === "percent" ? `${camp.value}% OFF` : `₹${camp.value} OFF`)}
-                          </Badge>
-                          <Badge
-                            variant={camp.active ? "default" : "outline"}
-                            className="text-[10px] px-1.5 py-0"
+                        {/* Left: Banner preview, and Offer info */}
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          {/* Banner Thumbnail */}
+                          <div
+                            className="relative h-14 w-28 rounded-lg overflow-hidden border border-border bg-muted/30 shrink-0 cursor-pointer group"
+                            onClick={() => openEditDialog(camp)}
+                            title="Click to edit banner & position"
                           >
-                            {camp.active ? "Active" : "Paused"}
-                          </Badge>
-                          {camp.active && hasBanner && (
-                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-amber-500/50 text-amber-700 bg-amber-50/60 font-sans">
-                              In Carousel
-                            </Badge>
-                          )}
+                            {hasBanner ? (
+                              /* eslint-disable-next-line @next/next/no-img-element */
+                              <img
+                                src={camp.bannerImageUrl!}
+                                alt={camp.name}
+                                className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+                                style={{ objectPosition: camp.imagePosition || "center" }}
+                              />
+                            ) : (
+                              <div className="h-full w-full flex flex-col items-center justify-center text-muted-foreground/50 text-[10px] gap-0.5 bg-muted/20">
+                                <ImageIcon className="h-4 w-4" />
+                                <span>No banner</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Offer Info */}
+                          <div className="min-w-0 space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-serif font-bold text-sm text-foreground truncate">
+                                {camp.name}
+                              </span>
+                              <Badge variant="secondary" className="text-[10px] px-2 py-0 font-mono font-semibold">
+                                {camp.label || (camp.type === "percent" ? `${camp.value}% OFF` : `₹${camp.value} OFF`)}
+                              </Badge>
+                              <Badge
+                                variant={camp.active ? "default" : "outline"}
+                                className="text-[10px] px-1.5 py-0"
+                              >
+                                {camp.active ? "Active" : "Paused"}
+                              </Badge>
+                              {camp.active && hasBanner && (
+                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-amber-500/50 text-amber-700 bg-amber-50/60 font-sans">
+                                  In Carousel
+                                </Badge>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-3 text-[11px] text-muted-foreground flex-wrap">
+                              <span className="font-medium text-foreground">
+                                {attachedCount} saree{attachedCount === 1 ? "" : "s"} attached
+                              </span>
+                              <span>•</span>
+                              <span>
+                                Discount: {camp.type === "percent" ? `${camp.value}%` : `₹${camp.value} flat`}
+                              </span>
+                              {camp.expiry && (
+                                <>
+                                  <span>•</span>
+                                  <span className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3 text-muted-foreground" />
+                                    Exp: {camp.expiry}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-3 text-[11px] text-muted-foreground flex-wrap">
-                          <span className="font-medium text-foreground">
-                            {attachedCount} saree{attachedCount === 1 ? "" : "s"} attached
-                          </span>
-                          <span>•</span>
-                          <span>
-                            Discount: {camp.type === "percent" ? `${camp.value}%` : `₹${camp.value} flat`}
-                          </span>
-                          {camp.expiry && (
-                            <>
-                              <span>•</span>
-                              <span className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3 text-muted-foreground" />
-                                Exp: {camp.expiry}
-                              </span>
-                            </>
-                          )}
+                        {/* Right: Actions */}
+                        <div className="flex items-center gap-1.5 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-border/40 w-full md:w-auto justify-end">
+                          {/* Manage Sarees Button */}
+                          <Button
+                            type="button"
+                            variant="default"
+                            size="sm"
+                            onClick={() => openManageProductsDialog(camp)}
+                            className="text-xs h-8 px-3 gap-1.5 shadow-2xs"
+                          >
+                            <Tag className="h-3.5 w-3.5" />
+                            <span>Manage Sarees ({attachedCount})</span>
+                          </Button>
+
+                          {/* Edit Button */}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openEditDialog(camp)}
+                            className="text-xs h-8 px-2.5 gap-1"
+                            title="Edit offer details, banner & position"
+                          >
+                            <Edit2 className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="hidden sm:inline">Edit</span>
+                          </Button>
+
+                          {/* Toggle Active / Pause */}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleToggleCampaign(camp.id)}
+                            className={`h-8 w-8 ${camp.active ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50" : "text-primary hover:bg-primary/10"
+                              }`}
+                            title={camp.active ? "Pause offer" : "Activate offer"}
+                            disabled={isPending}
+                          >
+                            <Power className="h-3.5 w-3.5" />
+                          </Button>
+
+                          {/* Delete */}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDeleteCampaign(camp.id)}
+                            className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                            title="Delete offer"
+                            disabled={isPending}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Right: Actions */}
-                    <div className="flex items-center gap-1.5 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-border/40 w-full md:w-auto justify-end">
-                      {/* Manage Sarees Button */}
-                      <Button
-                        type="button"
-                        variant="default"
-                        size="sm"
-                        onClick={() => openManageProductsDialog(camp)}
-                        className="text-xs h-8 px-3 gap-1.5 shadow-2xs"
-                      >
-                        <Tag className="h-3.5 w-3.5" />
-                        <span>Manage Sarees ({attachedCount})</span>
-                      </Button>
-
-                      {/* Edit Button */}
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openEditDialog(camp)}
-                        className="text-xs h-8 px-2.5 gap-1"
-                        title="Edit offer details, banner & position"
-                      >
-                        <Edit2 className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span className="hidden sm:inline">Edit</span>
-                      </Button>
-
-                      {/* Toggle Active / Pause */}
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleToggleCampaign(camp.id)}
-                        className={`h-8 w-8 ${
-                          camp.active ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50" : "text-primary hover:bg-primary/10"
-                        }`}
-                        title={camp.active ? "Pause offer" : "Activate offer"}
-                        disabled={isPending}
-                      >
-                        <Power className="h-3.5 w-3.5" />
-                      </Button>
-
-                      {/* Delete */}
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleDeleteCampaign(camp.id)}
-                        className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                        title="Delete offer"
-                        disabled={isPending}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  )}
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* DIALOG 1: Edit Initial Homepage Hero Banner & Position */}
       <Dialog open={heroDialogOpen} onOpenChange={setHeroDialogOpen}>
@@ -1917,13 +1902,12 @@ export function OfferManager({
                     {/* Gradient Overlay Preview */}
                     {heroShowOverlay && (
                       <div
-                        className={`absolute inset-0 ${
-                          heroTextPosition === "right"
-                            ? "bg-gradient-to-l from-black/80 via-black/40 to-transparent right-0 left-auto w-[65%]"
-                            : heroTextPosition === "center"
+                        className={`absolute inset-0 ${heroTextPosition === "right"
+                          ? "bg-gradient-to-l from-black/80 via-black/40 to-transparent right-0 left-auto w-[65%]"
+                          : heroTextPosition === "center"
                             ? "bg-black/45"
                             : "bg-gradient-to-r from-black/80 via-black/40 to-transparent w-[65%]"
-                        }`}
+                          }`}
                       />
                     )}
 
@@ -2000,11 +1984,10 @@ export function OfferManager({
                           setHeroPositionX(preset.x);
                           setHeroPositionY(preset.y);
                         }}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${
-                          heroPositionX === preset.x && heroPositionY === preset.y
-                            ? "bg-primary text-primary-foreground border-primary shadow-2xs"
-                            : "bg-background text-foreground border-border hover:bg-muted"
-                        }`}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${heroPositionX === preset.x && heroPositionY === preset.y
+                          ? "bg-primary text-primary-foreground border-primary shadow-2xs"
+                          : "bg-background text-foreground border-border hover:bg-muted"
+                          }`}
                       >
                         {preset.label}
                       </button>
@@ -2069,22 +2052,20 @@ export function OfferManager({
                     <button
                       type="button"
                       onClick={() => setHeroShowOverlay(true)}
-                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${
-                        heroShowOverlay
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${heroShowOverlay
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border text-muted-foreground hover:bg-muted"
+                        }`}
                     >
                       Text Overlay
                     </button>
                     <button
                       type="button"
                       onClick={() => setHeroShowOverlay(false)}
-                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${
-                        !heroShowOverlay
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${!heroShowOverlay
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border text-muted-foreground hover:bg-muted"
+                        }`}
                     >
                       Pure Graphic
                     </button>
@@ -2101,11 +2082,10 @@ export function OfferManager({
                             key={pos}
                             type="button"
                             onClick={() => setHeroTextPosition(pos)}
-                            className={`flex-1 py-1 rounded-md text-[11px] font-medium capitalize border transition-colors ${
-                              heroTextPosition === pos
-                                ? "bg-primary text-primary-foreground border-primary"
-                                : "border-border text-muted-foreground hover:bg-muted"
-                            }`}
+                            className={`flex-1 py-1 rounded-md text-[11px] font-medium capitalize border transition-colors ${heroTextPosition === pos
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "border-border text-muted-foreground hover:bg-muted"
+                              }`}
                           >
                             {pos}
                           </button>
@@ -2450,22 +2430,20 @@ export function OfferManager({
                     <button
                       type="button"
                       onClick={() => setBannerShowOverlay(true)}
-                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${
-                        bannerShowOverlay
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${bannerShowOverlay
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border text-muted-foreground hover:bg-muted"
+                        }`}
                     >
                       Text Overlay
                     </button>
                     <button
                       type="button"
                       onClick={() => setBannerShowOverlay(false)}
-                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${
-                        !bannerShowOverlay
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
+                      className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-colors ${!bannerShowOverlay
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border text-muted-foreground hover:bg-muted"
+                        }`}
                     >
                       Pure Graphic
                     </button>
@@ -2539,22 +2517,20 @@ export function OfferManager({
                       <button
                         type="button"
                         onClick={() => setOfferType("percent")}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                          offerType === "percent"
-                            ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                            : "border-border text-muted-foreground hover:bg-muted"
-                        }`}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${offerType === "percent"
+                          ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                          : "border-border text-muted-foreground hover:bg-muted"
+                          }`}
                       >
                         Percentage (%)
                       </button>
                       <button
                         type="button"
                         onClick={() => setOfferType("flat")}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                          offerType === "flat"
-                            ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                            : "border-border text-muted-foreground hover:bg-muted"
-                        }`}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${offerType === "flat"
+                          ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                          : "border-border text-muted-foreground hover:bg-muted"
+                          }`}
                       >
                         Flat (₹)
                       </button>
@@ -2706,13 +2682,12 @@ export function OfferManager({
                     onClick={() => {
                       if (!isLockedOther) toggleProductSelect(p.id);
                     }}
-                    className={`flex items-center justify-between p-2.5 rounded-lg transition-colors pt-2.5 ${
-                      isLockedOther
-                        ? "opacity-55 cursor-not-allowed bg-muted/20"
-                        : isSelected
+                    className={`flex items-center justify-between p-2.5 rounded-lg transition-colors pt-2.5 ${isLockedOther
+                      ? "opacity-55 cursor-not-allowed bg-muted/20"
+                      : isSelected
                         ? "bg-primary/5 border border-primary/20 cursor-pointer"
                         : "hover:bg-muted/40 cursor-pointer"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className="shrink-0 text-primary">

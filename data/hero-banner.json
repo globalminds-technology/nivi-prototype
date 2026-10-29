@@ -1,18 +1,18 @@
 {
-  "imageUrl": "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/banners/hero_flagship_1791797443698.png",
+  "imageUrl": "https://pub-603a291ba647417fbd757fbd40d1b708.r2.dev/banners/hero_flagship_1793080919900.png",
   "active": true,
   "displayOrder": 0,
-  "tagline": "TIMELESS TRADITIONS",
+  "tagline": "TIMELESS TRADITIONS FOR THE JOY",
   "title": "Sarees for Every Story",
   "subtitle": "Explore our curated collection of exquisite sarees that blend tradition, elegance and modern grace.",
   "primaryCtaText": "Shop Collection",
   "primaryCtaLink": "/collections",
-  "secondaryCtaText": null,
-  "secondaryCtaLink": null,
-  "showOverlay": true,
+  "secondaryCtaText": "Explore Offers",
+  "secondaryCtaLink": "/offers",
+  "showOverlay": false,
   "textPosition": "left",
-  "imagePositionX": 85,
-  "imagePositionY": 15,
-  "objectPosition": "85% 15%",
-  "updatedAt": "2026-10-27T08:31:29.163Z"
+  "imagePositionX": 50,
+  "imagePositionY": 50,
+  "objectPosition": "50% 50%",
+  "updatedAt": "2026-10-27T06:02:20.255Z"
 }
