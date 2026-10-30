@@ -60,10 +60,10 @@ export function CircularCategoryBar({ categories = [] }: CircularCategoryBarProp
   if (displayCategories.length === 0) return null;
 
   return (
-    <section className="w-full pt-2 sm:pt-3 pb-2 sm:pb-3">
-      <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 md:px-10">
+    <section className="w-full pt-2 sm:pt-3 pb-1.5 sm:pb-3">
+      <div className="w-full max-w-[1360px] mx-auto px-3 sm:px-6 md:px-10">
         {/* Header: Explore Categories in Brand Script & Antique Gold */}
-        <div className="relative flex flex-col items-center justify-center text-center mb-2 sm:mb-3">
+        <div className="relative flex flex-col items-center justify-center text-center mb-1.5 sm:mb-3">
           <GoldText>Explore Categories</GoldText>
         </div>
 
@@ -76,21 +76,21 @@ export function CircularCategoryBar({ categories = [] }: CircularCategoryBarProp
           }}
           className="w-full relative"
         >
-          <CarouselContent className="-ml-3 sm:-ml-4 md:-ml-6">
+          <CarouselContent className="-ml-2 sm:-ml-4 md:-ml-6">
             {displayCategories.map((category) => {
               const href = `/categories/${category.slug}`;
 
               return (
                 <CarouselItem
                   key={category.id}
-                  className="pl-3 sm:pl-4 md:pl-6 basis-[36%] xs:basis-[28%] sm:basis-[22%] md:basis-[20%]"
+                  className="pl-2 sm:pl-4 md:pl-6 basis-[27%] xs:basis-[24%] sm:basis-[22%] md:basis-[20%]"
                 >
                   <Link
                     href={href}
                     className="group flex flex-col items-center w-full text-center focus:outline-none transition-transform duration-200"
                   >
                     {/* Circular Thumbnail - completely borderless, ring-free */}
-                    <div className="relative w-18 h-18 sm:w-20 sm:h-20 md:w-22 md:h-22 lg:w-24 lg:h-24 xl:w-26 xl:h-26 rounded-full overflow-hidden bg-[#FAF7F0] border-0 ring-0 outline-none focus:outline-none focus:ring-0 group-hover:border-0 group-hover:ring-0 group-hover:scale-105 transition-all duration-300 shrink-0">
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-22 md:h-22 lg:w-24 lg:h-24 xl:w-26 xl:h-26 rounded-full overflow-hidden bg-[#FAF7F0] border-0 ring-0 outline-none focus:outline-none focus:ring-0 group-hover:border-0 group-hover:ring-0 group-hover:scale-105 transition-all duration-300 shrink-0">
                       {category.imageUrl ? (
                         <Image
                           src={category.imageUrl}
@@ -110,7 +110,7 @@ export function CircularCategoryBar({ categories = [] }: CircularCategoryBarProp
                     {/* Category Label */}
                     <span
                       title={category.name}
-                      className="mt-2 text-xs sm:text-[13px] md:text-sm font-medium text-[#30251F] group-hover:text-[#073C35] transition-colors text-center leading-snug line-clamp-2 px-1 tracking-wide"
+                      className="mt-1.5 sm:mt-2 text-[11px] sm:text-[13px] md:text-sm font-medium text-[#30251F] group-hover:text-[#073C35] transition-colors text-center leading-tight sm:leading-snug line-clamp-2 px-0.5 sm:px-1 tracking-tight sm:tracking-wide"
                     >
                       {category.name}
                     </span>

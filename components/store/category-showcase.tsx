@@ -24,7 +24,7 @@ export function CategoryShowcase({ categories }: CategoryShowcaseProps) {
           </p>
         </div>
         <Link
-          href="/#catalog"
+          href="/collections"
           className="text-xs font-medium text-primary hover:text-primary/80 inline-flex items-center gap-1 transition-colors self-start sm:self-auto"
         >
           <span>View All Weaves</span>

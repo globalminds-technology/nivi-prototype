@@ -25,19 +25,19 @@ export function FeaturedCarousel({
   if (products.length === 0) return null;
 
   return (
-    <section className="space-y-4 sm:space-y-6">
-      {/* Header: Centered Great Vibes with Deep Antique Gold Gradient */}
-      <div className="relative flex flex-col items-center justify-center text-center mb-4 sm:mb-6">
+    <section className="space-y-2.5 sm:space-y-6">
+      {/* Header: Single compact row on mobile, spacious on desktop */}
+      <div className="relative flex items-center justify-center text-center mb-2 sm:mb-6">
         <GoldText>{title}</GoldText>
 
         {viewAllHref && (
-          <div className="mt-1 sm:mt-0 sm:absolute sm:right-0 sm:top-1/2 sm:-translate-y-1/2">
+          <div className="absolute right-0 top-1/2 -translate-y-1/2">
             <Link
               href={viewAllHref}
-              className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#073C35] hover:text-[#C9A45C] transition-colors shrink-0"
+              className="inline-flex items-center gap-0.5 sm:gap-1 text-[11px] sm:text-sm font-semibold text-[#073C35] hover:text-[#C9A45C] transition-colors shrink-0"
             >
               <span>View All</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </Link>
           </div>
         )}

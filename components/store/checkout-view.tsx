@@ -913,7 +913,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate text-[#30251F]">{product?.name || item.sku}</p>
-                      <p className="text-[10px] font-mono text-muted-foreground">SKU: {item.sku}</p>
+                      <p className="text-[11px] text-[#786960]">Qty: {item.qty}</p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="font-mono font-semibold text-[#30251F]">
@@ -923,32 +923,6 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                   </div>
                 );
               })}
-            </div>
-
-            <Separator />
-
-            {/* Delivery Option Indicator */}
-            <div className="flex items-center justify-between text-xs py-1">
-              <span className="font-semibold text-[#073C35] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                <Truck className="w-3.5 h-3.5" />
-                <span>Delivery Method</span>
-              </span>
-              {shippingMethod ? (
-                <Badge
-                  variant="outline"
-                  className={`font-mono text-[10px] px-2 py-0.5 ${
-                    shippingMethod === "express"
-                      ? "bg-[#694208]/10 text-[#694208] border-[#694208]/30 font-semibold"
-                      : "bg-[#073C35]/10 text-[#073C35] border-[#073C35]/30 font-semibold"
-                  }`}
-                >
-                  {shippingMethod === "express" ? "Express Priority" : "Within India"}
-                </Badge>
-              ) : (
-                <span className="text-[11px] text-[#786960] italic">
-                  Select in Step 2
-                </span>
-              )}
             </div>
 
             <Separator />
@@ -964,44 +938,11 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                   <span className="font-mono">-{formatInr(quote.discount.minor)}</span>
                 </div>
               )}
-              {isShippingActive ? (
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    {shippingMethod === "express" ? (
-                      <Zap className="w-3.5 h-3.5 text-[#694208]" />
-                    ) : (
-                      <Truck className="w-3.5 h-3.5 text-[#073C35]" />
-                    )}
-                    <span>
-                      {shippingMethod === "express"
-                        ? (expressOption?.name || "Express Delivery")
-                        : (standardOption?.name || "Standard Shipping")}
-                    </span>
-                  </span>
-                  <span className="font-mono font-medium text-foreground">
-                    {quote && quote.shipping.minor === 0
-                      ? "FREE"
-                      : quote
-                      ? formatInr(quote.shipping.minor)
-                      : "—"}
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-between text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    <Truck className="w-3.5 h-3.5 text-[#073C35]" />
-                    <span>Shipping</span>
-                  </span>
-                  <span className="text-[11px] text-[#786960] italic">
-                    Select delivery option above
-                  </span>
-                </div>
-              )}
               <Separator />
               <div className="flex items-baseline justify-between text-sm font-semibold pt-1">
                 <span className="font-serif text-[#30251F]">Total Amount</span>
                 <span className="font-mono text-lg font-bold text-[#073C35]">
-                  {quote ? formatInr(displayedTotalMinor) : "—"}
+                  {quote ? formatInr(netSubtotalMinor) : "—"}
                 </span>
               </div>
             </div>
@@ -1771,29 +1712,22 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                             <p className="font-semibold text-xs sm:text-sm text-[#30251F] leading-snug line-clamp-2">
                               {product?.name || item.sku}
                             </p>
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-sm sm:text-base font-bold text-[#073C35]">
-                                {quoteLine
-                                  ? formatInr(quoteLine.lineTotal.minor)
-                                  : product
-                                  ? formatInr(product.priceMinor * item.qty)
-                                  : "—"}
-                              </span>
-                              {quoteLine && quoteLine.lineDiscount.minor > 0 && (
-                                <span className="font-mono text-xs text-[#786960] line-through">
-                                  {formatInr(quoteLine.lineSubtotal.minor)}
+                            <div className="flex items-center justify-between gap-2 pt-0.5">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-sm sm:text-base font-bold text-[#073C35]">
+                                  {quoteLine
+                                    ? formatInr(quoteLine.lineTotal.minor)
+                                    : product
+                                    ? formatInr(product.priceMinor * item.qty)
+                                    : "—"}
                                 </span>
-                              )}
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                              <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                                <span>Authentic Handloom</span>
-                              </span>
-                              <span className="text-[11px] font-mono text-[#786960]">
-                                SKU: {item.sku}
-                              </span>
-                              <span className="text-[11px] text-[#786960]">
+                                {quoteLine && quoteLine.lineDiscount.minor > 0 && (
+                                  <span className="font-mono text-xs text-[#786960] line-through">
+                                    {formatInr(quoteLine.lineSubtotal.minor)}
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-xs text-[#786960] font-medium">
                                 Qty: {item.qty}
                               </span>
                             </div>

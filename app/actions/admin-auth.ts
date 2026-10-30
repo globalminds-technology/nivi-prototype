@@ -31,15 +31,15 @@ export async function loginAdminAction(
     };
   }
 
-  const isValid = await adminAuth.verifyCredentials(parsed.data.email, parsed.data.password);
-  if (!isValid) {
+  const user = await adminAuth.verifyCredentials(parsed.data.email, parsed.data.password);
+  if (!user) {
     return {
       success: false,
       error: "Invalid email or password",
     };
   }
 
-  const token = await adminAuth.createSessionToken(parsed.data.email);
+  const token = await adminAuth.createSessionToken(user.email, user.role, user.hideZohoBooks);
   await adminAuth.setSessionCookie(token);
 
   redirect("/admin");

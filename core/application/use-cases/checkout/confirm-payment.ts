@@ -101,6 +101,7 @@ export class ConfirmPayment {
         invoiceNumber,
         invoicePdf,
         quote: snapshot.quote,
+        shippingAddress: snapshot.customer.shippingAddress,
       });
     } catch (err) {
       // Don't fail the order if email sending fails, but log it

@@ -130,16 +130,16 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Product Details - Left-aligned title, price with INR symbol and cart icon on right */}
-      <div className="pt-2 sm:pt-2.5 space-y-1 text-left">
+      <div className="pt-2 sm:pt-2.5 space-y-1 text-left flex flex-col justify-between flex-1">
         <Link
           href={`/products/${product.slug}`}
-          className="text-[11px] sm:text-[13px] md:text-sm font-medium text-[#30251F] hover:text-[#073C35] transition-colors line-clamp-1 block text-left"
+          className="text-[11px] sm:text-[13px] md:text-sm font-medium text-[#30251F] hover:text-[#073C35] transition-colors line-clamp-2 leading-tight h-7.5 sm:h-9 overflow-hidden text-ellipsis text-left"
           title={product.name}
         >
           {product.name}
         </Link>
 
-        <div className="flex items-center justify-between gap-1 pt-0.5">
+        <div className="flex items-center justify-between gap-1 pt-0.5 mt-auto">
           <div className="flex items-baseline gap-1.5 flex-wrap">
             <span className="text-[11.5px] sm:text-[13.5px] font-semibold text-[#30251F]">
               ₹{Math.round(effectivePrice).toLocaleString("en-IN")}

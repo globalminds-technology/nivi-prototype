@@ -145,7 +145,7 @@ export default async function HomePage() {
         <CircularCategoryBar categories={categories} />
 
         {/* 4. PRODUCT SHOWCASE SECTIONS */}
-        <div className="space-y-6 sm:space-y-8 mt-6 sm:mt-10">
+        <div className="space-y-5 sm:space-y-8 mt-3 sm:mt-10">
           {/* NEW ARRIVALS */}
           {newArrivals.length > 0 && (
             <section className="container mx-auto px-4 sm:px-6">

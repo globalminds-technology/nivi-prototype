@@ -178,6 +178,10 @@ export class ZohoSalesRepository implements SalesRepository {
       ? Money.toMajor(input.snapshot.quote.shipping)
       : 0;
 
+    const shippingMethodLabel =
+      input.snapshot.quote.shippingLabel ||
+      (input.snapshot.quote.shippingMethod === "express" ? "Express Delivery" : "Standard Shipping");
+
     const payload: Record<string, unknown> = {
       customer_id: input.contactId,
       date: today,
@@ -185,7 +189,10 @@ export class ZohoSalesRepository implements SalesRepository {
       is_inclusive_tax: input.snapshot.quote.taxInclusive,
       shipping_charge: shippingMajor > 0 ? shippingMajor : undefined,
       line_items: lineItems,
-      notes: "Thank you for shopping with Nivi!",
+      notes: [
+        "Thank you for shopping with NiVi!",
+        `Shipping Charge: ${shippingMethodLabel} (${shippingMajor > 0 ? `₹${shippingMajor}` : "FREE"})`,
+      ].join("\n"),
     };
 
     try {
