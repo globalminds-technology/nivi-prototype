@@ -27,7 +27,7 @@ export function FeaturedCarousel({
   return (
     <section className="space-y-2.5 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col items-center gap-1 mb-2 sm:flex-row sm:justify-between sm:items-center sm:mb-6">
+      <div className="flex flex-col items-center gap-1 mb-2 sm:mb-6">
         <GoldText>{title}</GoldText>
 
         {viewAllHref && (
