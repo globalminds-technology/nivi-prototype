@@ -100,6 +100,14 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
               aria-autocomplete="none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  setIsOpen(false);
+                  const target = query.trim() ? `/collections?q=${encodeURIComponent(query.trim())}` : "/collections";
+                  router.push(target);
+                }
+              }}
               placeholder="Search..."
               className="w-full bg-transparent text-xs text-neutral-800 placeholder:text-neutral-400 focus:outline-none"
             />
@@ -158,6 +166,14 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
             }
           }}
           onFocus={() => setIsOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              setIsOpen(false);
+              const target = query.trim() ? `/collections?q=${encodeURIComponent(query.trim())}` : "/collections";
+              router.push(target);
+            }
+          }}
           placeholder="Search..."
           className="w-full bg-transparent text-xs text-neutral-800 placeholder:text-neutral-500/80 focus:outline-none"
         />
@@ -234,6 +250,7 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
                           src={product.primaryImageUrl}
                           alt={product.name}
                           fill
+                          unoptimized
                           sizes="40px"
                           className="object-cover"
                         />
@@ -279,11 +296,14 @@ export function SearchDropdown({ products }: SearchDropdownProps) {
           <div className="p-2 border-t border-[#d2c8b5]/60 bg-[#faf8f2] flex items-center justify-between text-[11px] text-[#3d5a5e] px-3">
             <span>Press Esc to close</span>
             <Link
-              href="/#catalog"
-              onClick={() => setIsOpen(false)}
+              href={query.trim() ? `/collections?q=${encodeURIComponent(query.trim())}` : "/collections"}
+              onClick={() => {
+                setIsOpen(false);
+                setQuery("");
+              }}
               className="font-medium text-[#023036] hover:text-[#056677] hover:underline"
             >
-              View all collections →
+              {query.trim() ? `View all results for "${query.trim()}" →` : "View all collections →"}
             </Link>
           </div>
         </div>

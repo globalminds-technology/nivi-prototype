@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Package } from "lucide-react";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Package } from "lucide-react";
 
 interface ProductGalleryProps {
   images: readonly string[];
@@ -11,6 +10,7 @@ interface ProductGalleryProps {
 
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const thumbRef = useRef<HTMLDivElement>(null);
 
   const activeImage = images[selectedIdx] || images[0];
 
@@ -22,9 +22,18 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     );
   }
 
+  const scrollThumbs = (dir: "left" | "right") => {
+    if (!thumbRef.current) return;
+    const scrollAmount = 200;
+    thumbRef.current.scrollBy({
+      left: dir === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div className="w-full max-w-[460px] mx-auto space-y-3">
-      {/* Main Image Container with Viewport-Friendly Height */}
+      {/* Main Image Container */}
       <div className="relative w-full rounded-2xl border border-[#D5CCBB]/80 overflow-hidden bg-[#FAF7F0] shadow-sm aspect-[4/5] max-h-[500px] flex items-center justify-center group">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -41,29 +50,55 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         )}
       </div>
 
-      {/* Thumbnails row */}
+      {/* Thumbnails row with arrows */}
       {images.length > 1 && (
-        <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 scrollbar-none">
-          {images.map((img, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => setSelectedIdx(idx)}
-              aria-label={`View image ${idx + 1}`}
-              className={`relative h-15 w-15 sm:h-16 sm:w-16 rounded-xl border overflow-hidden shrink-0 transition-all duration-200 cursor-pointer ${
-                selectedIdx === idx
-                  ? "border-[#C9A45C] ring-2 ring-[#C9A45C]/40 shadow-xs scale-105"
-                  : "border-[#D5CCBB]/70 opacity-65 hover:opacity-100 hover:border-[#C9A45C]/60"
-              }`}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={img}
-                alt={`${productName} thumbnail ${idx + 1}`}
-                className="h-full w-full object-cover object-top"
-              />
-            </button>
-          ))}
+        <div className="relative flex items-center gap-1">
+          {/* Left arrow */}
+          <button
+            type="button"
+            onClick={() => scrollThumbs("left")}
+            className="shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-white/80 border border-[#D5CCBB]/60 shadow-sm hover:bg-white hover:border-[#C9A45C]/60 transition-colors cursor-pointer"
+            aria-label="Scroll thumbnails left"
+          >
+            <ChevronLeft className="w-4 h-4 text-neutral-600" />
+          </button>
+
+          {/* Scrollable thumbnails */}
+          <div
+            ref={thumbRef}
+            className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none scroll-smooth flex-1"
+          >
+            {images.map((img, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setSelectedIdx(idx)}
+                aria-label={`View image ${idx + 1}`}
+                className={`relative h-15 w-15 sm:h-16 sm:w-16 rounded-xl border overflow-hidden shrink-0 transition-all duration-200 cursor-pointer ${
+                  selectedIdx === idx
+                    ? "border-[#C9A45C] ring-2 ring-[#C9A45C]/40 shadow-xs scale-105"
+                    : "border-[#D5CCBB]/70 opacity-65 hover:opacity-100 hover:border-[#C9A45C]/60"
+                }`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img}
+                  alt={`${productName} thumbnail ${idx + 1}`}
+                  className="h-full w-full object-cover object-top"
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* Right arrow */}
+          <button
+            type="button"
+            onClick={() => scrollThumbs("right")}
+            className="shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-white/80 border border-[#D5CCBB]/60 shadow-sm hover:bg-white hover:border-[#C9A45C]/60 transition-colors cursor-pointer"
+            aria-label="Scroll thumbnails right"
+          >
+            <ChevronRight className="w-4 h-4 text-neutral-600" />
+          </button>
         </div>
       )}
     </div>

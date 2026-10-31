@@ -11,6 +11,7 @@ import {
   Menu,
   Package,
   PlusCircle,
+  Star,
   Store,
   Tag,
   Truck,
@@ -23,9 +24,10 @@ import "@/components/store/gold-text.css";
 
 interface AdminHeaderProps {
   adminEmail: string;
+  hideZohoBooks?: boolean;
 }
 
-export function AdminHeader({ adminEmail }: AdminHeaderProps) {
+export function AdminHeader({ adminEmail, hideZohoBooks = false }: AdminHeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [storefrontHref, setStorefrontHref] = useState("/");
@@ -63,6 +65,7 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
     { label: "Products", href: "/admin", exact: true, icon: Package },
     { label: "Categories", href: "/admin/categories", exact: false, icon: Layers },
     { label: "Offers & Banners", href: "/admin/offers", exact: false, icon: Tag },
+    { label: "Reviews", href: "/admin/reviews", exact: false, icon: Star },
     { label: "Shipping", href: "/admin/shipping", exact: false, icon: Truck },
   ];
 
@@ -192,22 +195,24 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
               <ExternalLink className="h-3 w-3 opacity-60 hidden xl:inline" />
             </Link>
 
-            {/* Zoho Books (Visible on 2xl screens) */}
-            <a
-              href="https://books.zoho.in"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Open Zoho Books in new tab"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-                className:
-                  "hidden 2xl:inline-flex gap-1.5 text-xs text-[#30251F]/70 hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-lg",
-              })}
-            >
-              <span>Zoho Books</span>
-              <ExternalLink className="h-3.5 w-3.5 opacity-60" />
-            </a>
+            {/* Zoho Books (Visible on 2xl screens, hidden for restricted manager) */}
+            {!hideZohoBooks && (
+              <a
+                href="https://books.zoho.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open Zoho Books in new tab"
+                className={buttonVariants({
+                  variant: "ghost",
+                  size: "sm",
+                  className:
+                    "hidden 2xl:inline-flex gap-1.5 text-xs text-[#30251F]/70 hover:text-[#073C35] hover:bg-[#073C35]/8 rounded-lg",
+                })}
+              >
+                <span>Zoho Books</span>
+                <ExternalLink className="h-3.5 w-3.5 opacity-60" />
+              </a>
+            )}
 
             {/* Admin Badge: Full pill on 2xl, compact user icon on xl */}
             <div
@@ -320,15 +325,17 @@ export function AdminHeader({ adminEmail }: AdminHeaderProps) {
                     <ExternalLink className="h-3.5 w-3.5 opacity-60" />
                   </Link>
 
-                  <a
-                    href="https://books.zoho.in"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#30251F]/80 hover:bg-[#073C35]/8"
-                  >
-                    <span>Open Zoho Books</span>
-                    <ExternalLink className="h-3.5 w-3.5 opacity-60" />
-                  </a>
+                  {!hideZohoBooks && (
+                    <a
+                      href="https://books.zoho.in"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#30251F]/80 hover:bg-[#073C35]/8"
+                    >
+                      <span>Open Zoho Books</span>
+                      <ExternalLink className="h-3.5 w-3.5 opacity-60" />
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

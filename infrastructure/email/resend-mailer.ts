@@ -55,12 +55,67 @@ export class ResendMailer implements Mailer {
             </thead>
             <tbody>
               ${linesHtml}
-              <tr>
-                <td style="padding: 12px; font-weight: bold; border-top: 2px solid #800020;">Total</td>
-                <td style="padding: 12px; font-weight: bold; text-align: right; border-top: 2px solid #800020;">${formatInr(input.quote.total)}</td>
+
+              <!-- Subtotal -->
+              <tr style="border-top: 1px solid #f0e6e6; color: #555;">
+                <td style="padding: 10px 12px;">Subtotal</td>
+                <td style="padding: 10px 12px; text-align: right; font-family: monospace;">${formatInr(input.quote.subtotal)}</td>
+              </tr>
+
+              <!-- Festive Discount (if any) -->
+              ${
+                input.quote.discount && input.quote.discount.minor > 0
+                  ? `
+              <tr style="color: #047857;">
+                <td style="padding: 8px 12px;">Festive Discount</td>
+                <td style="padding: 8px 12px; text-align: right; font-family: monospace;">-${formatInr(input.quote.discount)}</td>
+              </tr>`
+                  : ""
+              }
+
+              <!-- Shipping / Delivery Charge Definition -->
+              <tr style="color: #555;">
+                <td style="padding: 10px 12px;">
+                  <strong style="color: #333;">Shipping &amp; Delivery Charge</strong>
+                  <span style="font-size: 12px; color: #777; display: block; margin-top: 2px;">
+                    ${
+                      input.quote.shippingLabel ||
+                      (input.quote.shippingMethod === "express"
+                        ? "Express Delivery"
+                        : "Standard Shipping (Within India)")
+                    }
+                  </span>
+                </td>
+                <td style="padding: 10px 12px; text-align: right; font-family: monospace;">
+                  ${
+                    input.quote.shipping && input.quote.shipping.minor > 0
+                      ? formatInr(input.quote.shipping)
+                      : '<strong style="color: #800020;">FREE</strong>'
+                  }
+                </td>
+              </tr>
+
+              <!-- Total Paid -->
+              <tr style="background: #faf7f2; border-top: 2px solid #800020;">
+                <td style="padding: 14px 12px; font-weight: bold; color: #800020; font-size: 16px;">Total Paid</td>
+                <td style="padding: 14px 12px; font-weight: bold; text-align: right; color: #800020; font-size: 16px; font-family: monospace;">${formatInr(input.quote.total)}</td>
               </tr>
             </tbody>
           </table>
+
+          ${
+            input.shippingAddress
+              ? `
+          <div style="margin: 20px 0; padding: 14px 16px; background: #faf7f2; border: 1px solid #ede3d7; border-radius: 6px; font-family: sans-serif; font-size: 13px;">
+            <strong style="color: #800020; font-size: 13px; display: block; margin-bottom: 4px;">Delivery Address</strong>
+            <p style="margin: 0; color: #444; line-height: 1.5;">
+              ${input.customerName}<br />
+              ${input.shippingAddress.line1}${input.shippingAddress.line2 ? `, ${input.shippingAddress.line2}` : ""}<br />
+              ${input.shippingAddress.city}, ${input.shippingAddress.state} - ${input.shippingAddress.pincode}
+            </p>
+          </div>`
+              : ""
+          }
 
           <p style="font-size: 13px; color: #735c5c;">Your official tax invoice is attached as a PDF to this email.</p>
         </div>

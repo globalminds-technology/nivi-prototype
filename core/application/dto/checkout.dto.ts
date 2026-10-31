@@ -16,10 +16,19 @@ export const CustomerDto = z.object({
   email: z.string().email("Enter a valid email address"),
   phone: z
     .string()
-    .regex(INDIAN_MOBILE_PATTERN, "Enter a valid 10-digit Indian mobile number")
+    .min(7, "Phone number must be at least 7 digits")
+    .max(20, "Phone number cannot exceed 20 characters")
+    .refine((val) => {
+      const clean = val.replace(/[\s-]/g, "");
+      return INDIAN_MOBILE_PATTERN.test(clean) || /^\+?[1-9]\d{6,14}$/.test(clean);
+    }, "Enter a valid mobile number (10-digit Indian number or international number with country code)")
     .transform((val) => {
-      const match = INDIAN_MOBILE_PATTERN.exec(val.replace(/[\s-]/g, ""));
-      return match ? match[1] : val;
+      const clean = val.replace(/[\s-]/g, "");
+      const match = INDIAN_MOBILE_PATTERN.exec(clean);
+      if (match && !clean.startsWith("+") && clean.length === 10) {
+        return match[1];
+      }
+      return clean.startsWith("+") ? clean : clean.length === 10 ? clean : `+${clean}`;
     }),
   shippingAddress: AddressDto,
   billingAddress: AddressDto,

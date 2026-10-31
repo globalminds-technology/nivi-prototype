@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, RotateCcw } from "lucide-react";
 import type { SareeQuizAnswers } from "@/core/domain/entities/saree-quiz";
 
 interface QuizStep {
@@ -119,33 +119,65 @@ const QUIZ_STEPS: QuizStep[] = [
 export function SareeQuizFlow() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const isEditMode = searchParams ? searchParams.get("mode") === "edit" : false;
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [answers, setAnswers] = useState<SareeQuizAnswers>(() => {
-    const initial: SareeQuizAnswers = {};
-    if (!searchParams) return initial;
-
-    const bodyShape = searchParams.get("bodyShape");
-    const height = searchParams.get("height");
-    const undertone = searchParams.get("undertone");
-    const occasion = searchParams.get("occasion");
-    const style = searchParams.get("style");
-    const comfort = searchParams.get("comfort");
-    const border = searchParams.get("border");
-    const colourPalette = searchParams.get("colourPalette");
-
-    if (bodyShape) initial.bodyShape = bodyShape as any;
-    if (height) initial.height = height as any;
-    if (undertone) initial.undertone = undertone as any;
-    if (occasion) initial.occasion = occasion as any;
-    if (style) initial.style = style as any;
-    if (comfort) initial.comfort = comfort as any;
-    if (border) initial.border = border as any;
-    if (colourPalette) initial.colourPalette = colourPalette as any;
-
-    return initial;
-  });
+  const [answers, setAnswers] = useState<SareeQuizAnswers>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sync state whenever navigating to the quiz or search parameters change
+  useEffect(() => {
+    setIsSubmitting(false);
+
+    if (isEditMode && searchParams) {
+      const initial: SareeQuizAnswers = {};
+      const bodyShape = searchParams.get("bodyShape");
+      const height = searchParams.get("height");
+      const undertone = searchParams.get("undertone");
+      const occasion = searchParams.get("occasion");
+      const style = searchParams.get("style");
+      const comfort = searchParams.get("comfort");
+      const border = searchParams.get("border");
+      const colourPalette = searchParams.get("colourPalette");
+
+      if (bodyShape) initial.bodyShape = bodyShape as any;
+      if (height) initial.height = height as any;
+      if (undertone) initial.undertone = undertone as any;
+      if (occasion) initial.occasion = occasion as any;
+      if (style) initial.style = style as any;
+      if (comfort) initial.comfort = comfort as any;
+      if (border) initial.border = border as any;
+      if (colourPalette) initial.colourPalette = colourPalette as any;
+
+      setAnswers(initial);
+      setCurrentStepIndex(0);
+    } else {
+      // Fresh start from Question 1 with cleared answers
+      setCurrentStepIndex(0);
+      setAnswers({});
+    }
+  }, [searchParams, isEditMode]);
+
+  // Handle browser Back/Forward Cache (BFCache) when navigating back from results
+  useEffect(() => {
+    const handlePageShow = () => {
+      setIsSubmitting(false);
+      if (!searchParams || searchParams.get("mode") !== "edit") {
+        setCurrentStepIndex(0);
+        setAnswers({});
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, [searchParams]);
+
+  // Safety cleanup: reset isSubmitting on unmount
+  useEffect(() => {
+    return () => {
+      setIsSubmitting(false);
+    };
+  }, []);
 
   const currentStep = QUIZ_STEPS[currentStepIndex];
   const selectedAnswer = answers[currentStep.id];
@@ -165,6 +197,11 @@ export function SareeQuizFlow() {
     if (finalAnswers.colourPalette) params.set("colourPalette", finalAnswers.colourPalette);
 
     router.push(`/quiz/results?${params.toString()}`);
+
+    // Safety timeout in case navigation is delayed or preserved in router cache
+    setTimeout(() => {
+      setIsSubmitting(false);
+    }, 1500);
   };
 
   const handleSelectOption = (optionLabel: string) => {
@@ -192,6 +229,12 @@ export function SareeQuizFlow() {
     }
   };
 
+  const handleRestart = () => {
+    setCurrentStepIndex(0);
+    setAnswers({});
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto px-2 sm:px-4">
       {/* Question Card (Compact, Fits Entirely in Viewport) */}
@@ -202,9 +245,22 @@ export function SareeQuizFlow() {
             <span className="font-serif font-bold text-xs uppercase tracking-wider text-[#8C6D37]">
               Step {currentStep.number} of {QUIZ_STEPS.length}
             </span>
-            <span className="text-[11px] font-mono font-semibold text-[#6B5A4A]">
-              {progressPercent}% Complete
-            </span>
+            <div className="flex items-center gap-3">
+              {currentStepIndex > 0 && (
+                <button
+                  type="button"
+                  onClick={handleRestart}
+                  className="inline-flex items-center gap-1 text-[11px] text-[#8C6D37] hover:text-[#073C35] transition-colors cursor-pointer"
+                  title="Restart from Question 1"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  <span>Restart</span>
+                </button>
+              )}
+              <span className="text-[11px] font-mono font-semibold text-[#6B5A4A]">
+                {progressPercent}% Complete
+              </span>
+            </div>
           </div>
 
           {/* Progress Bar with NiVi Brand Colors */}
@@ -221,57 +277,53 @@ export function SareeQuizFlow() {
               {currentStep.question}
             </h2>
             {currentStep.subtitle && (
-              <p className="text-xs sm:text-xs text-[#5C4D3C] mt-1 leading-relaxed">
+              <p className="text-xs sm:text-xs text-[#6B5A4A] mt-1 leading-relaxed">
                 {currentStep.subtitle}
               </p>
             )}
           </div>
         </div>
 
-        {/* Option Selection Grid (2-Column Responsive Layout - Zero Scroll) */}
-        <div
-          className={`grid gap-2.5 sm:gap-3 ${
-            currentStep.options.length === 3
-              ? "grid-cols-1 sm:grid-cols-3"
-              : "grid-cols-1 sm:grid-cols-2"
-          }`}
-        >
-          {currentStep.options.map((opt) => {
-            const isSelected = selectedAnswer === opt.label;
+        {/* Options Grid (Dual Column on Desktop, Single on Mobile for Scannability) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+          {currentStep.options.map((option) => {
+            const isSelected = selectedAnswer === option.label;
             return (
               <button
-                key={opt.label}
+                key={option.label}
                 type="button"
-                onClick={() => handleSelectOption(opt.label)}
-                className={`w-full text-left p-3 sm:p-3.5 rounded-xl border transition-all duration-150 flex items-start justify-between gap-2.5 cursor-pointer shadow-2xs ${
+                onClick={() => handleSelectOption(option.label)}
+                disabled={isSubmitting}
+                className={`group relative flex items-start justify-between p-3.5 sm:p-4 rounded-xl border text-left transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-[#073C35]/8 border-[#073C35] ring-1 ring-[#073C35] text-[#073C35]"
-                    : "bg-white border-[#E5DAC6] hover:border-[#8C6D37]/70 hover:bg-[#FAF4EA]"
+                    ? "border-[#073C35] bg-[#073C35]/5 ring-1 ring-[#073C35] shadow-xs"
+                    : "border-[#D5CCBB] bg-white hover:border-[#8C6D37]/50 hover:bg-[#FAF6EE]/50"
                 }`}
               >
-                <div className="space-y-0.5 min-w-0 flex-1">
-                  <div
-                    className={`text-xs sm:text-sm font-semibold leading-snug ${
-                      isSelected ? "text-[#073C35]" : "text-[#221811]"
+                <div className="pr-3 space-y-0.5">
+                  <p
+                    className={`text-xs sm:text-sm font-semibold transition-colors ${
+                      isSelected ? "text-[#073C35]" : "text-[#221811] group-hover:text-[#073C35]"
                     }`}
                   >
-                    {opt.label}
-                  </div>
-                  {opt.description && (
-                    <div className="text-[11px] text-[#6B5A4A] leading-tight line-clamp-2">
-                      {opt.description}
-                    </div>
+                    {option.label}
+                  </p>
+                  {option.description && (
+                    <p className="text-[11px] sm:text-xs text-[#6B5A4A] leading-snug">
+                      {option.description}
+                    </p>
                   )}
                 </div>
 
+                {/* Elegant Radio/Check Icon */}
                 <div
-                  className={`h-4.5 w-4.5 rounded-full shrink-0 mt-0.5 flex items-center justify-center border transition-all ${
+                  className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                     isSelected
-                      ? "bg-[#073C35] border-[#073C35] text-white"
-                      : "border-[#C8BCAB] bg-white"
+                      ? "bg-[#073C35] text-white shadow-2xs"
+                      : "border border-[#C8BCAB] bg-white group-hover:border-[#8C6D37]"
                   }`}
                 >
-                  {isSelected && <Check className="h-3 w-3" />}
+                  {isSelected && <Check className="h-3 w-3 stroke-[2.5]" />}
                 </div>
               </button>
             );

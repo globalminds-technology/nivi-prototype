@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {} from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Great_Vibes } from "next/font/google";
 import { StorePoliciesDialog, type PolicyTabKey } from "./store-policies-dialog";
 import "./gold-text.css";
@@ -313,6 +313,13 @@ export function Footer() {
                         </a>
                       </div>
                     </li>
+                    <li className="pt-0.5 text-[10.5px] xl:text-[11.5px] text-[#221811]/90 font-medium leading-tight">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3 text-[#073C35] shrink-0" />
+                        <span>Peraiyur &bull; Maraimalainagar</span>
+                      </div>
+                      <span className="text-[9.5px] xl:text-[10px] text-[#694208] block pl-4">Tamil Nadu, India</span>
+                    </li>
                     <li>
                       <button
                         type="button"
@@ -370,15 +377,7 @@ export function Footer() {
                     onClick={() => handleOpenPolicy("shipping")}
                     className="hover:text-white transition-colors cursor-pointer"
                   >
-                    Terms of Service
-                  </button>
-                  <span className="text-[#EAE0D0]/40">|</span>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenPolicy("disclaimers")}
-                    className="hover:text-white transition-colors cursor-pointer"
-                  >
-                    Sitemap
+                    Terms & Conditions
                   </button>
                 </div>
               </div>
@@ -407,7 +406,7 @@ export function Footer() {
             className="absolute inset-0 w-full h-full pointer-events-none select-none z-[5]"
             style={{
               background:
-                "linear-gradient(180deg, rgba(234, 224, 208, 0.98) 0%, rgba(246, 238, 226, 0.94) 22%, rgba(246, 238, 226, 0.82) 35%, rgba(246, 238, 226, 0.35) 46%, rgba(246, 238, 226, 0) 56%)",
+              "linear-gradient(180deg, rgba(234, 224, 208, 0.98) 0%, rgba(246, 238, 226, 0.96) 24%, rgba(246, 238, 226, 0.90) 38%, rgba(246, 238, 226, 0.80) 46%, rgba(246, 238, 226, 0.25) 54%, rgba(246, 238, 226, 0) 62%)",
             }}
           />
 
@@ -478,7 +477,7 @@ export function Footer() {
                 <div className="w-28 h-[1px] bg-gradient-to-r from-transparent via-[#8A5A12]/35 to-transparent my-2" />
 
                 {/* 2. Navigation Structure (Shop & About side-by-side, Customer Care with full width) */}
-                <div className="w-full max-w-[340px] px-2 text-left">
+                <div className="w-full max-w-[350px] px-2.5 text-left">
                   <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                     {/* SHOP */}
                     <div>
@@ -506,33 +505,35 @@ export function Footer() {
                       </ul>
                     </div>
 
-                    {/* CUSTOMER CARE (Spans both columns, perfectly laid out with no wrapping) */}
-                    <div className="col-span-2 pt-1.5 border-t border-[#8A5A12]/20">
-                      <div className="flex items-center justify-between mb-1">
+                    {/* CUSTOMER CARE & POLICIES (Spans both columns, perfectly laid out with no wrapping) */}
+                    <div className="col-span-2 pt-2 border-t border-[#8A5A12]/20">
+                      <div className="flex items-center justify-between mb-1.5">
                         <h4 className="font-serif text-[11px] font-bold tracking-wider text-[#694208] uppercase">
                           Customer Care
                         </h4>
-                        <div className="flex items-center gap-1.5 text-[9.5px] text-[#221811]/80 font-medium">
-                          <button type="button" onClick={() => handleOpenPolicy("shipping")} className="hover:text-[#073C35]">Shipping</button>
-                          <span>•</span>
-                          <button type="button" onClick={() => handleOpenPolicy("returns")} className="hover:text-[#073C35]">Returns</button>
-                          <span>•</span>
-                          <button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35]">FAQs</button>
+                        <div className="flex items-center gap-1.5 text-[9.5px] text-[#221811]/85 font-medium">
+                          <button type="button" onClick={() => handleOpenPolicy("shipping")} className="hover:text-[#073C35] transition-colors cursor-pointer">Shipping</button>
+                          <span className="text-[#8A5A12]/40">•</span>
+                          <button type="button" onClick={() => handleOpenPolicy("returns")} className="hover:text-[#073C35] transition-colors cursor-pointer">Returns</button>
+                          <span className="text-[#8A5A12]/40">•</span>
+                          <button type="button" onClick={() => handleOpenPolicy("disclaimers")} className="hover:text-[#073C35] transition-colors cursor-pointer">FAQs</button>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between gap-1 text-[10px] text-[#221811] font-medium flex-wrap">
-                        <a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] transition-colors">
+                      <div className="flex items-center justify-between gap-1 text-[10px] text-[#221811] font-medium">
+                        <a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] transition-colors truncate">
                           connect@brandnivi.com
                         </a>
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <span>+91 91509 92863</span>
+                          <a href="tel:+919150992863" className="hover:text-[#073C35] transition-colors">
+                            +91 91509 92863
+                          </a>
                           <div className="inline-flex items-center gap-1">
                             <a
                               href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                              className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/90 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
                               title="Chat on WhatsApp"
                               aria-label="Chat on WhatsApp"
                             >
@@ -540,7 +541,7 @@ export function Footer() {
                             </a>
                             <a
                               href="tel:+919150992863"
-                              className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
+                              className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/90 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
                               title="Call Customer Care"
                               aria-label="Call Customer Care"
                             >
@@ -548,6 +549,34 @@ export function Footer() {
                             </a>
                           </div>
                         </div>
+                        <div className="flex items-center justify-center gap-1 text-[10px] text-[#221811]/90 font-medium pt-1">
+                          <MapPin className="h-2.5 w-2.5 text-[#073C35] shrink-0" />
+                          <span>Peraiyur &bull; Maraimalainagar, Tamil Nadu</span>
+                        </div>
+                      </div>
+
+                      {/* Terms & Conditions, Privacy Policy & Copyright placed slightly above next to contact */}
+                      <div className="mt-2.5 pt-2 border-t border-[#8A5A12]/20 flex flex-col items-center justify-center gap-1 text-center">
+                        <div className="flex items-center justify-center gap-x-3 text-[10px] text-[#221811]/90 font-medium">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenPolicy("disclaimers")}
+                            className="hover:text-[#073C35] transition-colors cursor-pointer"
+                          >
+                            Privacy Policy
+                          </button>
+                          <span className="text-[#8A5A12]/40">•</span>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenPolicy("shipping")}
+                            className="hover:text-[#073C35] transition-colors cursor-pointer"
+                          >
+                            Terms & Conditions
+                          </button>
+                        </div>
+                        <p className="text-[9px] text-[#221811]/70 tracking-wide font-sans">
+                          © {currentYear} NiVi. All rights reserved.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -675,7 +704,7 @@ export function Footer() {
             </div>
 
             {/* ── BOTTOM ROW: Directly inside the Emerald Green Wave ── */}
-            <div className="w-full pb-24 sm:pb-14 md:pb-4 text-center pointer-events-auto">
+            <div className="hidden sm:block w-full pb-14 md:pb-4 text-center pointer-events-auto">
               <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-[#FAF7F0]/95 text-[10px] sm:text-[10.5px] md:text-[11px] mb-1 font-medium">
                 <button
                   type="button"
@@ -690,15 +719,7 @@ export function Footer() {
                   onClick={() => handleOpenPolicy("shipping")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Terms of Service
-                </button>
-                <span className="text-[#FAF7F0]/40">|</span>
-                <button
-                  type="button"
-                  onClick={() => handleOpenPolicy("disclaimers")}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  Sitemap
+                  Terms & Conditions
                 </button>
               </div>
               <p className="text-[#FAF7F0]/80 text-[9.5px] sm:text-[10px] md:text-[10.5px] tracking-wide">

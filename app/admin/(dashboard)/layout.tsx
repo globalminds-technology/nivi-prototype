@@ -18,7 +18,7 @@ export default async function AdminDashboardLayout({
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <AdminHeader adminEmail={session.email} />
+      <AdminHeader adminEmail={session.email} hideZohoBooks={session.hideZohoBooks} />
       <main className="flex-1 container mx-auto px-4 sm:px-6 py-8">
         {children}
       </main>

@@ -316,7 +316,7 @@ export function ProductForm({
         `Added ${validFiles.length} photo(s). Some were skipped due to format or 11-slot limit.`,
       );
     } else {
-      toast.success(`Selected ${validFiles.length} photo(s). They will upload on final submit.`);
+      toast.success(`Selected ${validFiles.length} photo(s).`);
     }
 
     const newItems: StagedGalleryFile[] = validFiles.map((file) => ({
@@ -370,12 +370,12 @@ export function ProductForm({
     // Preserve existing offer if product already had one linked via Offers Manager
     const offerPayload = initialData?.offer
       ? {
-          active: initialData.offer.active,
-          type: initialData.offer.type,
-          value: initialData.offer.value,
-          label: initialData.offer.label,
-          expiry: initialData.offer.expiry ? initialData.offer.expiry : null,
-        }
+        active: initialData.offer.active,
+        type: initialData.offer.type,
+        value: initialData.offer.value,
+        label: initialData.offer.label,
+        expiry: initialData.offer.expiry ? initialData.offer.expiry : null,
+      }
       : null;
 
     startTransition(async () => {
@@ -622,22 +622,20 @@ export function ProductForm({
                     <button
                       type="button"
                       onClick={() => setStatus("active")}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                        status === "active"
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${status === "active"
                           ? "bg-primary text-primary-foreground border-primary shadow-xs"
                           : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
+                        }`}
                     >
                       Active
                     </button>
                     <button
                       type="button"
                       onClick={() => setStatus("inactive")}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                        status === "inactive"
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-colors ${status === "inactive"
                           ? "bg-primary text-primary-foreground border-primary shadow-xs"
                           : "border-border text-muted-foreground hover:bg-muted"
-                      }`}
+                        }`}
                     >
                       Draft
                     </button>
@@ -839,11 +837,10 @@ export function ProductForm({
                     if (file) handleSelectPrimaryFile(file);
                   }}
                   onClick={() => fileInputRef.current?.click()}
-                  className={`rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 cursor-pointer ${
-                    isDragging
+                  className={`rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 cursor-pointer ${isDragging
                       ? "border-emerald-600 bg-emerald-500/10"
                       : "border-border/80 hover:border-emerald-700/60 hover:bg-muted/30"
-                  }`}
+                    }`}
                 >
                   <UploadCloud className="mx-auto h-8 w-8 text-muted-foreground/60 mb-2" />
                   <h4 className="text-sm font-semibold text-foreground">Click to upload or drag & drop primary photo</h4>
@@ -902,11 +899,10 @@ export function ProductForm({
                     if (e.dataTransfer.files) handleSelectAdditionalFiles(e.dataTransfer.files);
                   }}
                   onClick={() => additionalFileInputRef.current?.click()}
-                  className={`rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 cursor-pointer ${
-                    isDraggingAdditional
+                  className={`rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 cursor-pointer ${isDraggingAdditional
                       ? "border-emerald-600 bg-emerald-500/10"
                       : "border-border/80 hover:border-emerald-700/60 hover:bg-muted/30"
-                  }`}
+                    }`}
                 >
                   <ImagePlus className="mx-auto h-8 w-8 text-muted-foreground/50 mb-2" />
                   <h4 className="text-sm font-semibold text-foreground">Click to select multiple photos or drag & drop</h4>
@@ -1090,11 +1086,10 @@ export function ProductForm({
                         type="button"
                         onClick={() => toggleOccasion(occ)}
                         disabled={isPending}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
-                          selected
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${selected
                             ? "bg-emerald-800 text-white border-emerald-800 shadow-2xs"
                             : "bg-muted/40 border-border text-foreground hover:bg-muted"
-                        }`}
+                          }`}
                       >
                         {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3 text-muted-foreground" />}
                         <span>{occ}</span>
@@ -1116,11 +1111,10 @@ export function ProductForm({
                         type="button"
                         onClick={() => toggleStyle(st)}
                         disabled={isPending}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
-                          selected
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${selected
                             ? "bg-emerald-800 text-white border-emerald-800 shadow-2xs"
                             : "bg-muted/40 border-border text-foreground hover:bg-muted"
-                        }`}
+                          }`}
                       >
                         {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3 text-muted-foreground" />}
                         <span>{st}</span>
@@ -1142,11 +1136,10 @@ export function ProductForm({
                         type="button"
                         onClick={() => toggleComfort(comf)}
                         disabled={isPending}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
-                          selected
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${selected
                             ? "bg-emerald-800 text-white border-emerald-800 shadow-2xs"
                             : "bg-muted/40 border-border text-foreground hover:bg-muted"
-                        }`}
+                          }`}
                       >
                         {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3 text-muted-foreground" />}
                         <span>{comf}</span>
@@ -1200,11 +1193,10 @@ export function ProductForm({
                       type="button"
                       onClick={() => toggleTag(tag)}
                       disabled={isPending}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                        selected
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selected
                           ? "bg-primary text-primary-foreground border-primary shadow-xs"
                           : "bg-muted/40 border-border text-foreground hover:bg-muted"
-                      }`}
+                        }`}
                     >
                       {selected ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3 text-muted-foreground" />}
                       <span className="capitalize">{tag.replace(/_/g, " ")}</span>

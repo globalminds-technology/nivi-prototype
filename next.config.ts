@@ -23,6 +23,16 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    localPatterns: [
+      {
+        pathname: "/api/images/**",
+        search: "?*",
+      },
+      {
+        pathname: "/**",
+        search: "?*",
+      },
+    ],
     remotePatterns: [
       ...(r2Host ? [{ protocol: "https" as const, hostname: r2Host }] : []),
       // Zoho-hosted primary item images

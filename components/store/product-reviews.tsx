@@ -1,6 +1,7 @@
 "use client";
 
-import { ShieldCheck, Star } from "lucide-react";
+import { useState, useMemo } from "react";
+import { ChevronDown, ChevronUp, ShieldCheck, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import type { Review, ReviewSummary } from "@/core/domain/entities/review";
@@ -18,7 +19,11 @@ export function ProductReviews({
   reviews,
   summary,
 }: ProductReviewsProps) {
-  const hasReviews = reviews.length > 0;
+  const [isExpanded, setIsExpanded] = useState(false);
+  const visibleReviews = useMemo(() => reviews.filter((r) => !r.hidden), [reviews]);
+  const hasReviews = visibleReviews.length > 0;
+  const displayedReviews = isExpanded ? visibleReviews : visibleReviews.slice(0, 2);
+  const remainingCount = visibleReviews.length - 2;
 
   return (
     <div className="pt-12 sm:pt-16 border-t border-border/60">
@@ -29,9 +34,6 @@ export function ProductReviews({
               <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
                 Verified Patron Reviews
               </h2>
-              <span className="font-mono text-xs text-muted-foreground uppercase">
-                ({sku})
-              </span>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Authentic feedback for {productName} from verified purchasers across India.
@@ -44,11 +46,10 @@ export function ProductReviews({
                 {[1, 2, 3, 4, 5].map((s) => (
                   <Star
                     key={s}
-                    className={`w-4 h-4 ${
-                      s <= Math.round(summary.average)
+                    className={`w-4 h-4 ${s <= Math.round(summary.average)
                         ? "fill-amber-400 text-amber-400"
                         : "text-muted-foreground/30"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
@@ -86,11 +87,10 @@ export function ProductReviews({
                   {[1, 2, 3, 4, 5].map((s) => (
                     <Star
                       key={s}
-                      className={`w-4 h-4 ${
-                        s <= Math.round(summary.average)
+                      className={`w-4 h-4 ${s <= Math.round(summary.average)
                           ? "fill-amber-400 text-amber-400"
                           : "text-muted-foreground/30"
-                      }`}
+                        }`}
                     />
                   ))}
                 </div>
@@ -127,7 +127,7 @@ export function ProductReviews({
 
             {/* Right reviews list */}
             <div className="md:col-span-8 space-y-4">
-              {reviews.map((r) => (
+              {displayedReviews.map((r) => (
                 <Card key={r.id} className="border-border/60 shadow-xs">
                   <CardContent className="pt-5 space-y-2">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -135,11 +135,10 @@ export function ProductReviews({
                         {[1, 2, 3, 4, 5].map((star) => (
                           <Star
                             key={star}
-                            className={`w-3.5 h-3.5 ${
-                              star <= r.rating
+                            className={`w-3.5 h-3.5 ${star <= r.rating
                                 ? "fill-amber-400 text-amber-400"
                                 : "text-muted-foreground/30"
-                            }`}
+                              }`}
                           />
                         ))}
                       </div>
@@ -178,6 +177,28 @@ export function ProductReviews({
                   </CardContent>
                 </Card>
               ))}
+
+              {visibleReviews.length > 2 && (
+                <div className="pt-2 text-center sm:text-left">
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded((prev) => !prev)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-[#073C35] bg-[#073C35]/6 hover:bg-[#073C35]/12 border border-[#073C35]/20 transition-all cursor-pointer shadow-2xs"
+                  >
+                    {isExpanded ? (
+                      <>
+                        <ChevronUp className="w-3.5 h-3.5" />
+                        <span>Show fewer reviews</span>
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-3.5 h-3.5" />
+                        <span>+{remainingCount} more reviews</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

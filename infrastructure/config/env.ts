@@ -48,10 +48,14 @@ const envSchema = z.object({
   MAIL_USERNAME: optionalString,
   MAIL_PASSWORD: optionalString,
 
-  // Security
+  // Security & Admin Auth
   CRON_SECRET: optionalString,
   ADMIN_EMAIL: emptyToUndefined(z.string().email().optional()),
+  ADMIN_PASSWORD: optionalString,
   ADMIN_PASSWORD_HASH: optionalString,
+  MANAGER_EMAIL: emptyToUndefined(z.string().email().optional()),
+  MANAGER_PASSWORD: optionalString,
+  MANAGER_PASSWORD_HASH: optionalString,
   AUTH_SECRET: optionalString,
   REVIEW_LINK_SECRET: optionalString,
 

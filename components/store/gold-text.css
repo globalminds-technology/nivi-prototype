@@ -6,10 +6,10 @@
 }
 
 .gold-text {
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-size: clamp(1.75rem, 5.5vw, 2.15rem); /* Refined heading size for mobile view */
   line-height: 1.15;
   margin: 0;
-  padding: 0.05em 0.15em; /* stops script swashes from clipping */
+  padding: 0.04em 0.12em; /* stops script swashes from clipping */
   letter-spacing: normal !important; /* CRITICAL: Prevents breaking space between cursive script letters */
   word-spacing: 0.15em;
 
@@ -54,4 +54,9 @@
   color: transparent;
   filter: drop-shadow(0 1px 1px rgba(35, 18, 2, 0.45));
 }
-
+/* Tablet & Desktop: Restore original expansive heading size */
+@media (min-width: 640px) {
+  .gold-text {
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+  }
+}

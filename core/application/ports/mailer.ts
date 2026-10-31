@@ -6,6 +6,13 @@ export interface SendOrderConfirmationInput {
   invoiceNumber: string;
   invoicePdf: Uint8Array;
   quote: Quote;
+  shippingAddress?: {
+    line1: string;
+    line2?: string | null;
+    city: string;
+    state: string;
+    pincode: string;
+  };
 }
 
 export interface Mailer {

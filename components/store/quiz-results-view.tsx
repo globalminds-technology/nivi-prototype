@@ -149,11 +149,6 @@ export function QuizResultsView({
                 <Sparkles className="h-3.5 w-3.5 text-[#8C6D37]" />
                 <span>Curated Style Recommendation</span>
               </div>
-              {totalMatches > 1 && (
-                <span className="text-[11px] font-semibold text-[#8C6D37] bg-white/80 px-2.5 py-1 rounded-full border border-[#D5CCBB]">
-                  Match {matchIndex + 1} of {totalMatches}
-                </span>
-              )}
             </div>
 
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#221811] leading-tight">
@@ -180,11 +175,7 @@ export function QuizResultsView({
                 aria-label="Find Another Match"
               >
                 <RefreshCw className="h-3.5 w-3.5 text-[#C9A45C]" />
-                <span>
-                  {totalMatches > 1
-                    ? `Find Another Match (${matchIndex + 1}/${totalMatches})`
-                    : "Find Another Match"}
-                </span>
+                <span>Find Another Match</span>
               </button>
 
               <Link
@@ -239,12 +230,15 @@ export function QuizResultsView({
       {/* SECTION 2: In-Stock Matching Sarees Showcase */}
       <div className="space-y-6 pt-2">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-[#D5CCBB] pb-4">
-          <div>
-            <span className="text-xs font-bold text-[#8C6D37] uppercase tracking-widest block mb-1">
-              Ready to Wear
-            </span>
-            <GoldText>Curated Handcrafted Sarees</GoldText>
-            <p className="text-xs sm:text-sm text-[#6B5A4A] mt-1">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#073C35]/10 text-[#073C35] text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="h-3.5 w-3.5 text-[#C9A45C]" />
+              <span>Ready to Choose</span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#221811]">
+              Curated Handcrafted Sarees
+            </h2>
+            <p className="text-xs sm:text-sm text-[#6B5A4A]">
               In-stock masterweaves matching your {recommendation.fabric} recommendation and occasion profile.
             </p>
           </div>
@@ -256,11 +250,7 @@ export function QuizResultsView({
               className="inline-flex items-center gap-2 text-xs font-semibold text-[#073C35] hover:text-[#073C35]/80 transition-colors cursor-pointer select-none"
             >
               <RefreshCw className="h-3.5 w-3.5 text-[#073C35]" />
-              <span>
-                {totalMatches > 1
-                  ? `Explore Match #${((matchIndex + 1) % totalMatches) + 1} (${((matchIndex + 1) % totalMatches) + 1}/${totalMatches})`
-                  : "Find Another Match"}
-              </span>
+              <span>Find Another Match</span>
             </button>
             <span className="text-[#B0A292] text-xs">|</span>
             <Link

@@ -66,9 +66,10 @@ export interface SerializedProduct {
 interface ProductTableProps {
   products: SerializedProduct[];
   zohoOrgId?: string;
+  hideZoho?: boolean;
 }
 
-export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
+export function ProductTable({ products, zohoOrgId, hideZoho = false }: ProductTableProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -391,19 +392,21 @@ export function ProductTable({ products, zohoOrgId }: ProductTableProps) {
                                 </>
                               )}
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                              render={
-                                <a
-                                  href={zohoItemUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2 text-xs text-[#30251F] hover:text-[#073C35]"
-                                >
-                                  <ExternalLink className="h-3.5 w-3.5" />
-                                  <span>View in Zoho</span>
-                                </a>
-                              }
-                            />
+                            {!hideZoho && (
+                              <DropdownMenuItem
+                                render={
+                                  <a
+                                    href={zohoItemUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-xs text-[#30251F] hover:text-[#073C35]"
+                                  >
+                                    <ExternalLink className="h-3.5 w-3.5" />
+                                    <span>View in Zoho</span>
+                                  </a>
+                                }
+                              />
+                            )}
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>

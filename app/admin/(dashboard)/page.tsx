@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 
 export default async function AdminProductsPage() {
   await connection();
+  const session = await container.adminAuth.getCurrentSession();
   const zohoOrgId = container.getZohoOrgId();
   let products: SerializedProduct[] = [];
   let errorNotice: string | null = null;
@@ -158,7 +159,7 @@ export default async function AdminProductsPage() {
       </div>
 
       {/* Main Table */}
-      <ProductTable products={products} zohoOrgId={zohoOrgId} />
+      <ProductTable products={products} zohoOrgId={zohoOrgId} hideZoho={Boolean(session?.hideZohoBooks)} />
     </div>
   );
 }
