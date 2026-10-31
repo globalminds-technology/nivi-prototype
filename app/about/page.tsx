@@ -58,28 +58,26 @@ export default function AboutPage() {
             {/* ── 3. FOUNDERS EMBLEM & IDENTITY (Grand, Subtle Container with Elegant Italic Typography) ── */}
             <div className="relative rounded-3xl bg-gradient-to-b from-[#FAF6EE] via-[#F6F1E5] to-[#FAF6EE] border border-[#C9A45C]/35 shadow-[0_12px_36px_rgba(7,60,53,0.06),0_0_0_1px_rgba(201,164,92,0.15)] p-6 sm:p-8 space-y-4 max-w-2xl mx-auto">
               {/* Founders emblem banner: Ni ✦ Vi · Nirmala & Vijayakala */}
-              <div className="inline-flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 py-2.5 px-6 rounded-2xl bg-[#FFFDF9] border border-[#C9A45C]/30 shadow-2xs">
-                {/* Monogram in NiVi Logo Palette with flowing italic serif */}
-                <div className="flex items-center gap-2 font-serif italic text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight select-none">
-                  <span className="text-[#073C35]">Ni</span>
-                  <span className="text-[#C9A45C] not-italic text-lg sm:text-xl">✦</span>
-                  <span className="text-[#996515]">Vi</span>
+              <div className="inline-flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 py-2.5 px-6 rounded-2xl bg-[#FFFDF9] border border-[#C9A45C]/35 shadow-2xs text-[#996515]">
+                {/* Monogram with flowing italic serif in signature NiVi logo gold */}
+                <div className="flex items-center gap-2 font-serif italic text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight select-none text-[#996515]">
+                  <span>Ni</span>
+                  <span className="not-italic text-lg sm:text-xl text-[#C9A45C]">✦</span>
+                  <span>Vi</span>
                 </div>
 
                 <span className="hidden sm:inline-block h-8 w-px bg-[#8C6D37]/35" />
 
-                {/* Founders' Names with graceful italic serif */}
-                <div className="font-serif italic text-xl sm:text-2xl md:text-3xl font-semibold tracking-wide">
-                  <span className="text-[#073C35]">Nirmala</span>
-                  <span className="text-[#8C6D37] mx-2 font-normal not-italic">&amp;</span>
-                  <span className="text-[#996515]">Vijayakala</span>
+                {/* Founders' Names with graceful italic serif in signature NiVi logo gold */}
+                <div className="font-serif italic text-xl sm:text-2xl md:text-3xl font-semibold tracking-wide text-[#996515]">
+                  <span>Nirmala &amp; Vijayakala</span>
                 </div>
               </div>
 
-              {/* Story Narrative with Signature Brand Colors in Italic Accent */}
+              {/* Story Narrative with Signature Heading Tone */}
               <p className="font-serif text-base sm:text-lg md:text-xl text-[#2A1D15] font-bold leading-relaxed pt-1">
                 Our name reflects the bond of its founders—
-                <span className="text-[#073C35] font-extrabold italic mx-1">
+                <span className="text-[#996515] font-extrabold italic mx-1">
                   “Ni” for Nirmala
                 </span>
                 and
@@ -130,8 +128,8 @@ export default function AboutPage() {
                   {/* Peraiyur Address */}
                   <div className="space-y-2 sm:border-r sm:border-[#8C6D37]/25 sm:pr-6">
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-[#073C35]/10 border border-[#073C35]/20 flex items-center justify-center shrink-0 mt-0.5">
-                        <MapPin className="h-4 w-4 text-[#073C35]" />
+                      <div className="h-8 w-8 rounded-lg bg-[#996515]/10 border border-[#996515]/20 flex items-center justify-center shrink-0 mt-0.5">
+                        <MapPin className="h-4 w-4 text-[#996515]" />
                       </div>
                       <div className="space-y-1">
                         <h4 className="font-serif text-lg sm:text-xl font-bold text-[#1E1611] leading-tight">
