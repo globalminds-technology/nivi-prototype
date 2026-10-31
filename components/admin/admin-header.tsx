@@ -11,6 +11,7 @@ import {
   Menu,
   Package,
   PlusCircle,
+  Star,
   Store,
   Tag,
   Truck,
@@ -64,6 +65,7 @@ export function AdminHeader({ adminEmail, hideZohoBooks = false }: AdminHeaderPr
     { label: "Products", href: "/admin", exact: true, icon: Package },
     { label: "Categories", href: "/admin/categories", exact: false, icon: Layers },
     { label: "Offers & Banners", href: "/admin/offers", exact: false, icon: Tag },
+    { label: "Reviews", href: "/admin/reviews", exact: false, icon: Star },
     { label: "Shipping", href: "/admin/shipping", exact: false, icon: Truck },
   ];
 

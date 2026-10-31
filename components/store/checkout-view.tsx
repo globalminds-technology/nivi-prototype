@@ -23,6 +23,9 @@ import {
   Truck,
   XCircle,
   Zap,
+  Globe,
+  MessageCircle,
+  Phone,
 } from "lucide-react";
 import { StorePoliciesDialog, type PolicyTabKey } from "./store-policies-dialog";
 import { toast } from "sonner";
@@ -64,6 +67,29 @@ interface CheckoutViewProps {
   products: StoreProductData[];
 }
 
+
+const COUNTRY_DIAL_CODES = [
+  { code: "+91", label: "India (+91)", flag: "🇮🇳" },
+  { code: "+1", label: "USA / Canada (+1)", flag: "🇺🇸" },
+  { code: "+44", label: "UK (+44)", flag: "🇬🇧" },
+  { code: "+971", label: "UAE (+971)", flag: "🇦🇪" },
+  { code: "+65", label: "Singapore (+65)", flag: "🇸🇬" },
+  { code: "+60", label: "Malaysia (+60)", flag: "🇲🇾" },
+  { code: "+61", label: "Australia (+61)", flag: "🇦🇺" },
+  { code: "+64", label: "New Zealand (+64)", flag: "🇳🇿" },
+  { code: "+966", label: "Saudi Arabia (+966)", flag: "🇸🇦" },
+  { code: "+974", label: "Qatar (+974)", flag: "🇶🇦" },
+  { code: "+968", label: "Oman (+968)", flag: "🇴🇲" },
+  { code: "+965", label: "Kuwait (+965)", flag: "🇰🇼" },
+  { code: "+973", label: "Bahrain (+973)", flag: "🇧🇭" },
+  { code: "+49", label: "Germany (+49)", flag: "🇩🇪" },
+  { code: "+33", label: "France (+33)", flag: "🇫🇷" },
+  { code: "+94", label: "Sri Lanka (+94)", flag: "🇱🇰" },
+  { code: "+81", label: "Japan (+81)", flag: "🇯🇵" },
+  { code: "+27", label: "South Africa (+27)", flag: "🇿🇦" },
+  { code: "+other", label: "Other International", flag: "🌐" },
+];
+
 export function CheckoutView({ products }: CheckoutViewProps) {
   const router = useRouter();
   const { items, isLoaded, clearCart } = useCart();
@@ -90,6 +116,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   // Form Fields - Contact
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
 
   // Shipping Address
@@ -245,12 +272,22 @@ export function CheckoutView({ products }: CheckoutViewProps) {
     return null;
   };
 
-  const validatePhoneField = (val: string): string | null => {
-    const clean = val.replace(/\D/g, "");
-    if (!clean) return "10-digit mobile number is required for delivery coordination";
-    if (!/^[6-9]/.test(clean)) return "Indian mobile numbers must start with 6, 7, 8, or 9";
-    if (clean.length !== 10) return `Mobile number must be 10 digits (currently ${clean.length}/10)`;
-    return null;
+  const validatePhoneField = (val: string, code: string = countryCode): string | null => {
+    const clean = val.replace(/[\s-]/g, "");
+    if (!clean) return "Mobile number is required for delivery coordination";
+    if (code === "+91") {
+      const digits = clean.replace(/\D/g, "");
+      if (!digits) return "10-digit mobile number is required for delivery coordination";
+      if (!/^[6-9]/.test(digits)) return "Indian mobile numbers must start with 6, 7, 8, or 9";
+      if (digits.length !== 10) return `Mobile number must be 10 digits (currently ${digits.length}/10)`;
+      return null;
+    } else {
+      const digits = clean.replace(/\D/g, "");
+      if (digits.length < 6 || digits.length > 15) {
+        return "International numbers must be between 6 and 15 digits";
+      }
+      return null;
+    }
   };
 
   const validateLine1Field = (val: string): string | null => {
@@ -310,10 +347,17 @@ export function CheckoutView({ products }: CheckoutViewProps) {
   };
 
   const handlePhoneChange = (val: string) => {
-    const digits = val.replace(/\D/g, "").slice(0, 10);
-    setPhone(digits);
+    const clean = countryCode === "+91" ? val.replace(/\D/g, "").slice(0, 10) : val.replace(/[^\d\s-+]/g, "");
+    setPhone(clean);
     if (touched.phone || formErrors.phone) {
-      setFieldError("phone", validatePhoneField(digits));
+      setFieldError("phone", validatePhoneField(clean, countryCode));
+    }
+  };
+
+  const handleCountryCodeChange = (newCode: string) => {
+    setCountryCode(newCode);
+    if (touched.phone || formErrors.phone) {
+      setFieldError("phone", validatePhoneField(phone, newCode));
     }
   };
 
@@ -442,7 +486,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
     const emailErr = validateEmailField(email);
     if (emailErr) errors.email = emailErr;
 
-    const phoneErr = validatePhoneField(phone);
+    const phoneErr = validatePhoneField(phone, countryCode);
     if (phoneErr) errors.phone = phoneErr;
 
     const pincodeErr = validatePincodeField(shippingPincode);
@@ -518,7 +562,10 @@ export function CheckoutView({ products }: CheckoutViewProps) {
     setIsProcessingPayment(true);
 
     try {
-      const cleanPhone = phone.replace(/[\s-]/g, "");
+      const cleanDigits = phone.replace(/[\s-]/g, "");
+      const cleanPhone = countryCode === "+91"
+        ? cleanDigits.replace(/\D/g, "")
+        : (cleanDigits.startsWith("+") ? cleanDigits : `${countryCode}${cleanDigits.replace(/\D/g, "")}`);
       const checkoutPayload = {
         customer: {
           name: name.trim(),
@@ -1076,43 +1123,64 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                         <Label htmlFor="checkout-phone" className="text-xs font-medium text-[#30251F]">
                           Mobile Number *
                         </Label>
-                        {phone.length > 0 && phone.length < 10 && (
+                        {countryCode === "+91" && phone.length > 0 && phone.length < 10 && (
                           <span className="text-[10px] text-muted-foreground font-mono">
                             {phone.length}/10 digits
                           </span>
                         )}
+                        {countryCode !== "+91" && (
+                          <span className="text-[10px] text-[#073C35] font-sans font-medium">
+                            International Number
+                          </span>
+                        )}
                       </div>
-                      <div className="relative">
-                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-mono">
-                          +91
-                        </span>
-                        <Input
-                          id="checkout-phone"
-                          type="tel"
-                          inputMode="numeric"
-                          maxLength={10}
-                          autoComplete="tel"
-                          placeholder="9876543210"
-                          value={phone}
-                          onChange={(e) => handlePhoneChange(e.target.value)}
-                          onBlur={() => {
-                            markTouched("phone");
-                            setFieldError("phone", validatePhoneField(phone));
-                          }}
-                          className={`pl-11 pr-9 font-mono ${
-                            (touched.phone || formErrors.phone) && formErrors.phone
-                              ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
-                              : phone.length === 10 && /^[6-9]/.test(phone)
-                              ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
-                              : ""
-                          }`}
-                        />
-                        <div className="absolute right-3 top-2.5 pointer-events-none">
-                          {(touched.phone || formErrors.phone) && formErrors.phone ? (
-                            <AlertCircle className="w-4 h-4 text-destructive" />
-                          ) : phone.length === 10 && /^[6-9]/.test(phone) ? (
-                            <Check className="w-4 h-4 text-emerald-600" />
-                          ) : null}
+                      <div className="flex items-center gap-1.5">
+                        <select
+                          id="checkout-country-code"
+                          aria-label="Country Dial Code"
+                          value={countryCode}
+                          onChange={(e) => handleCountryCodeChange(e.target.value)}
+                          className="h-10 px-2 rounded-md border border-input bg-background text-xs font-mono font-medium focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring shrink-0"
+                        >
+                          {COUNTRY_DIAL_CODES.map((c) => (
+                            <option key={c.code} value={c.code}>
+                              {c.flag} {c.code === "+other" ? "Other" : c.code}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="relative flex-1">
+                          <Input
+                            id="checkout-phone"
+                            type="tel"
+                            inputMode={countryCode === "+91" ? "numeric" : "tel"}
+                            maxLength={countryCode === "+91" ? 10 : 20}
+                            autoComplete="tel"
+                            placeholder={countryCode === "+91" ? "9876543210" : "Mobile number"}
+                            value={phone}
+                            onChange={(e) => handlePhoneChange(e.target.value)}
+                            onBlur={() => {
+                              markTouched("phone");
+                              setFieldError("phone", validatePhoneField(phone, countryCode));
+                            }}
+                            className={`font-mono pr-9 ${
+                              (touched.phone || formErrors.phone) && formErrors.phone
+                                ? "border-destructive focus-visible:ring-destructive bg-destructive/5"
+                                : (countryCode === "+91"
+                                    ? phone.length === 10 && /^[6-9]/.test(phone)
+                                    : phone.replace(/\D/g, "").length >= 6)
+                                ? "border-emerald-600/60 focus-visible:ring-emerald-600 bg-emerald-50/20"
+                                : ""
+                            }`}
+                          />
+                          <div className="absolute right-3 top-2.5 pointer-events-none">
+                            {(touched.phone || formErrors.phone) && formErrors.phone ? (
+                              <AlertCircle className="w-4 h-4 text-destructive" />
+                            ) : (countryCode === "+91"
+                                ? phone.length === 10 && /^[6-9]/.test(phone)
+                                : phone.replace(/\D/g, "").length >= 6) ? (
+                              <Check className="w-4 h-4 text-emerald-600" />
+                            ) : null}
+                          </div>
                         </div>
                       </div>
                       {(touched.phone || formErrors.phone) && formErrors.phone ? (
@@ -1120,10 +1188,15 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                           <span>{formErrors.phone}</span>
                         </p>
-                      ) : phone.length === 10 && /^[6-9]/.test(phone) ? (
+                      ) : countryCode === "+91" && phone.length === 10 && /^[6-9]/.test(phone) ? (
                         <p className="text-[11px] text-emerald-700 flex items-center gap-1 font-medium">
                           <Check className="w-3 h-3 text-emerald-600 shrink-0" />
                           <span>Verified 10-digit Indian mobile format</span>
+                        </p>
+                      ) : countryCode !== "+91" && phone.replace(/\D/g, "").length >= 6 ? (
+                        <p className="text-[11px] text-emerald-700 flex items-center gap-1 font-medium">
+                          <Check className="w-3 h-3 text-emerald-600 shrink-0" />
+                          <span>Valid international mobile format ({countryCode})</span>
                         </p>
                       ) : (
                         <p className="text-[11px] text-muted-foreground">
@@ -1944,7 +2017,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                       </span>
                       {phone && (
                         <span className="font-mono text-[#4A3D34] font-medium">
-                          +91 {phone}
+                          {countryCode === "+91" ? `+91 ${phone}` : `${countryCode} ${phone}`}
                         </span>
                       )}
                     </div>

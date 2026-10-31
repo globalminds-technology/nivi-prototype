@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Great_Vibes } from "next/font/google";
 import { StorePoliciesDialog, type PolicyTabKey } from "./store-policies-dialog";
 import "./gold-text.css";
@@ -313,6 +313,13 @@ export function Footer() {
                         </a>
                       </div>
                     </li>
+                    <li className="pt-0.5 text-[10.5px] xl:text-[11.5px] text-[#221811]/90 font-medium leading-tight">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3 text-[#073C35] shrink-0" />
+                        <span>Peraiyur &bull; Maraimalainagar</span>
+                      </div>
+                      <span className="text-[9.5px] xl:text-[10px] text-[#694208] block pl-4">Tamil Nadu, India</span>
+                    </li>
                     <li>
                       <button
                         type="button"
@@ -541,6 +548,10 @@ export function Footer() {
                               <PhoneIcon className="h-2.5 w-2.5" />
                             </a>
                           </div>
+                        </div>
+                        <div className="flex items-center justify-center gap-1 text-[10px] text-[#221811]/90 font-medium pt-1">
+                          <MapPin className="h-2.5 w-2.5 text-[#073C35] shrink-0" />
+                          <span>Peraiyur &bull; Maraimalainagar, Tamil Nadu</span>
                         </div>
                       </div>
 

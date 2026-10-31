@@ -14,6 +14,8 @@ export type Review = Readonly<{
   authorName: string;
   /** ISO timestamp. */
   createdAt: string;
+  /** When true, review is hidden from customer storefront by admin. Default false. */
+  hidden?: boolean;
 }>;
 
 export function isRating(n: number): n is Rating {
@@ -27,7 +29,14 @@ export function createReview(props: Omit<Review, "rating"> & { rating: number })
   const authorName = props.authorName.trim();
   if (!authorName) throw new ValidationError("Name is required");
   const title = props.title?.trim() || null;
-  return Object.freeze({ ...props, rating: props.rating, comment, authorName, title });
+  return Object.freeze({
+    ...props,
+    rating: props.rating,
+    comment,
+    authorName,
+    title,
+    hidden: props.hidden ?? false,
+  });
 }
 
 export type ReviewSummary = Readonly<{

@@ -26,20 +26,18 @@ export function FeaturedCarousel({
 
   return (
     <section className="space-y-2.5 sm:space-y-6">
-      {/* Header: Single compact row on mobile, spacious on desktop */}
-      <div className="relative flex items-center justify-center text-center mb-2 sm:mb-6">
+      {/* Header */}
+      <div className="flex flex-col items-center gap-1 mb-2 sm:flex-row sm:justify-between sm:items-center sm:mb-6">
         <GoldText>{title}</GoldText>
 
         {viewAllHref && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2">
-            <Link
-              href={viewAllHref}
-              className="inline-flex items-center gap-0.5 sm:gap-1 text-[11px] sm:text-sm font-semibold text-[#073C35] hover:text-[#C9A45C] transition-colors shrink-0"
-            >
-              <span>View All</span>
-              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-            </Link>
-          </div>
+          <Link
+            href={viewAllHref}
+            className="inline-flex items-center gap-0.5 sm:gap-1 text-[11px] sm:text-sm font-semibold text-[#073C35] hover:text-[#C9A45C] transition-colors shrink-0"
+          >
+            <span>View All</span>
+            <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+          </Link>
         )}
       </div>
 

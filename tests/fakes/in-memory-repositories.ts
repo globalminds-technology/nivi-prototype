@@ -141,18 +141,29 @@ export class InMemoryMailer implements Mailer {
 export class InMemoryReviewRepository implements ReviewRepository {
   public reviews: Review[] = [];
 
-  async listBySku(sku: Sku): Promise<readonly Review[]> {
-    return this.reviews.filter((r) => r.sku === sku);
-  }
+  async listBySku(sku: Sku, includeHidden = false): Promise < readonly Review[] > {
+      return this.reviews.filter((r) => r.sku === sku && (includeHidden || !r.hidden));
+    }
 
-  async findByInvoiceAndSku(invoiceId: string, sku: Sku): Promise<Review | null> {
-    return this.reviews.find((r) => r.invoiceId === invoiceId && r.sku === sku) ?? null;
-  }
+  async listAll(): Promise < readonly Review[] > {
+      return [...this.reviews];
+    }
 
-  async create(review: Review): Promise<void> {
-    this.reviews.push(review);
+  async findByInvoiceAndSku(invoiceId: string, sku: Sku): Promise < Review | null > {
+      return this.reviews.find((r) => r.invoiceId === invoiceId && r.sku === sku) ?? null;
+    }
+
+  async create(review: Review): Promise < void> {
+      this.reviews.push({ ...review, hidden: review.hidden ?? false });
+    }
+
+  async toggleVisibility(reviewId: string, sku: Sku, hidden: boolean): Promise < void> {
+      const rev = this.reviews.find((r) => r.id === reviewId && r.sku === sku);
+      if(rev) {
+        (rev as any).hidden = hidden;
+      }
+    }
   }
-}
 
 export class FakeTokenSigner implements TokenSigner {
   async signReviewToken(payload: ReviewTokenPayload): Promise<string> {
@@ -183,7 +194,7 @@ export class FakeCacheInvalidator implements CacheInvalidator {
 }
 
 export class FixedClock implements Clock {
-  constructor(public currentDate: Date = new Date("2026-10-03T10:00:00.000Z")) {}
+  constructor(public currentDate: Date = new Date("2026-10-03T10:00:00.000Z")) { }
   now(): Date {
     return this.currentDate;
   }

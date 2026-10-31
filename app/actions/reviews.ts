@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { container } from "@/infrastructure/di/container";
 import { SubmitReviewDto } from "@/core/application/dto/review.dto";
 import type { Review, ReviewSummary } from "@/core/domain/entities/review";
@@ -80,6 +81,30 @@ export async function listProductReviewsAction(sku: string): Promise<ListReviews
         average: 0,
         distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
       },
+    };
+  }
+}
+
+export interface ToggleReviewVisibilityResponse {
+  success: boolean;
+  error?: string;
+}
+
+export async function toggleReviewVisibilityAction(
+  reviewId: string,
+  sku: string,
+  hidden: boolean,
+): Promise<ToggleReviewVisibilityResponse> {
+  try {
+    await container.adminAuth.requireAdmin();
+    await container.reviewRepository().toggleVisibility(reviewId, toSku(sku), hidden);
+    revalidatePath("/admin/reviews");
+    revalidatePath("/products/[slug]", "page");
+    return { success: true };
+  } catch (err: unknown) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to toggle review visibility",
     };
   }
 }
