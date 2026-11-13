@@ -109,7 +109,7 @@ export function Footer() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/Golden Heritage Lake at Dusk.png"
-            alt="NiVi Golden Heritage Lake at Dusk"
+            alt="The Saree Studio Golden Heritage Lake at Dusk"
             className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none z-0"
           />
 
@@ -138,65 +138,42 @@ export function Footer() {
             <div className="w-full pt-[2.2%] md:pt-[2.4%] px-[5%] md:px-[6%] lg:px-[8%] xl:px-[11.8%]">
               <div className="flex items-start justify-between gap-2 md:gap-3 xl:gap-5">
                 {/* 1. BRAND IDENTITY COLUMN */}
-                <div className="flex items-start gap-2 md:gap-3 xl:gap-4 max-w-[240px] md:max-w-[300px] xl:max-w-[380px]">
-                  {/* Header-Style Logo Container (Bigger, Clean without border or zoom) */}
-                  <Link href="/" className="shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/nivi-logo.jpeg"
-                      alt="NiVi"
-                      className="h-11 md:h-14 lg:h-18 xl:h-[84px] w-auto object-contain rounded-xl lg:rounded-2xl shadow-xs"
-                    />
+                <div className="flex flex-col items-start gap-1 max-w-[240px] md:max-w-[300px] xl:max-w-[380px]">
+                  <Link href="/" className="inline-block select-none group">
+                    <img src="/logo.svg" alt="The Saree Studio" className="h-11 md:h-13 lg:h-14 xl:h-16 w-auto object-contain" />
                   </Link>
 
-                  {/* NiVi Wordmark + Center-Aligned Tagline + Social Icons Aligned under NiVi */}
-                  <div className="flex flex-col items-center text-center justify-center">
-                    <Link href="/" className="inline-block select-none">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/nivi-wordmark.png"
-                        alt="NiVi"
-                        className="h-6 md:h-8 lg:h-10 xl:h-[48px] w-auto object-contain select-none pointer-events-none drop-shadow-md"
-                      />
-                    </Link>
-                    <span
-                      className="gold-quote text-center whitespace-nowrap text-[0.72rem] md:text-[0.82rem] lg:text-[1rem] xl:text-[1.18rem] mt-1 md:mt-1.5 lg:mt-2.5 select-none"
+                  {/* Circular Outline Social Icons */}
+                  <div className="flex items-center gap-1.5 md:gap-2 pt-2">
+                    <a
+                      href="https://instagram.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      className="h-5.5 w-5.5 md:h-6.5 md:w-6.5 lg:h-7 lg:w-7 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
                     >
-                      Women with tradition, styled for today.
-                    </span>
+                      <InstagramIcon className="h-3.5 w-3.5" />
+                    </a>
 
-                    {/* Circular Outline Social Icons (Instagram, Facebook, YouTube) starting under NiVi */}
-                    <div className="flex items-center justify-center gap-1.5 md:gap-2 lg:gap-2.5 pt-1 md:pt-2 lg:pt-2.5 w-full">
-                      <a
-                        href="https://instagram.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Instagram"
-                        className="h-5.5 w-5.5 md:h-6.5 md:w-6.5 lg:h-7 lg:w-7 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                      >
-                        <InstagramIcon className="h-3.5 w-3.5" />
-                      </a>
+                    <a
+                      href="https://facebook.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook"
+                      className="h-5.5 w-5.5 md:h-6.5 md:w-6.5 lg:h-7 lg:w-7 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
+                    >
+                      <FacebookIcon className="h-3.5 w-3.5" />
+                    </a>
 
-                      <a
-                        href="https://facebook.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Facebook"
-                        className="h-5.5 w-5.5 md:h-6.5 md:w-6.5 lg:h-7 lg:w-7 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                      >
-                        <FacebookIcon className="h-3.5 w-3.5" />
-                      </a>
-
-                      <a
-                        href="https://youtube.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="YouTube"
-                        className="h-5.5 w-5.5 md:h-6.5 md:w-6.5 lg:h-7 lg:w-7 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                      >
-                        <YouTubeIcon className="h-3.5 w-3.5" />
-                      </a>
-                    </div>
+                    <a
+                      href="https://youtube.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="YouTube"
+                      className="h-5.5 w-5.5 md:h-6.5 md:w-6.5 lg:h-7 lg:w-7 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
+                    >
+                      <YouTubeIcon className="h-3.5 w-3.5" />
+                    </a>
                   </div>
                 </div>
 
@@ -286,15 +263,15 @@ export function Footer() {
                   </h4>
                   <ul className="space-y-1 text-[11px] xl:text-[12px] text-[#221811] font-medium leading-tight">
                     <li>
-                      <a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] transition-colors inline-block text-[10px] xl:text-[11px]">
-                        connect@brandnivi.com
+                      <a href="mailto:hello@thesareestudio.com" className="hover:text-[#073C35] transition-colors inline-block text-[10px] xl:text-[11px]">
+                        hello@thesareestudio.com
                       </a>
                     </li>
                     <li className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[#221811]">+91 91509 92863</span>
+                      <span className="text-[#221811]">+91 98000 00000</span>
                       <div className="inline-flex items-center gap-1">
                         <a
-                          href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                          href="https://wa.me/919800000000?text=Hello%20The%20Saree%20Studio%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
                           target="_blank"
                           rel="noopener noreferrer"
                           className="h-5 w-5 xl:h-5.5 xl:w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
@@ -304,9 +281,9 @@ export function Footer() {
                           <WhatsAppIcon className="h-2.5 w-2.5 xl:h-3 xl:w-3" />
                         </a>
                         <a
-                          href="tel:+919150992863"
+                          href="tel:+919800000000"
                           className="h-5 w-5 xl:h-5.5 xl:w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
-                          title="Call +91 91509 92863"
+                          title="Call +91 98000 00000"
                           aria-label="Call Customer Care"
                         >
                           <PhoneIcon className="h-2.5 w-2.5 xl:h-3 xl:w-3" />
@@ -359,7 +336,7 @@ export function Footer() {
               <div className="w-full flex items-center justify-between text-[#EAE0D0] text-[9px] md:text-[10px] lg:text-[11px] xl:text-xs">
                 {/* Copyright on left of green wave */}
                 <p className="font-sans text-[#EAE0D0]/95 tracking-wide">
-                  © {currentYear} NiVi. All rights reserved.
+                  © {currentYear} The Saree Studio. All rights reserved.
                 </p>
 
                 {/* Legal links on right of green wave */}
@@ -397,7 +374,7 @@ export function Footer() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/footer mobile.png"
-            alt="NiVi Heritage"
+            alt="The Saree Studio Heritage"
             className="absolute inset-0 w-full h-full object-cover object-top pointer-events-none select-none z-0"
           />
 
@@ -416,60 +393,41 @@ export function Footer() {
             <div className="w-full">
               {/* MOBILE LAYOUT (< 640px) - Elegant, Balanced, Matching Laptop View */}
               <div className="flex sm:hidden flex-col items-center text-center">
-                {/* 1. Brand Header (Horizontal Lockup like Laptop) */}
-                <div className="flex items-center justify-center gap-2.5 pt-1">
-                  <Link href="/" className="shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/nivi-logo.jpeg"
-                      alt="NiVi"
-                      className="h-11 w-auto object-contain rounded-xl shadow-xs"
-                    />
+                {/* 1. Brand Header */}
+                <div className="flex flex-col items-center justify-center pt-1">
+                  <Link href="/" className="inline-block select-none group">
+                    <img src="/logo.svg" alt="The Saree Studio" className="h-11 w-auto object-contain" />
                   </Link>
 
-                  <div className="flex flex-col items-center">
-                    <Link href="/" className="inline-block select-none">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/nivi-wordmark.png"
-                        alt="NiVi"
-                        className="h-6 w-auto object-contain drop-shadow-sm select-none pointer-events-none"
-                      />
-                    </Link>
-                    <span className="gold-quote text-center whitespace-nowrap text-[0.76rem] mt-0.5 select-none">
-                      Women with tradition, styled for today.
-                    </span>
-
-                    {/* Circular Outline Social Icons right under tagline */}
-                    <div className="flex items-center justify-center gap-2 pt-1">
-                      <a
-                        href="https://instagram.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Instagram"
-                        className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                      >
-                        <InstagramIcon className="h-2.5 w-2.5" />
-                      </a>
-                      <a
-                        href="https://facebook.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Facebook"
-                        className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                      >
-                        <FacebookIcon className="h-2.5 w-2.5" />
-                      </a>
-                      <a
-                        href="https://youtube.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="YouTube"
-                        className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
-                      >
-                        <YouTubeIcon className="h-2.5 w-2.5" />
-                      </a>
-                    </div>
+                  {/* Circular Outline Social Icons right under tagline */}
+                  <div className="flex items-center justify-center gap-2 pt-1.5">
+                    <a
+                      href="https://instagram.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
+                    >
+                      <InstagramIcon className="h-2.5 w-2.5" />
+                    </a>
+                    <a
+                      href="https://facebook.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook"
+                      className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
+                    >
+                      <FacebookIcon className="h-2.5 w-2.5" />
+                    </a>
+                    <a
+                      href="https://youtube.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="YouTube"
+                      className="h-5.5 w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs"
+                    >
+                      <YouTubeIcon className="h-2.5 w-2.5" />
+                    </a>
                   </div>
                 </div>
 
@@ -521,16 +479,16 @@ export function Footer() {
                       </div>
 
                       <div className="flex items-center justify-between gap-1 text-[10px] text-[#221811] font-medium">
-                        <a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35] transition-colors truncate">
-                          connect@brandnivi.com
+                        <a href="mailto:hello@thesareestudio.com" className="hover:text-[#073C35] transition-colors truncate">
+                          hello@thesareestudio.com
                         </a>
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <a href="tel:+919150992863" className="hover:text-[#073C35] transition-colors">
-                            +91 91509 92863
+                          <a href="tel:+919800000000" className="hover:text-[#073C35] transition-colors">
+                            +91 98000 00000
                           </a>
                           <div className="inline-flex items-center gap-1">
                             <a
-                              href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                              href="https://wa.me/919800000000?text=Hello%20The%20Saree%20Studio%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
                               target="_blank"
                               rel="noopener noreferrer"
                               className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/90 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
@@ -540,7 +498,7 @@ export function Footer() {
                               <WhatsAppIcon className="h-2.5 w-2.5" />
                             </a>
                             <a
-                              href="tel:+919150992863"
+                              href="tel:+919800000000"
                               className="h-4.5 w-4.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/90 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
                               title="Call Customer Care"
                               aria-label="Call Customer Care"
@@ -575,7 +533,7 @@ export function Footer() {
                           </button>
                         </div>
                         <p className="text-[9px] text-[#221811]/70 tracking-wide font-sans">
-                          © {currentYear} NiVi. All rights reserved.
+                          © {currentYear} The Saree Studio. All rights reserved.
                         </p>
                       </div>
                     </div>
@@ -587,20 +545,9 @@ export function Footer() {
               <div className="hidden sm:flex items-start justify-between gap-5 md:gap-8 max-w-4xl mx-auto w-full">
                 {/* 1. Brand Identity */}
                 <div className="flex flex-col items-start text-left min-w-[170px] md:min-w-[200px]">
-                  <Link href="/" className="inline-block">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/nivi-logo.jpeg"
-                      alt="NiVi"
-                      className="h-11 md:h-13 w-auto object-contain rounded-xl shadow-xs"
-                    />
+                  <Link href="/" className="inline-block select-none group">
+                    <img src="/logo.svg" alt="The Saree Studio" className="h-11 md:h-13 w-auto object-contain" />
                   </Link>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/nivi-wordmark.png"
-                    alt="NiVi"
-                    className="h-6 md:h-7.5 w-auto object-contain mt-1 drop-shadow-sm"
-                  />
                   <span className="gold-quote text-[0.88rem] md:text-[0.98rem] mt-0.5 select-none">
                     Women with tradition, styled for today.
                   </span>
@@ -668,12 +615,12 @@ export function Footer() {
                       Care
                     </h4>
                     <ul className="space-y-1 text-[10.5px] md:text-[11.5px] text-[#221811] font-medium leading-tight">
-                      <li><a href="mailto:connect@brandnivi.com" className="hover:text-[#073C35]">connect@brandnivi.com</a></li>
+                      <li><a href="mailto:hello@thesareestudio.com" className="hover:text-[#073C35]">hello@thesareestudio.com</a></li>
                       <li className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[#221811]">+91 91509 92863</span>
+                        <span className="text-[#221811]">+91 98000 00000</span>
                         <div className="inline-flex items-center gap-1">
                           <a
-                            href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                            href="https://wa.me/919800000000?text=Hello%20The%20Saree%20Studio%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
                             target="_blank"
                             rel="noopener noreferrer"
                             className="h-5 w-5 md:h-5.5 md:w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
@@ -683,7 +630,7 @@ export function Footer() {
                             <WhatsAppIcon className="h-2.5 w-2.5 md:h-3 md:w-3" />
                           </a>
                           <a
-                            href="tel:+919150992863"
+                            href="tel:+919800000000"
                             className="h-5 w-5 md:h-5.5 md:w-5.5 rounded-full border border-[#221811]/60 bg-[#FFFCF5]/85 text-[#221811] hover:bg-[#073C35] hover:text-[#FAF7F0] hover:border-[#073C35] transition-all flex items-center justify-center shadow-xs cursor-pointer"
                             title="Call Customer Care"
                             aria-label="Call Customer Care"
@@ -723,7 +670,7 @@ export function Footer() {
                 </button>
               </div>
               <p className="text-[#FAF7F0]/80 text-[9.5px] sm:text-[10px] md:text-[10.5px] tracking-wide">
-                © {currentYear} NiVi. All rights reserved.
+                © {currentYear} The Saree Studio. All rights reserved.
               </p>
             </div>
           </div>

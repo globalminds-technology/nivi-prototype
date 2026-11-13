@@ -121,7 +121,7 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
 
           if (slide.type === "hero") {
             const banner = slide.banner;
-            const heroImgSrc = banner.imageUrl || "/nivi-hero-banner-v2.jpg";
+            const heroImgSrc = banner.imageUrl || "/hero-flagship-exact.png";
             const heroObjectPos =
               banner.objectPosition ||
               (banner.imagePositionX !== undefined && banner.imagePositionY !== undefined
@@ -142,12 +142,12 @@ export function HeroCarousel({ campaigns, heroBanner }: HeroCarouselProps) {
                   <Link
                     href={banner.primaryCtaLink || "/collections"}
                     className="block w-full h-full cursor-pointer overflow-hidden"
-                    aria-label={banner.title || "NiVi Saree Collection"}
+                    aria-label={banner.title || "The Saree Studio Collection"}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={heroImgSrc}
-                      alt={banner.title || "NiVi Saree Collection"}
+                      alt={banner.title || "The Saree Studio Collection"}
                       className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.008]"
                       style={{ objectPosition: heroObjectPos }}
                     />

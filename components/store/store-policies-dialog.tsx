@@ -52,7 +52,7 @@ export function StorePoliciesDialog({
             </div>
             <div>
               <h3 className="font-serif text-lg md:text-xl font-bold text-[#073C35] leading-tight">
-                NiVi Store & Craft Policies
+                The Saree Studio — Policies &amp; Craft Notes
               </h3>
               <p className="text-[11px] text-[#6B5A4A]">
                 Women with tradition, styled for today.
@@ -169,7 +169,7 @@ export function StorePoliciesDialog({
 
         {/* Footer */}
         <div className="px-5 py-3 border-t border-[#D5CCBB] bg-[#F4EFE6] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#6B5A4A]">
-          <span>Need help? WhatsApp/Phone: +91 91509 92863 | Email: connect@brandnivi.com</span>
+          <span>Need help? WhatsApp/Phone: +91 98000 00000 | Email: hello@thesareestudio.com</span>
           <button
             type="button"
             onClick={onClose}

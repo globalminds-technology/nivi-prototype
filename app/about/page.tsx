@@ -5,9 +5,9 @@ import { Footer } from "@/components/store/footer";
 import { GoldText } from "@/components/store/gold-text";
 
 export const metadata = {
-  title: "About Us · NiVi — Handcrafted Sarees, Born of Heritage & Friendship",
+  title: "About Us · The Saree Studio — Handcrafted Sarees, Born of Heritage",
   description:
-    "NiVi is a celebration of timeless Indian elegance, born from a beautiful friendship between Nirmala (“Ni”) and Vijayakala (“Vi”). Discover our handcrafted saree collections.",
+    "The Saree Studio is a celebration of timeless Indian elegance. Discover our thoughtfully curated handcrafted saree collections.",
 };
 
 export default function AboutPage() {
@@ -48,53 +48,33 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* ── 2. STANZA 1: ORIGIN & FRIENDSHIP (Bold Serif Typography) ── */}
+            {/* ── 2. STANZA 1: ORIGIN (Bold Serif Typography) ── */}
             <div className="max-w-2xl mx-auto">
               <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-[#1E1611] font-bold leading-[1.3] tracking-tight">
-                NiVi is a celebration of timeless Indian elegance, born from a cherished friendship and a shared love for the art of the saree.
+                The Saree Studio is a celebration of timeless Indian elegance, born from a deep devotion to the living art of the handloom saree.
               </h2>
             </div>
 
-            {/* ── 3. FOUNDERS EMBLEM & IDENTITY (Grand, Subtle Container with Elegant Italic Typography) ── */}
+            {/* ── 3. HERITAGE & IDENTITY EMBLEM ── */}
             <div className="relative rounded-3xl bg-gradient-to-b from-[#FAF6EE] via-[#F6F1E5] to-[#FAF6EE] border border-[#C9A45C]/35 shadow-[0_12px_36px_rgba(7,60,53,0.06),0_0_0_1px_rgba(201,164,92,0.15)] p-6 sm:p-8 space-y-4 max-w-2xl mx-auto">
-              {/* Founders emblem banner: Ni ✦ Vi · Nirmala & Vijayakala */}
-              <div className="inline-flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 py-2.5 px-6 rounded-2xl bg-[#FFFDF9] border border-[#C9A45C]/35 shadow-2xs text-[#996515]">
-                {/* Monogram with flowing italic serif in signature NiVi logo gold */}
-                <div className="flex items-center gap-2 font-serif italic text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight select-none text-[#996515]">
-                  <span>Ni</span>
-                  <span className="not-italic text-lg sm:text-xl text-[#C9A45C]">✦</span>
-                  <span>Vi</span>
-                </div>
-
-                <span className="hidden sm:inline-block h-8 w-px bg-[#8C6D37]/35" />
-
-                {/* Founders' Names with graceful italic serif in signature NiVi logo gold */}
-                <div className="font-serif italic text-xl sm:text-2xl md:text-3xl font-semibold tracking-wide text-[#996515]">
-                  <span>Nirmala &amp; Vijayakala</span>
+              <div className="inline-flex items-center justify-center gap-2.5 sm:gap-4 py-2.5 px-6 rounded-2xl bg-[#FFFDF9] border border-[#C9A45C]/35 shadow-2xs text-[#996515]">
+                <div className="font-serif italic text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight select-none text-[#996515]">
+                  <span>The Saree Studio</span>
                 </div>
               </div>
 
-              {/* Story Narrative with Signature Heading Tone */}
               <p className="font-serif text-base sm:text-lg md:text-xl text-[#2A1D15] font-bold leading-relaxed pt-1">
-                Our name reflects the bond of its founders—
-                <span className="text-[#996515] font-extrabold italic mx-1">
-                  “Ni” for Nirmala
-                </span>
-                and
-                <span className="text-[#996515] font-extrabold italic mx-1">
-                  “Vi” for Vijayakala
-                </span>
-                —a lifelong friendship that blossomed into a shared dream of bringing authentic, heirloom-quality sarees to every woman.
+                Every drape is thoughtfully curated directly from master weavers across India—bringing authentic, heirloom-quality sarees to women who cherish timeless grace and unmatched craftsmanship.
               </p>
             </div>
 
             {/* Hairline Separator */}
             <div className="w-24 h-px mx-auto bg-gradient-to-r from-transparent via-[#8C6D37]/45 to-transparent" />
 
-            {/* ── 4. STANZA 2: CURATION & CRAFTSMANSHIP (Bold & Elegant) ── */}
+            {/* ── 4. STANZA 2: CURATION & CRAFTSMANSHIP ── */}
             <div className="max-w-2xl mx-auto space-y-3.5">
               <h3 className="font-serif text-xl sm:text-2xl md:text-3xl text-[#1E1611] font-bold leading-snug">
-                At NiVi, we curate sarees that unite centuries-old heritage, impeccable handloom craftsmanship, and modern grace.
+                At The Saree Studio, we curate sarees that unite centuries-old heritage, impeccable handloom craftsmanship, and modern grace.
               </h3>
               <p className="font-serif text-base sm:text-lg text-[#3A2D23] font-bold leading-relaxed">
                 From pure Kanchipuram silks and ornate Banarasi zari to breathable Sungudi cottons and featherlight festive drapes, every saree is thoughtfully handpicked to ensure every woman feels confident, poised, and radiant.
@@ -104,7 +84,7 @@ export default function AboutPage() {
             {/* Hairline Separator */}
             <div className="w-24 h-px mx-auto bg-gradient-to-r from-transparent via-[#8C6D37]/45 to-transparent" />
 
-            {/* ── 5. FOUNDERS' ADDRESSES: PERAIYUR & MARAIMALAINAGAR (Clean, No Repetition) ── */}
+            {/* ── 5. STUDIO PRESENCE ── */}
             <div className="max-w-2xl mx-auto space-y-5">
               <div className="text-center space-y-1">
                 <div className="flex items-center justify-center gap-2">
@@ -122,7 +102,7 @@ export default function AboutPage() {
                 </p>
               </div>
 
-              {/* Dual Address Columns (Stated cleanly once without duplication) */}
+              {/* Dual Address Columns */}
               <div className="rounded-2xl bg-[#FAF6EE]/85 border border-[#C9A45C]/30 p-6 sm:p-7 shadow-[0_4px_20px_rgba(7,60,53,0.03)]">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 text-left">
                   {/* Peraiyur Address */}
@@ -173,7 +153,7 @@ export default function AboutPage() {
             {/* Hairline Separator */}
             <div className="w-24 h-px mx-auto bg-gradient-to-r from-transparent via-[#8C6D37]/45 to-transparent" />
 
-            {/* ── 6. CONTACT US DIRECTLY (Clean, Normal Number Styling) ── */}
+            {/* ── 6. CONTACT US DIRECTLY ── */}
             <div className="space-y-4 max-w-2xl mx-auto">
               <div className="space-y-1">
                 <h4 className="font-serif text-xl sm:text-2xl font-bold text-[#1E1611]">
@@ -184,30 +164,29 @@ export default function AboutPage() {
                 </p>
               </div>
 
-              {/* Normal number styling (sans-serif, clean & legible) */}
               <div className="flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap text-xs sm:text-sm">
                 <a
-                  href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20would%20like%20to%20connect%20regarding%20your%20handcrafted%20sarees."
+                  href="https://wa.me/919800000000?text=Hello%20The%20Saree%20Studio%2C%20I%20would%20like%20to%20connect%20regarding%20your%20handcrafted%20sarees."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 rounded-full bg-[#073C35]/10 border border-[#073C35]/30 text-[#073C35] hover:bg-[#073C35] hover:text-[#FAF7F0] font-sans font-medium transition-all flex items-center gap-2 shadow-xs"
                 >
                   <MessageCircle className="h-4 w-4 shrink-0" />
-                  <span>WhatsApp (+91 91509 92863)</span>
+                  <span>WhatsApp (+91 98000 00000)</span>
                 </a>
                 <a
-                  href="tel:+919150992863"
+                  href="tel:+919800000000"
                   className="px-4 py-2 rounded-full bg-[#FAF6EE] border border-[#8C6D37]/40 text-[#694208] hover:bg-[#8C6D37] hover:text-[#FAF7F0] font-sans font-medium transition-all flex items-center gap-2 shadow-xs"
                 >
                   <Phone className="h-4 w-4 shrink-0" />
-                  <span>+91 91509 92863</span>
+                  <span>+91 98000 00000</span>
                 </a>
                 <a
-                  href="mailto:connect@brandnivi.com"
+                  href="mailto:hello@thesareestudio.com"
                   className="px-4 py-2 rounded-full bg-[#FAF6EE] border border-[#8C6D37]/40 text-[#694208] hover:bg-[#8C6D37] hover:text-[#FAF7F0] font-sans font-medium transition-all flex items-center gap-2 shadow-xs"
                 >
                   <Mail className="h-4 w-4 shrink-0" />
-                  <span>connect@brandnivi.com</span>
+                  <span>hello@thesareestudio.com</span>
                 </a>
               </div>
             </div>
@@ -219,7 +198,7 @@ export default function AboutPage() {
             <div className="space-y-5 max-w-2xl mx-auto">
               <blockquote>
                 <p className="font-serif text-2xl sm:text-3xl md:text-4xl text-[#073C35] font-bold italic leading-snug tracking-tight">
-                  &ldquo;NiVi — where every weave tells a story, and every saree becomes a cherished memory.&rdquo;
+                  &ldquo;The Saree Studio — where every weave tells a story, and every saree becomes a cherished memory.&rdquo;
                 </p>
               </blockquote>
 

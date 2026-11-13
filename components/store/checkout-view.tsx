@@ -540,7 +540,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
 
     if (!policiesAgreed) {
       toast.error(
-        "Please confirm that you have read and agreed to NiVi's Store Policies (including mandatory continuous unboxing video requirement).",
+        "Please confirm that you have read and agreed to The Saree Studio's Store Policies.",
       );
       return;
     }
@@ -639,7 +639,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
             if (confirmRes.reviewTokens && confirmRes.reviewTokens.length > 0) {
               try {
                 sessionStorage.setItem(
-                  "nivi_latest_order_reviews",
+                  "tss_latest_order_reviews",
                   JSON.stringify(confirmRes.reviewTokens),
                 );
               } catch {
@@ -649,7 +649,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
 
             try {
               sessionStorage.setItem(
-                "nivi_latest_order_details",
+                "tss_latest_order_details",
                 JSON.stringify({
                   invoiceNumber: confirmRes.invoiceNumber,
                   invoiceId: confirmRes.invoiceId,
@@ -689,7 +689,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
         key: res.keyId,
         amount: res.amountMinor,
         currency: res.currency || "INR",
-        name: "NiVi",
+        name: "The Saree Studio",
         description: "Handcrafted Heritage Sarees",
         order_id: res.orderId,
         prefill: {
@@ -732,7 +732,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
               if (confirmRes.reviewTokens && confirmRes.reviewTokens.length > 0) {
                 try {
                   sessionStorage.setItem(
-                    "nivi_latest_order_reviews",
+                    "tss_latest_order_reviews",
                     JSON.stringify(confirmRes.reviewTokens),
                   );
                 } catch {
@@ -742,7 +742,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
 
               try {
                 sessionStorage.setItem(
-                  "nivi_latest_order_details",
+                  "tss_latest_order_details",
                   JSON.stringify({
                     invoiceNumber: confirmRes.invoiceNumber,
                     invoiceId: confirmRes.invoiceId,
@@ -2095,7 +2095,7 @@ export function CheckoutView({ products }: CheckoutViewProps) {
                       className="mt-0.5 shrink-0"
                     />
                     <span className="text-[11px] sm:text-xs text-[#4A3D34] leading-snug">
-                      I agree to NiVi&apos;s{" "}
+                      I agree to The Saree Studio&apos;s{" "}
                       <button
                         type="button"
                         onClick={(e) => {

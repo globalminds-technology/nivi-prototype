@@ -306,7 +306,7 @@ export function OfferManager({
       type: "hero",
       title: heroBanner.title || "Flagship Brand Banner",
       subtitle: heroBanner.tagline || "Initial Home Hero Slide",
-      imageUrl: heroBanner.imageUrl || "/nivi-hero-banner-v2.jpg",
+      imageUrl: heroBanner.imageUrl || "/hero-flagship-exact.png",
       order: heroBanner.displayOrder ?? 0,
       active: heroBanner.active !== false,
       badge: "Initial Flagship",
@@ -496,7 +496,7 @@ export function OfferManager({
 
   // Open Hero Banner Edit Modal
   const openHeroDialog = () => {
-    setHeroImageUrl(heroBanner.imageUrl || "/nivi-hero-banner-v2.jpg");
+    setHeroImageUrl(heroBanner.imageUrl || "/hero-flagship-exact.png");
     setHeroTagline(heroBanner.tagline || "");
     setHeroTitle(heroBanner.title || "");
     setHeroSubtitle(heroBanner.subtitle || "");
@@ -612,9 +612,9 @@ export function OfferManager({
     });
   };
 
-  // Reset Initial Hero Banner to Default NiVi Photo
+  // Reset Initial Hero Banner to Default Photo
   const handleResetHeroBanner = () => {
-    if (!confirm("Reset initial hero banner to default NiVi settings?")) return;
+    if (!confirm("Reset initial hero banner to default settings?")) return;
 
     startTransition(async () => {
       const res = await resetHeroBannerAction();
@@ -624,7 +624,7 @@ export function OfferManager({
         setHeroPositionX(res.data.heroBanner.imagePositionX);
         setHeroPositionY(res.data.heroBanner.imagePositionY);
         setHeroDialogOpen(false);
-        toast.success("Reset to default NiVi hero banner.");
+        toast.success("Reset to default hero banner.");
       } else {
         toast.error(res.error || "Failed to reset hero banner.");
       }
@@ -1019,7 +1019,7 @@ export function OfferManager({
                 onClick={handleResetHeroBanner}
                 variant="outline"
                 className="gap-1.5 shadow-2xs border-[#D5CCBB] bg-[#FFFCF5] text-[#30251F] hover:bg-[#073C35]/8 hover:text-[#073C35] rounded-xl font-medium cursor-pointer"
-                title="Reset to default NiVi banner"
+                title="Reset to default banner"
                 disabled={isPending}
               >
                 <RotateCcw className="h-4 w-4" />
@@ -1140,7 +1140,7 @@ export function OfferManager({
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={heroBanner.imageUrl || "/nivi-hero-banner-v2.jpg"}
+                      src={heroBanner.imageUrl || "/hero-flagship-exact.png"}
                       alt={heroBanner.title || "Initial Hero Banner"}
                       className="w-full h-full object-cover brightness-[0.92] transition-transform duration-500 group-hover:scale-[1.02]"
                       style={{
@@ -1244,7 +1244,7 @@ export function OfferManager({
                       variant="outline"
                       size="sm"
                       className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-                      title="Reset to default NiVi banner"
+                      title="Reset to default banner"
                       disabled={isPending}
                     >
                       <RotateCcw className="h-3.5 w-3.5" />

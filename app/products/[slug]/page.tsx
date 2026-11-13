@@ -31,10 +31,10 @@ export async function generateMetadata({
     const product = await container.getProduct().execute(slug);
     const images = productImages(product);
     return {
-      title: `${product.name} — Handcrafted Collection · NiVi`,
+      title: `${product.name} — Handcrafted Collection · The Saree Studio`,
       description:
         product.description ||
-        `Shop ${product.name} at NiVi. Curated Indian heritage textiles, delivered across India.`,
+        `Shop ${product.name} at The Saree Studio. Curated Indian heritage textiles, delivered across India.`,
       openGraph: {
         title: product.name,
         description: product.description,
@@ -43,7 +43,7 @@ export async function generateMetadata({
     };
   } catch {
     return {
-      title: "Product Not Found · NiVi",
+      title: "Product Not Found · The Saree Studio",
     };
   }
 }
@@ -114,7 +114,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
-        name: "NiVi",
+        name: "The Saree Studio",
       },
     },
   };

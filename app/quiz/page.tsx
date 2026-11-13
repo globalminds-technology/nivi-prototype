@@ -6,7 +6,7 @@ import { GoldText } from "@/components/store/gold-text";
 import { SareeQuizFlow } from "@/components/store/saree-quiz-flow";
 
 export const metadata: Metadata = {
-  title: "Find Your Perfect Saree — NiVi Matchmaker",
+  title: "Find Your Perfect Saree — The Saree Studio Matchmaker",
   description:
     "Answer 8 quick questions about your occasion, comfort, and style preferences to discover your signature handcrafted saree match and personalized styling advice.",
 };

@@ -72,7 +72,7 @@ export function ProductReviews({
               Be the First to Review
             </CardTitle>
             <p className="text-xs text-muted-foreground max-w-md mx-auto">
-              Each Nivi creation is sent with a verified review invitation. Once you receive your saree, you can share your thoughts on its weave, drape, and texture.
+              Each creation from The Saree Studio is sent with a verified review invitation. Once you receive your saree, you can share your thoughts on its weave, drape, and texture.
             </p>
           </Card>
         ) : (

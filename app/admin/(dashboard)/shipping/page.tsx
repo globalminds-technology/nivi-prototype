@@ -6,7 +6,7 @@ import { container } from "@/infrastructure/di/container";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Shipping Charges — NiVi Console",
+  title: "Shipping Charges — The Saree Studio Console",
   robots: { index: false, follow: false },
 };
 

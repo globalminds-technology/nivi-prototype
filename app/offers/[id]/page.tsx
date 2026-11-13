@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
 
   if (!campaign) {
     return {
-      title: "Campaign Not Found · NiVi",
+      title: "Campaign Not Found · The Saree Studio",
     };
   }
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps) {
       : `₹${campaign.value} OFF`;
 
   return {
-    title: `${campaign.bannerTitle || campaign.name} (${discountLabel}) · NiVi`,
+    title: `${campaign.bannerTitle || campaign.name} (${discountLabel}) · The Saree Studio`,
     description:
       campaign.bannerSubtitle ||
       campaign.label ||

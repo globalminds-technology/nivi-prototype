@@ -105,48 +105,20 @@ export function AdminHeader({ adminEmail, hideZohoBooks = false }: AdminHeaderPr
             </Button>
 
             <Link href="/admin" className="flex items-center gap-2 shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/nivi-logo.jpeg"
-                alt="NiVi"
-                className="h-9 sm:h-10 w-auto object-contain rounded-xl shadow-xs"
-              />
-              <div className="flex flex-col text-left justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/nivi-wordmark.png"
-                  alt="NiVi"
-                  className="h-5 sm:h-6 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
-                />
-                <span className="hidden sm:inline-block gold-quote text-[0.76rem] leading-none select-none">
-                  Women with tradition, styled for today
-                </span>
-              </div>
+              <img src="/logo.jpg" alt="The Saree Studio" className="h-9 sm:h-10 w-auto object-contain" />
+              <span className="text-[10px] uppercase tracking-wider text-[#8C6D37]">
+                Admin
+              </span>
             </Link>
           </div>
 
           {/* DESKTOP (>= 1024px): Dual Logo + Tagline + Navigation */}
           <div className="hidden lg:flex items-center gap-3 xl:gap-5 min-w-0">
-            <Link href="/admin" className="flex items-center gap-2.5 lg:gap-3 shrink-0 group">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/nivi-logo.jpeg"
-                alt="NiVi"
-                className="h-10 lg:h-11 w-auto object-contain rounded-xl shadow-xs transition-transform group-hover:scale-[1.02]"
-              />
-              <div className="flex flex-col text-left justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/nivi-wordmark.png"
-                  alt="NiVi"
-                  className="h-6 lg:h-7 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
-                />
-                <div>
-                  <span className="gold-quote text-[0.84rem] xl:text-[0.92rem] leading-tight select-none mt-0.5">
-                   Women with tradition, styled for today.
-                  </span>
-                </div>
-              </div>
+            <Link href="/admin" className="flex items-center gap-2 shrink-0 group">
+              <img src="/logo.jpg" alt="The Saree Studio" className="h-12 lg:h-14 w-auto object-contain" />
+              <span className="text-[11px] font-medium tracking-widest uppercase text-[#8C6D37] select-none">
+                Portal
+              </span>
             </Link>
 
             {/* Desktop Navigation: 4 Section Tabs */}
@@ -260,21 +232,13 @@ export function AdminHeader({ adminEmail, hideZohoBooks = false }: AdminHeaderPr
             {/* Drawer Header */}
             <div>
               <div className="p-4 flex items-center justify-between border-b border-[#D5CCBB]">
-                <div className="flex items-center gap-2.5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/nivi-logo.jpeg"
-                    alt="NiVi"
-                    className="h-10 w-auto object-contain rounded-xl shadow-xs"
-                  />
-                  <div className="flex flex-col text-left">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/nivi-wordmark.png"
-                      alt="NiVi"
-                      className="h-6 w-auto object-contain"
-                    />
-                  </div>
+                <div className="flex flex-col text-left">
+                  <span className="font-serif text-xl font-bold tracking-tight text-[#073C35] leading-none">
+                    The Saree Studio
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider text-[#8C6D37] mt-1">
+                    Admin Portal
+                  </span>
                 </div>
 
                 <Button

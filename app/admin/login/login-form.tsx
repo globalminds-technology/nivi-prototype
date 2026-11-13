@@ -24,22 +24,13 @@ export function LoginForm() {
       <div className="h-1.5 w-full bg-gradient-to-r from-[#073C35] via-[#C9A45C] to-[#073C35]" />
 
       <CardHeader className="space-y-3 text-center pt-8 pb-5 px-6">
-        {/* Dual Brand Logo */}
-        <div className="flex flex-col items-center justify-center space-y-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/nivi-logo.jpeg"
-            alt="NiVi Emblem"
-            className="h-16 w-auto object-contain rounded-2xl shadow-sm border border-[#C9A45C]/35"
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/nivi-wordmark.png"
-            alt="NiVi"
-            className="h-8 w-auto object-contain select-none pointer-events-none drop-shadow-xs"
-          />
-          <span className="gold-quote text-[1.05rem] leading-tight select-none pt-0.5">
-            Women with tradition, styled for today.
+        {/* Brand Header */}
+        <div className="flex flex-col items-center justify-center space-y-1">
+          <span className="font-serif text-3xl font-bold tracking-tight text-[#073C35]">
+            The Saree Studio
+          </span>
+          <span className="text-xs uppercase tracking-widest text-[#8C6D37] font-medium">
+            Administrative Console
           </span>
         </div>
 
@@ -74,7 +65,7 @@ export function LoginForm() {
                 type="email"
                 autoComplete="email"
                 required
-                placeholder="admin@nivi.in"
+                placeholder="admin@thesareestudio.com"
                 disabled={isPending}
                 className="pl-10 h-11 bg-white border-[#D5CCBB] text-[#30251F] placeholder:text-[#6B5A4A]/50 focus-visible:border-[#073C35] focus-visible:ring-[#073C35] rounded-xl shadow-2xs"
               />

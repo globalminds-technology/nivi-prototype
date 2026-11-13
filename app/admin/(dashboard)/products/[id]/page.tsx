@@ -20,12 +20,12 @@ export async function generateMetadata({
   try {
     const product = await container.getProductById().execute(id);
     return {
-      title: `Edit ${product.name} · Nivi Admin`,
+      title: `Edit ${product.name} · The Saree Studio Admin`,
       robots: { index: false, follow: false },
     };
   } catch {
     return {
-      title: "Edit Product · Nivi Admin",
+      title: "Edit Product · The Saree Studio Admin",
       robots: { index: false, follow: false },
     };
   }

@@ -12,7 +12,7 @@ import { container } from "@/infrastructure/di/container";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Order Confirmed — Nivi Sarees",
+  title: "Order Confirmed — The Saree Studio",
   description: "Your handcrafted order has been received and confirmed.",
   robots: {
     index: false,

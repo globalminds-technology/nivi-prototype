@@ -7,8 +7,8 @@ import { ReturnToStoreLink } from "./return-to-store-link";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Super Admin Sign In · NiVi",
-  description: "Sign in to access NiVi administrative console.",
+  title: "Super Admin Sign In · The Saree Studio",
+  description: "Sign in to access The Saree Studio administrative console.",
   robots: { index: false, follow: false },
 };
 
@@ -50,7 +50,7 @@ export default async function AdminLoginPage() {
 
       {/* Subtle brand copyright */}
       <p className="mt-8 text-xs text-[#6B5A4A] text-center font-serif tracking-wide relative z-10">
-        NiVi Luxury Handcrafted Sarees &copy; {new Date().getFullYear()} · All Rights Reserved
+        The Saree Studio &copy; {new Date().getFullYear()} · All Rights Reserved
       </p>
     </main>
   );

@@ -100,49 +100,15 @@ export function Header({ products = [], categories }: HeaderProps) {
               <Menu className="h-5 w-5" />
             </Button>
 
-            <Link href="/" className="flex items-center gap-2.5 shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/nivi-logo.jpeg"
-                alt="NiVi"
-                className="h-11 sm:h-12 w-auto object-contain rounded-xl shadow-xs"
-              />
-              <div className="flex flex-col text-left justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/nivi-wordmark.png"
-                  alt="NiVi"
-                  className="h-7 sm:h-8 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
-                />
-                <span className="hidden sm:inline-block gold-quote text-[0.88rem] leading-tight select-none mt-0.5">
-                  Women with tradition, styled for today.
-                </span>
-              </div>
+            <Link href="/" className="flex items-center gap-2 group shrink-0">
+              <img src="/logo.svg" alt="The Saree Studio" className="h-9 sm:h-11 w-auto object-contain" />
             </Link>
           </div>
 
           {/* DESKTOP ONLY: Logo & Navigation Links (Responsive for Tablet & Desktop) */}
           <div className="hidden md:flex items-center gap-3 md:gap-4 lg:gap-6 xl:gap-9 min-w-0">
-            <Link href="/" className="flex items-center gap-2 md:gap-2.5 lg:gap-3.5 shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/nivi-logo.jpeg"
-                alt="NiVi"
-                className="h-10 md:h-11 lg:h-13 xl:h-15 w-auto object-contain rounded-xl sm:rounded-2xl shadow-xs"
-              />
-              <div className="flex flex-col text-left justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/nivi-wordmark.png"
-                  alt="NiVi"
-                  className="h-6.5 md:h-7 lg:h-8.5 xl:h-9.5 w-auto object-contain select-none pointer-events-none drop-shadow-sm"
-                />
-                <div className="hidden xl:block">
-                  <span className="gold-quote text-[0.92rem] lg:text-[1.05rem] leading-tight select-none mt-0.5">
-                    Women with tradition, styled for today.
-                  </span>
-                </div>
-              </div>
+            <Link href="/" className="flex items-center gap-2 group shrink-0 py-1">
+              <img src="/logo.svg" alt="The Saree Studio" className="h-11 lg:h-13 xl:h-14 w-auto object-contain" />
             </Link>
 
             {/* Desktop Center Navigation */}
@@ -235,14 +201,8 @@ export function Header({ products = [], categories }: HeaderProps) {
               className="p-4 border-b border-[#023036]/10 flex items-center justify-between"
               style={{ background: "linear-gradient(180deg, #FAF8F5 0%, #EFEAE1 100%)" }}
             >
-              <div className="flex items-center gap-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/nivi-logo.jpeg"
-                  alt="NiVi"
-                  className="h-9 w-auto object-contain rounded-md ring-1 ring-[#023036]/10"
-                />
-                <span className="font-serif text-lg font-bold text-[#023036]">NiVi</span>
+              <div className="flex items-center">
+                <img src="/logo.svg" alt="The Saree Studio" className="h-9 w-auto object-contain" />
               </div>
               <button
                 type="button"
@@ -319,13 +279,13 @@ export function Header({ products = [], categories }: HeaderProps) {
             {/* Drawer Footer */}
             <div className="p-4 border-t border-[#023036]/15 space-y-2 bg-[#FAF8F5]">
               <a
-                href="https://wa.me/919150992863?text=Hello%20NiVi%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
+                href="https://wa.me/919800000000?text=Hello%20The%20Saree%20Studio%2C%20I%20have%20an%20inquiry%20about%20your%20handcrafted%20sarees."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#023036] hover:bg-[#035354] text-white text-xs font-semibold shadow-xs transition-colors"
               >
                 <Headphones className="h-4 w-4" />
-                <span>WhatsApp: +91 91509 92863</span>
+                <span>WhatsApp: +91 98000 00000</span>
               </a>
             </div>
           </div>

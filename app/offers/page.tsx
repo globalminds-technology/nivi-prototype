@@ -16,7 +16,7 @@ import { offerCampaignRepository } from "@/infrastructure/offers/offer-campaign-
 export const instant = false;
 
 export const metadata = {
-  title: "Special Offers & Festive Discounts · NiVi",
+  title: "Special Offers & Festive Discounts · The Saree Studio",
   description: "Browse limited-time offers and seasonal discounts on curated handcrafted Indian ensembles.",
 };
 

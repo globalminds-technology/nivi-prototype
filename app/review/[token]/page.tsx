@@ -15,8 +15,8 @@ import { Money } from "@/core/domain/value-objects/money";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Submit Verified Review — Nivi Sarees",
-  description: "Share your experience with your handcrafted Nivi saree.",
+  title: "Submit Verified Review — The Saree Studio",
+  description: "Share your experience with your handcrafted saree from The Saree Studio.",
   robots: {
     index: false,
     follow: false,

@@ -24,12 +24,12 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "NiVi — Pure Sarees, Timeless Stories",
-    template: "%s · NiVi",
+    default: "The Saree Studio — Handcrafted Sarees, Timeless Elegance",
+    template: "%s · The Saree Studio",
   },
   description:
-    "Explore NiVi's curated collection of exquisite sarees that blend tradition, elegance, and modern grace. Delivered across India.",
-  openGraph: { type: "website", siteName: "NiVi", locale: "en_IN" },
+    "Explore The Saree Studio's curated collection of exquisite sarees that blend tradition, elegance, and modern grace. Delivered across India.",
+  openGraph: { type: "website", siteName: "The Saree Studio", locale: "en_IN" },
   robots: { index: true, follow: true },
   icons: {
     icon: [

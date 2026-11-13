@@ -18,7 +18,7 @@ import { offerCampaignRepository } from "@/infrastructure/offers/offer-campaign-
 export const instant = false;
 
 export const metadata = {
-  title: "NiVi — Women with tradition, styled for today.",
+  title: "The Saree Studio — Handcrafted Sarees, Styled for Today.",
   description:
     "Curated collection of handcrafted Indian sarees, bespoke festive ensembles and heritage textiles. Delivered across India.",
 };
@@ -162,7 +162,7 @@ export default async function HomePage() {
 
               {/* WhatsApp CTA */}
               <a
-                href="https://wa.me/919150993463?text=Hello%20NiVi%2C%20I%20would%20like%20to%20inquire%20about%20international%20delivery."
+                href="https://wa.me/919800000000?text=Hello%20The%20Saree%20Studio%2C%20I%20would%20like%20to%20inquire%20about%20international%20delivery."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2.5 sm:gap-4 px-4 sm:px-7 py-2 sm:py-3 rounded-full text-white transition-all hover:scale-[1.03] active:scale-[0.98] shadow-md"
@@ -173,7 +173,7 @@ export default async function HomePage() {
                 </svg>
                 <div className="flex flex-col leading-tight">
                   <span className="text-[9px] sm:text-xs font-medium tracking-wide opacity-80">Contact WhatsApp</span>
-                  <span className="text-sm sm:text-lg font-bold tracking-wide">9150993463</span>
+                  <span className="text-sm sm:text-lg font-bold tracking-wide">98000 00000</span>
                 </div>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-5 sm:h-5 ml-0.5 opacity-70" />
               </a>

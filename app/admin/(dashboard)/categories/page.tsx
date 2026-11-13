@@ -6,7 +6,7 @@ import { categoryRepository } from "@/infrastructure/categories/category-reposit
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Categories Management — NiVi Console",
+  title: "Categories Management — The Saree Studio Console",
   robots: { index: false, follow: false },
 };
 

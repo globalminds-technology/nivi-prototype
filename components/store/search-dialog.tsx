@@ -52,7 +52,7 @@ export function SearchDialog({ products, open, onOpenChange }: SearchDialogProps
     <CommandDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Search Nivi Catalog"
+      title="Search Saree Catalog"
       description="Quickly jump to products, offers, or collections"
     >
       <CommandInput placeholder="Search sarees, dresses, silk, jewelry..." />

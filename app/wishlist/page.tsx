@@ -8,7 +8,7 @@ import { WishlistClient } from "./wishlist-client";
 import type { StoreProductData } from "@/components/store/product-card";
 
 export const metadata = {
-  title: "My Wishlist · NiVi",
+  title: "My Wishlist · The Saree Studio",
   description: "View your saved handcrafted sarees and festival ensembles.",
 };
 

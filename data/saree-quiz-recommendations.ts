@@ -1,8 +1,8 @@
 import type { RecommendationProfile } from "@/core/domain/entities/saree-quiz";
 
 /**
- * All 12 Client-Provided Saree Quiz Recommendations
- * Exactly matching Section 6 of the NiVi Implementation Plan.
+ * All 12 Saree Quiz Recommendations
+ * Exactly matching the quiz implementation plan.
  * Note: Banner images are all optional/null as pictures were not provided by client.
  */
 export const SAREE_QUIZ_RECOMMENDATIONS: readonly RecommendationProfile[] = [

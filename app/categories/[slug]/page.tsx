@@ -48,12 +48,12 @@ export async function generateMetadata({ params }: CategoryPageProps) {
 
   if (!category) {
     return {
-      title: "Category Not Found — NiVi",
+      title: "Category Not Found — The Saree Studio",
     };
   }
 
   return {
-    title: `${category.name} Sarees — NiVi`,
+    title: `${category.name} Sarees — The Saree Studio`,
     description:
       category.description ||
       `Explore our handcrafted collection of authentic ${category.name} sarees.`,

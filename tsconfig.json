@@ -19,6 +19,9 @@
       }
     ],
     "paths": {
+      "@/core/*": ["./lib/mock/core/*"],
+      "@/infrastructure/*": ["./lib/mock/infrastructure/*"],
+      "@/app/actions/*": ["./lib/mock/actions/*"],
       "@/*": ["./*"]
     }
   },

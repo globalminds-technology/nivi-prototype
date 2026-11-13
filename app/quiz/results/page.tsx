@@ -36,7 +36,7 @@ interface QuizResultsPageProps {
 export const instant = false;
 
 export const metadata = {
-  title: "Your Saree Match — NiVi Matchmaker",
+  title: "Your Saree Match — The Saree Studio Matchmaker",
   description:
     "Discover your signature saree match, draping tips, blouse pairings, and matching handcrafted sarees.",
 };

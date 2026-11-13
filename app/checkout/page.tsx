@@ -11,7 +11,7 @@ import { container } from "@/infrastructure/di/container";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Checkout — Nivi Sarees",
+  title: "Checkout — The Saree Studio",
   description: "Secure checkout for your handcrafted sarees and heritage textiles. Free insured domestic delivery.",
   robots: {
     index: false,

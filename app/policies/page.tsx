@@ -6,8 +6,8 @@ import { STORE_POLICIES } from "@/core/domain/constants/store-policies";
 import { Truck, RotateCcw, XCircle, AlertTriangle, CheckCircle2, Info, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Shipping, Return & Exchange Policies — NiVi Sarees",
-  description: "Official shipping timelines, cancellation terms, mandatory unboxing video guidelines, and Sungudi craft disclaimers for NiVi.",
+  title: "Shipping, Return & Exchange Policies — The Saree Studio",
+  description: "Official shipping timelines, cancellation terms, and craft guidelines for The Saree Studio.",
 };
 
 export const instant = false;

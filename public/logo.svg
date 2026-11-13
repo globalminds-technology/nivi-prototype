@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 90" fill="none">
+
+  <!-- Saree drape icon (left side) -->
+  <g transform="translate(10, 5) scale(0.80)">
+    <!-- Main drape flowing lines -->
+    <path d="M38 6 C34 10, 28 18, 26 28 C24 38, 25 48, 27 56 C29 64, 32 70, 34 76"
+          stroke="#B8922A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M44 4 C41 9, 36 18, 34 29 C32 40, 33 50, 35 58 C37 66, 40 72, 42 78"
+          stroke="#B8922A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M50 5 C48 11, 44 20, 42 31 C40 42, 41 52, 43 60 C45 68, 48 74, 50 79"
+          stroke="#B8922A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- Top gather/shoulder -->
+    <path d="M32 6 C36 2, 44 2, 50 5 C53 7, 54 10, 52 13 C50 16, 46 15, 44 14"
+          stroke="#B8922A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- Pallu curl -->
+    <path d="M42 78 C45 82, 50 84, 55 82 C60 80, 63 75, 61 70 C59 65, 54 63, 50 65"
+          stroke="#B8922A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M50 65 C47 67, 46 71, 48 74 C50 77, 54 77, 56 75"
+          stroke="#B8922A" stroke-width="2.0" stroke-linecap="round" fill="none"/>
+    <!-- Leaf sprig -->
+    <path d="M60 72 C65 68, 70 65, 72 60"
+          stroke="#B8922A" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <path d="M63 70 C66 67, 68 63, 67 59"
+          stroke="#B8922A" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <ellipse cx="69" cy="62" rx="4" ry="2.5" transform="rotate(-35 69 62)"
+             stroke="#B8922A" stroke-width="1.5" fill="none"/>
+    <ellipse cx="72" cy="57" rx="3.5" ry="2" transform="rotate(-50 72 57)"
+             stroke="#B8922A" stroke-width="1.5" fill="none"/>
+    <ellipse cx="65" cy="66" rx="3" ry="1.8" transform="rotate(-20 65 66)"
+             stroke="#B8922A" stroke-width="1.5" fill="none"/>
+  </g>
+
+  <!-- THE SAREE STUDIO — reduced letter-spacing so it fits cleanly -->
+  <text x="82" y="42"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="22"
+        font-weight="700"
+        letter-spacing="2"
+        fill="#0D3D2E">THE SAREE STUDIO</text>
+
+  <!-- PURE WEAVES · TIMELESS STORIES -->
+  <text x="82" y="60"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="8.5"
+        font-weight="400"
+        letter-spacing="2"
+        fill="#0D3D2E"
+        opacity="0.75">PURE WEAVES · TIMELESS STORIES</text>
+
+</svg>

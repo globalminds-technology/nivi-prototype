@@ -7,7 +7,7 @@ import { container } from "@/infrastructure/di/container";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Create Product · Nivi Admin",
+  title: "Create Product · The Saree Studio Admin",
   robots: { index: false, follow: false },
 };
 

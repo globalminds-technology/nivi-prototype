@@ -10,7 +10,7 @@ import { container } from "@/infrastructure/di/container";
 export const instant = false;
 
 export const metadata = {
-  title: "Handcrafted Collections — NiVi Sarees",
+  title: "Handcrafted Collections — The Saree Studio",
   description:
     "Explore our complete collection of handcrafted silk sarees, bridal master weaves, and festive handlooms. Delivered nationwide.",
 };

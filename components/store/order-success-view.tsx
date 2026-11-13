@@ -77,7 +77,7 @@ export function OrderSuccessView() {
 
   useEffect(() => {
     try {
-      const storedReviews = sessionStorage.getItem("nivi_latest_order_reviews");
+      const storedReviews = sessionStorage.getItem("tss_latest_order_reviews");
       if (storedReviews) {
         setReviewTokens(JSON.parse(storedReviews));
       }
@@ -86,7 +86,7 @@ export function OrderSuccessView() {
     }
 
     try {
-      const storedDetails = sessionStorage.getItem("nivi_latest_order_details");
+      const storedDetails = sessionStorage.getItem("tss_latest_order_details");
       if (storedDetails) {
         setOrderDetails(JSON.parse(storedDetails));
       }
@@ -100,9 +100,9 @@ export function OrderSuccessView() {
   const customer = orderDetails?.customer;
 
   const whatsappMessage = encodeURIComponent(
-    `Hello NiVi Concierge! I just placed an order (Invoice: ${invoiceNumber}). Could you provide delivery updates?`,
+    `Hello The Saree Studio Concierge! I just placed an order (Invoice: ${invoiceNumber}). Could you provide delivery updates?`,
   );
-  const whatsappUrl = `https://wa.me/919150992863?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/919800000000?text=${whatsappMessage}`;
 
   return (
     <div className="container max-w-3xl mx-auto py-12 px-4 sm:px-6">
@@ -117,7 +117,7 @@ export function OrderSuccessView() {
           Payment Verified &amp; Confirmed
         </Badge>
         <h1 className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight">
-          Thank you for choosing Nivi
+          Thank you for choosing The Saree Studio
         </h1>
         <p className="text-muted-foreground text-sm max-w-lg mx-auto">
           Your order has been recorded in our workshop. Each saree is inspected by hand and packaged in protective archival wraps before dispatch.
@@ -281,7 +281,7 @@ export function OrderSuccessView() {
               <div className="text-xs text-left">
                 <p className="font-medium">Have bespoke requests or questions?</p>
                 <p className="text-muted-foreground">
-                  Our concierge is available on WhatsApp (+91 91509 92863) or email at connect@brandnivi.com.
+                  Our concierge is available on WhatsApp (+91 98000 00000) or email at hello@thesareestudio.com.
                 </p>
               </div>
               <a

@@ -263,7 +263,7 @@ export function SareeQuizFlow() {
             </div>
           </div>
 
-          {/* Progress Bar with NiVi Brand Colors */}
+          {/* Progress Bar with Brand Colors */}
           <div className="w-full h-1.5 bg-[#E9E1D2] rounded-full overflow-hidden shadow-inner">
             <div
               className="h-full bg-linear-to-r from-[#073C35] to-[#8C6D37] transition-all duration-300 rounded-full"

@@ -10,7 +10,7 @@ import { Money } from "@/core/domain/value-objects/money";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Offers Management — NiVi Console",
+  title: "Offers Management — The Saree Studio Console",
   robots: { index: false, follow: false },
 };
 
